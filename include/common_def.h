@@ -12,6 +12,9 @@ typedef enum {
   kErrorCode_Ok = 0,
   kErrorCode_Null = -1,
   kErrorCode_Memory = -2,
+  kErrorCode_MemoryNodeNULL = -3,
+  kErrorCode_DataNULL = -4,
+  kErrorCode_ZeroBytes = -5,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

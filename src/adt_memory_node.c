@@ -18,6 +18,7 @@ static s16 MEMNODE_initWithoutCheck(MemoryNode *node);	// inits a MN with no che
 static void* MEMNODE_data(MemoryNode *node);	// returns a reference to data_
 static u16 MEMNODE_size(MemoryNode *node);		// returns data size
 static s16 MEMNODE_setData(MemoryNode *node, void *src, u16 bytes);
+static s16 MEMNODE_reset(MemoryNode* node);
 
 // Memory Node's API Definitions
 struct memory_node_ops_s memory_node_ops = { .data = MEMNODE_data,
@@ -82,4 +83,26 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   }
   node->data_ = src;
   node->size_ = bytes;
+
+  return kErrorCode_Ok;
+}
+
+s16 MEMNODE_reset(MemoryNode* node) {
+  if (NULL == node) return kErrorCode_MemoryNodeNULL;
+  if (NULL == node->data_) return kErrorCode_DataNULL;
+
+  MM->free(node->data_);
+  node->data_ = NULL;
+  node->size_ = 0;
+
+  return kErrorCode_Ok;
+}
+
+s16 MEMNODE_softReset(MemoryNode* node) {
+  if (NULL == node) return kErrorCode_MemoryNodeNULL;
+  if (NULL == node->data_) return kErrorCode_DataNULL;
+  
+  node->size_ = 0;
+
+  return kErrorCode_Ok;
 }

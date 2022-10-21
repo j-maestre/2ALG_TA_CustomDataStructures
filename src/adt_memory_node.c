@@ -18,12 +18,17 @@ static s16 MEMNODE_initWithoutCheck(MemoryNode *node);	// inits a MN with no che
 static void* MEMNODE_data(MemoryNode *node);	// returns a reference to data_
 static u16 MEMNODE_size(MemoryNode *node);		// returns data size
 static s16 MEMNODE_setData(MemoryNode *node, void *src, u16 bytes);
-static s16 MEMNODE_reset(MemoryNode* node);
+static s16 MEMNODE_reset(MemoryNode *node);
+static s16 MEMNODE_softReset(MemoryNode *node);
+static s16 MEMNODE_free(MemoryNode *node);
 
 // Memory Node's API Definitions
 struct memory_node_ops_s memory_node_ops = { .data = MEMNODE_data,
                                              .size = MEMNODE_size,
                                              .setData = MEMNODE_setData,
+                                             .reset = MEMNODE_reset,
+                                             .softReset = MEMNODE_softReset,
+                                             .free = MEMNODE_free,
 };
 
 // Memory Node Definitions
@@ -87,9 +92,13 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   return kErrorCode_Ok;
 }
 
-s16 MEMNODE_reset(MemoryNode* node) {
-  if (NULL == node) return kErrorCode_MemoryNodeNULL;
-  if (NULL == node->data_) return kErrorCode_DataNULL;
+s16 MEMNODE_reset(MemoryNode *node) {
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+  if (NULL == node->data_) {
+    return kErrorCode_DataNULL;
+  }
 
   MM->free(node->data_);
   node->data_ = NULL;
@@ -98,12 +107,40 @@ s16 MEMNODE_reset(MemoryNode* node) {
   return kErrorCode_Ok;
 }
 
-s16 MEMNODE_softReset(MemoryNode* node) {
-  if (NULL == node) return kErrorCode_MemoryNodeNULL;
-  if (NULL == node->data_) return kErrorCode_DataNULL;
-  
+s16 MEMNODE_softReset(MemoryNode *node) {
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+  if (NULL == node->data_) {
+    return kErrorCode_DataNULL;
+  }
+
   node->data_ = NULL;
   node->size_ = 0;
+
+  return kErrorCode_Ok;
+}
+
+s16 MEMNODE_free(MemoryNode *node) {
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+  if (NULL == node->data_) {
+    return kErrorCode_DataNULL;
+  }
+
+  MM->free(node->data_);
+  MM->free(node);
+
+  return kErrorCode_Ok;
+}
+
+s16 MEMNODE_softFree(MemoryNode* node) {
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+
+  MM->free(node);
 
   return kErrorCode_Ok;
 }

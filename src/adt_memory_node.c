@@ -102,6 +102,7 @@ s16 MEMNODE_softReset(MemoryNode* node) {
   if (NULL == node) return kErrorCode_MemoryNodeNULL;
   if (NULL == node->data_) return kErrorCode_DataNULL;
   
+  node->data_ = NULL;
   node->size_ = 0;
 
   return kErrorCode_Ok;

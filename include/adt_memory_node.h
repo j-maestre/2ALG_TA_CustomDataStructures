@@ -28,8 +28,10 @@ struct memory_node_ops_s {
   s16(*softFree) (MemoryNode *node);	// free only the node (its mmory, not its data)
 
   s16(*memSet) (MemoryNode *node, u8 value);
-  s16(*memCopy) (MemoryNode *node, void *src, u16 bytes);
-  s16(*memConcat) (MemoryNode *node, void *src, u16 bytes);
+  s16(*memCopy) (MemoryNode *node, void *src, u16 bytes); 
+  s16(*memConcat) (MemoryNode *node, void *src, u16 bytes); // Coge el bloque antiguo y el nuevo y los pone en un nuevo bloque contiguo
+  
+
   s16(*memMask) (MemoryNode *node, u8 mask);
 
   void(*print) (MemoryNode *node);

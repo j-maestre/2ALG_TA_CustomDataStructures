@@ -217,7 +217,7 @@ s16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes){
   }
 
   if (NULL == node->data_) {
-    MEMNODE_memCopy(node, src, bytes);
+    return kErrorCode_DataNULL;
   }
 
   u16 totalBytes = node->size_ + bytes;
@@ -231,7 +231,7 @@ s16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes){
   aux = (u8 *) src;
 
   for(int i = node->size_; i < totalBytes; i++){
-    totalBlock[i] = aux[i];
+    totalBlock[i] = aux[i-node->size_];
   }
 
   MM->free(node->data_);
@@ -245,6 +245,11 @@ s16 MEMNODE_memMask(MemoryNode *node, u8 mask){
   if( NULL == node){
     return kErrorCode_MemoryNodeNULL;
   }
+
+  if (NULL == node->data_) {
+    return kErrorCode_DataNULL;
+  }
+
 
   u8 *aux = (u8 *) node->data_;
 

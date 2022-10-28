@@ -109,11 +109,10 @@ s16 MEMNODE_reset(MemoryNode *node) {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;
   }
-  if (NULL == node->data_) {
-    return kErrorCode_DataNULL;
+  if (NULL != node->data_) {
+    MM->free(node->data_);
   }
 
-  MM->free(node->data_);
   node->data_ = NULL;
   node->size_ = 0;
 
@@ -138,11 +137,10 @@ s16 MEMNODE_free(MemoryNode *node) {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;
   }
-  if (NULL == node->data_) {
-    return kErrorCode_DataNULL;
+  if (NULL != node->data_) {
+    MM->free(node->data_);
   }
 
-  MM->free(node->data_);
   MM->free(node);
 
   return kErrorCode_Ok;

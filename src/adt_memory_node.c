@@ -104,7 +104,7 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
     return kErrorCode_Null;
   }
   
-    node->data_ = src;
+  node->data_ = src;
   node->size_ = bytes;
 
   return kErrorCode_Ok;
@@ -267,7 +267,7 @@ void MEMNODE_print(MemoryNode *node){
 
   printf("[Node Info] Adress: %p\n", node);
   printf("[Node Info] Size: %d\n", node->size_);
-  printf("[Node Info] Data address: %p\n", node->data_);
+  if( NULL != node->data_)printf("[Node Info] Data address: %p\n", node->data_);
   printf("[Node Info] content: ");
   for (int i = 0; i < node->size_; i++){
     printf("%c",((u8 *) node->data_)[i]);

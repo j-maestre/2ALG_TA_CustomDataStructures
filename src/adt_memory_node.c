@@ -85,7 +85,7 @@ void* MEMNODE_data(MemoryNode *node) { // returns a reference to data_
 }
 
 u16	MEMNODE_size(MemoryNode *node) { // returns data size
-  if (NULL == node) return kErrorCode_Null;
+  if (NULL == node) return 0;
   return node->size_;
 }
 
@@ -99,7 +99,12 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   if (NULL != node->data_) {
     MM->free(node->data_);
   }
-  node->data_ = src;
+
+  if (NULL == src) {
+    return kErrorCode_Null;
+  }
+  
+    node->data_ = src;
   node->size_ = bytes;
 
   return kErrorCode_Ok;
@@ -134,14 +139,15 @@ s16 MEMNODE_softReset(MemoryNode *node) {
 }
 
 s16 MEMNODE_free(MemoryNode *node) {
-  if (NULL == node) {
-    return kErrorCode_MemoryNodeNULL;
-  }
-  if (NULL != node->data_) {
-    MM->free(node->data_);
+  
+  if (NULL != node) {
+
+    if (NULL != node->data_) {
+      MM->free(node->data_);
+    }
+    MM->free(node);
   }
 
-  MM->free(node);
 
   return kErrorCode_Ok;
 }

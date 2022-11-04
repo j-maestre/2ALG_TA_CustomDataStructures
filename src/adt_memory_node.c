@@ -79,6 +79,18 @@ s16 MEMNODE_initWithoutCheck(MemoryNode *node) {
   return kErrorCode_Ok;
 }
 
+s16 MEMNODE_createLite(MemoryNode *node){
+  if( NULL == node){
+    return kErrorCode_MemoryNodeNULL;
+  }
+
+  node->data_ = NULL;
+  node->size_ = 0;
+  node->ops_ = &memory_node_ops;
+
+  return kErrorCode_Ok;
+}
+
 void* MEMNODE_data(MemoryNode *node) { // returns a reference to data_
   if (NULL == node) return NULL;
   return node->data_;
@@ -96,10 +108,7 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   if (0 == bytes) {
     return kErrorCode_ZeroBytes;
   }
-  if (NULL != node->data_) {
-    MM->free(node->data_);
-  }
-
+  
   if (NULL == src) {
     return kErrorCode_Null;
   }
@@ -168,7 +177,7 @@ s16 MEMNODE_memSet(MemoryNode *node, u8 value){
   }
   u8 *aux = (u8 *) node->data_;
 
-  for(int i = 0; i < node->size_; i++){
+  for(u32 i = 0; i < node->size_; i++){
     aux[i] = value;  
   }
   
@@ -191,12 +200,16 @@ s16 MEMNODE_memCopy(MemoryNode *node, void *src, u16 bytes){
     MM->free(node->data_);
   }
   node->data_ = MM->malloc(bytes);
+
+  if( NULL == node->data_){
+    return kErrorCode_NoMemory;
+  }
   node->size_ = bytes;
 
   u8 *aux = (u8 *) node->data_;
   u8 *aux2 = (u8 *) src;
 
-  for (int i = 0; i < node->size_; i++){
+  for (u32 i = 0; i < node->size_; i++){
     aux[i] = aux2[i];
   }
   
@@ -222,15 +235,18 @@ s16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes){
 
   u16 totalBytes = node->size_ + bytes;
   u8 *totalBlock = (u8 *) MM->malloc(totalBytes);
+  if (NULL == totalBlock){
+    return kErrorCode_NoMemory;
+  }
   u8 *aux = (u8 *) node->data_;
 
-  for(int i = 0; i < node->size_; i++){
+  for(u32 i = 0; i < node->size_; i++){
     totalBlock[i] = aux[i];
   }
 
   aux = (u8 *) src;
 
-  for(int i = node->size_; i < totalBytes; i++){
+  for(u32 i = node->size_; i < totalBytes; i++){
     totalBlock[i] = aux[i-node->size_];
   }
 
@@ -253,7 +269,7 @@ s16 MEMNODE_memMask(MemoryNode *node, u8 mask){
 
   u8 *aux = (u8 *) node->data_;
 
-  for (int i = 0; i < node->size_; i++){
+  for (u32 i = 0; i < node->size_; i++){
     aux[i] &= mask;
   }
   
@@ -269,7 +285,7 @@ void MEMNODE_print(MemoryNode *node){
   printf("[Node Info] Size: %d\n", node->size_);
   if( NULL != node->data_)printf("[Node Info] Data address: %p\n", node->data_);
   printf("[Node Info] content: ");
-  for (int i = 0; i < node->size_; i++){
+  for (u32 i = 0; i < node->size_; i++){
     printf("%c",((u8 *) node->data_)[i]);
   }
   printf("\n");

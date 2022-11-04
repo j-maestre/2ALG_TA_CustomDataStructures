@@ -12,29 +12,7 @@
 #include "adt_memory_node.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 
-char* GetErrorMsg(s16 error) {
-	switch (error) {
-	case 0:
-		return "OK";
-		break;
-	case -1:
-		return "NULL";
-		break;
-	case -2:
-		return "Memory error";
-		break;
-	case -3:
-		return "node is NULL";
-		break;
-	case -4:
-		return "node->data_ is NULL";
-		break;
-	case -5:
-		return "bytes is ZERO";
-		break;
-	}
-
-}
+char *error_codes[] = {{"OK"},{"NULL"},{"Memory error"},{"node is NULL"},{"node->data_ is NULL"},{"bytes is ZERO"},{"No memory when malloc"}};
 
 void printFunctionResult(MemoryNode *mn, u8 *msg, s16 error_type) {
 	u8 *error_msg = (u8 *)MM->malloc (sizeof(u8) * 100);
@@ -50,7 +28,7 @@ void printFunctionResult(MemoryNode *mn, u8 *msg, s16 error_type) {
 		  break;
 	  default:
 		  strcpy((char *) error_msg, "");
-		  printf("FAIL with error %d (%s)", error_type, GetErrorMsg(error_type));
+		  printf("FAIL with error %d (%s)", error_type,error_codes[error_type*-1]);
 		  break;
 	}
 	printf(" in address = %p", mn);

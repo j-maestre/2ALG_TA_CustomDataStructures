@@ -72,9 +72,71 @@ s16 VECTOR_reset(Vector *vector){
 
       return kErrorCode_Ok;
     }
-    
+
     return kErrorCode_StorageNULL;
   }
 
   return kErrorCode_VectorNULL;
 }
+
+s16 VECTOR_resize(Vector *vector, u16 new_size){
+  if( NULL == vector){
+
+    return kErrorCode_VectorNULL; 
+  }
+
+  if(new_size == 0){
+    return kErrorCode_SizeZERO;
+  }
+
+  if( new_size == vector->capacity_){
+    return kErrorCode_Ok;
+  }
+
+  MemoryNode *node_tmp = (MemoryNode*) MM->malloc(sizeof(MemoryNode)*new_size);
+  if(node_tmp == NULL){
+    return kErrorCode_NoMemory;
+  }
+  
+  if(new_size > vector->capacity_){
+    // Al alza
+    for (u32 i = 0; i < vector->capacity_; i++){
+
+      MEMNODE_createLite(node_tmp+i);
+      if(i<vector->tail_){
+        (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
+      }
+    }
+
+    MM->free(vector->storage_);
+  }else{
+    // A la baja
+    for (u32 i = 0; i < vector->capacity_; i++){
+
+      if(i<new_size){
+        MEMNODE_createLite(node_tmp+i);
+        (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
+
+      }else{
+        (vector->storage_+i)->ops_->reset(vector->storage_);
+      }
+    }
+
+
+    MM->free(vector->storage_);
+    vector->storage_ = node_tmp;
+    vector->capacity_ = new_size;
+    
+    if(vector->tail_ > new_size){
+      vector->tail_ = new_size;
+    }
+
+
+  }
+
+  // new size == capacity
+  return kErrorCode_Ok;
+  
+}
+
+

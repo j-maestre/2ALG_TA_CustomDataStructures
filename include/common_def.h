@@ -18,6 +18,7 @@ typedef enum {
   kErrorCode_NoMemory = -6,
   kErrorCode_VectorNULL = -7,
   kErrorCode_StorageNULL = -8,
+  kErrorCode_SizeZERO = -9,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

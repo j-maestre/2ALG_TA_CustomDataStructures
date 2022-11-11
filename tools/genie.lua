@@ -47,7 +47,7 @@ solution("DS_ALG_AI1" .. _ACTION)
 
   projects_names = {
     "PR00_MemoryNode",
-    --"PR01_Vector",
+    "PR01_Vector",
     --"PR02_CircularVector",
     --"PR03_MovableVector",
     --"PR04_List",
@@ -115,7 +115,6 @@ solution("DS_ALG_AI1" .. _ACTION)
   	  path.join(PROJ_DIR, "./tests/test_memory_node.c"),
     }
 
-  --[[
   project "PR01_Vector"
     files {
       path.join(PROJ_DIR, "./include/adt_memory_node.h"),
@@ -124,4 +123,3 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./src/adt_vector.c"),
       path.join(PROJ_DIR, "./tests/test_vector.c"),
     }
-  ]]--

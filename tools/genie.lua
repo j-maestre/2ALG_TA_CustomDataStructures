@@ -13,7 +13,7 @@ solution("DS_ALG_AI1" .. _ACTION)
   location(PROJ_DIR .. "/build/")
   language "C"
   kind "ConsoleApp"
-  startproject "PR00_MemoryNode"
+  startproject "PR01_Vector"
 
   defines {
     "_CRT_SECURE_NO_WARNINGS",

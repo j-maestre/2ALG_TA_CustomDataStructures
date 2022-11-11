@@ -62,3 +62,19 @@ s16 VECTOR_softReset(Vector *vector){
 
   return kErrorCode_VectorNULL;
 }
+
+s16 VECTOR_reset(Vector *vector){
+  if( NULL != vector){
+    if( NULL != vector->storage_){
+      for (u32 i = 0; i < vector->capacity_; i++){
+        (vector->storage_+i)->ops_->reset((vector->storage_+i));
+      }
+
+      return kErrorCode_Ok;
+    }
+    
+    return kErrorCode_StorageNULL;
+  }
+
+  return kErrorCode_VectorNULL;
+}

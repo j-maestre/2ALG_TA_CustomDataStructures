@@ -17,6 +17,25 @@ typedef struct adt_vector_s {
 	struct vector_ops_s *ops_;
 } Vector;
 
+//? Crear
+// Si el capacity es 0, no hacemos reserva
+// sizeof(MN)*capacity
+// Si no poidemos hacer malloc de la capacity, liberamos el vector que hemos creado y devolvemos NULL
+// head = 0, tail = 0, capacity_ = capacity
+//? Borrar
+// Liberamos el contenido pero no el contenedor
+// Liberamos storage (data)
+// Liberamos el vector
+
+
+// data del storage
+
+
+//? Resize
+// 
+
+
+
 struct vector_ops_s {
 	s16 (*destroy)(Vector *vector);	// Destroys the vector and its data
   s16 (*softReset)(Vector *vector);		// Soft resets vector's data
@@ -30,16 +49,20 @@ struct vector_ops_s {
 	boolean (*isFull)(Vector *vector);
 
 	// Data queries
+  //? Estos devuelven datas, no el nodo
 	void* (*first)(Vector *vector); // Returns a reference to the first element of the vector
-	void* (*last)(Vector *vector); // Returns a reference to the last element of the vector
+	void* (*last)(Vector *vector); // Returns a reference to the last element of the vector-> tail -1
 	void* (*at)(Vector *vector, u16 position); // Returns a reference to the element oat a given position
 
+
+
 	// Insertion
-	s16 (*insertFirst)(Vector *vector, void *data, u16 bytes); // Inserts an element in the first position of the vector
-	s16 (*insertLast)(Vector *vector, void *data, u16 bytes); // Inserts an element in the last position of the vector
+	s16 (*insertFirst)(Vector *vector, void *data, u16 bytes); // Inserts an element in the first position of the vector -> desplazamos todo a la derecha, cuidao si el vector está lleno, cuidao si bytes es 0
+	s16 (*insertLast)(Vector *vector, void *data, u16 bytes); // Inserts an element in the last position of the vector ->
 	s16 (*insertAt)(Vector *vector, void *data, u16 bytes, u16 position); // Inserts an element at the given position of the vector
 
 	// Extraction
+  //? EXTRAEMOS el data_
 	void* (*extractFirst)(Vector *vector); // Extracts the first element of the vector
   /*
 	// For debugging:

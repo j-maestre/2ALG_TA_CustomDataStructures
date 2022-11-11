@@ -21,6 +21,9 @@ Vector* VECTOR_create(u16 capacity) {
 		MM->free(rslt);
 		return NULL;
 	}
+	for (u32 i = 0; i < capacity; i++) {
+		MEMNODE_createLite((rslt->storage_ + i));
+	}
 	rslt->head_ = 0;
 	rslt->tail_ = 0;
 	rslt->capacity_ = capacity;

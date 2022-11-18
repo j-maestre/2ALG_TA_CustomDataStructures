@@ -218,11 +218,7 @@ boolean VECTOR_isFull(Vector *vector){
     return kErrorCode_VectorNULL;
   }
   // En el caso de que cuando se añada el ultimo elemento, el tail sea +1 respecto a la capacidad
-  if(vector->tail_-1 == vector->capacity_){
-    return True;
-  }
-
-  return False;
+  return (vector->tail_ == vector->capacity_);
 }
 
 void* VECTOR_first(Vector *vector){

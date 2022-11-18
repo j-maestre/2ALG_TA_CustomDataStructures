@@ -22,6 +22,8 @@ typedef enum {
   kErrorCode_VectorTailExceedsCapacity = -10,
   kErrorCode_VectorPositionExceedsCapacity = -11,
   kErrorCode_VectorPositionExceedsTail = -12,
+  kErrorCode_VectorFull = -13,
+  kErrorCode_CallBackNULL = -14,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

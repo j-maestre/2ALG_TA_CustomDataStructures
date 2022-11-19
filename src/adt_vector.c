@@ -150,7 +150,6 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
       }
     }
 
-    MM->free(vector->storage_);
   }else{
     // A la baja
     for (u32 i = 0; i < vector->capacity_; i++){
@@ -160,7 +159,7 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
         (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
 
       }else{
-        (vector->storage_+i)->ops_->reset(vector->storage_);
+        (vector->storage_+i)->ops_->reset(vector->storage_ + i);
       }
     }
 
@@ -432,7 +431,7 @@ s16 VECTOR_concat(Vector *vector, Vector *vector_src){
   }
 
   for (u32 i = 0; i < vector_src->tail_; i++){
-    (node+i+vector->tail_)->ops_->memCopy((node+i),(vector->storage_+i)->data_,(vector->storage_+i)->size_);
+    (node+i+vector->tail_)->ops_->memCopy((node+i),(vector_src->storage_+i)->data_,(vector_src->storage_+i)->size_);
   }
 
   MM->free(vector->storage_);

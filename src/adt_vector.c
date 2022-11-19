@@ -111,7 +111,7 @@ s16 VECTOR_reset(Vector *vector){
       for (u32 i = 0; i < vector->capacity_; i++){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
-
+      vector->tail_ = 0;
       return kErrorCode_Ok;
     }
 

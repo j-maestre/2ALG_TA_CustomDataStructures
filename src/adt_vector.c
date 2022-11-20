@@ -108,7 +108,7 @@ s16 VECTOR_softReset(Vector *vector){
 s16 VECTOR_reset(Vector *vector){
   if( NULL != vector){
     if( NULL != vector->storage_){
-      for (u32 i = 0; i < vector->capacity_; i++){
+      for (u32 i = 0; i < vector->tail_; i++){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       vector->tail_ = 0;
@@ -139,15 +139,15 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
   if(node_tmp == NULL){
     return kErrorCode_NoMemory;
   }
+  for (u32 i = 0; i < new_size; i++) {
+    MEMNODE_createLite(node_tmp + i);
+  }
   
   if(new_size > vector->capacity_){
     // Al alza
-    for (u32 i = 0; i < vector->capacity_; i++){
+    for (u32 i = 0; i < vector->tail_; i++){
 
-      MEMNODE_createLite(node_tmp+i);
-      if(i<vector->tail_){
-        (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
-      }
+      (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
     }
 
   }else{
@@ -155,7 +155,6 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
     for (u32 i = 0; i < vector->capacity_; i++){
 
       if(i<new_size){
-        MEMNODE_createLite(node_tmp+i);
         (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
 
       }else{
@@ -164,15 +163,16 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
     }
 
 
-    MM->free(vector->storage_);
-    vector->storage_ = node_tmp;
-    vector->capacity_ = new_size;
+
+
+  }
+
+  MM->free(vector->storage_);
+  vector->storage_ = node_tmp;
+  vector->capacity_ = new_size;
     
-    if(vector->tail_ > new_size){
-      vector->tail_ = new_size;
-    }
-
-
+  if(vector->tail_ > new_size){
+    vector->tail_ = new_size;
   }
 
   // new size == capacity
@@ -351,7 +351,7 @@ void* VECTOR_extractFirst(Vector *vector){
   //Reservamos el primer data
   void *data_tmp = (vector->storage_)->data_;
 
-  if(vector->tail_ >1){
+  if(vector->tail_ > 1){
     //Tiene mas de uno, los movemos todos uno a la izquierda
     for (u32 i = 0; i < vector->tail_; i++){
       ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i+1),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
@@ -370,17 +370,17 @@ void* VECTOR_extractAt(Vector *vector, u16 position){
     return NULL;
   }
 
-  if(position > vector->tail_ || VECTOR_isEmpty(vector)){
+  if(position > vector->tail_){
     return NULL;
   }
 
   //Reservamos el primer data
-  void *data_tmp = (vector->storage_)->data_;
+  void *data_tmp = (vector->storage_ + position)->data_;
 
-  if(vector->tail_ >1){
+  if(vector->tail_ > 1){
     //Tiene mas de uno, los movemos todos uno a la izquierda
     for (u32 i = position; i < vector->tail_; i++){
-      ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i+1),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
+      ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
   }
 
@@ -400,8 +400,8 @@ void* VECTOR_extractLast(Vector *vector){
     return vector->storage_->data_;
   }
 
-  void *data_tmp = ((vector->storage_)+vector->tail_)->data_;
-  VECTOR_softReset((vector->storage_)+vector->tail_);
+  void *data_tmp = ((vector->storage_)+(vector->tail_ - 1))->data_;
+  vector->storage_->ops_->softReset((vector->storage_) + (vector->tail_ - 1));
   vector->tail_--;
 
   return data_tmp;

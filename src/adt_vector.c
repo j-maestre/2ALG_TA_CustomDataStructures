@@ -244,6 +244,8 @@ void* VECTOR_last(Vector *vector){
   int offset = 0;
   if(vector->tail_ > 0){
     offset = vector->tail_ -1;
+  } else {
+    return NULL;
   }
   return (vector->storage_ + offset)->data_;
 } 
@@ -256,7 +258,7 @@ void* VECTOR_at(Vector *vector, u16 position){
   if( NULL == vector->storage_){
     return NULL;
   }
-  if(position > vector->tail_){
+  if(position >= vector->tail_){
     return NULL;
   }
   return (vector->storage_ + position)->data_;
@@ -281,7 +283,7 @@ s16 VECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
   if(!VECTOR_isEmpty(vector)){
     // El vector tiene cosas, hay que moverlas
     for (u32 i = vector->tail_; i > 0 ; i--){
-      (((vector->storage_)+i)->ops_)->setData( ((vector->storage_)+(i-1)) , ((vector->storage_)+(i-1) )->data_, ((vector->storage_)+(i-1))->size_);
+      (((vector->storage_)+i)->ops_)->setData( ((vector->storage_)+i) , ((vector->storage_)+(i-1) )->data_, ((vector->storage_)+(i-1))->size_);
     }
     
   }
@@ -345,7 +347,7 @@ void* VECTOR_extractFirst(Vector *vector){
   }
 
   if(VECTOR_isEmpty(vector)){
-    return vector->storage_->data_;
+    return NULL;
   }
 
   //Reservamos el primer data
@@ -431,7 +433,7 @@ s16 VECTOR_concat(Vector *vector, Vector *vector_src){
   }
 
   for (u32 i = 0; i < vector_src->tail_; i++){
-    (node+i+vector->tail_)->ops_->memCopy((node+i),(vector_src->storage_+i)->data_,(vector_src->storage_+i)->size_);
+    (node+i+vector->tail_)->ops_->memCopy((node+i + vector->tail_),(vector_src->storage_+i)->data_,(vector_src->storage_+i)->size_);
   }
 
   MM->free(vector->storage_);

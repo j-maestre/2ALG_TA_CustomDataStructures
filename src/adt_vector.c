@@ -463,7 +463,7 @@ s16 VECTOR_concat(Vector *vector, Vector *vector_src){//checked
   return kErrorCode_Ok;
 }
 
-s16 VECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){
+s16 VECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//cheked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -483,6 +483,9 @@ s16 VECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){
 
 void VECTOR_print(Vector *vector){
   if( NULL == vector){
+    return NULL;
+  }
+  if( NULL == vector->storage_){
     return NULL;
   }
 

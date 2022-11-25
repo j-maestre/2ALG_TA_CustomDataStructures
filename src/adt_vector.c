@@ -329,12 +329,26 @@ s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     return kErrorCode_VectorPositionExceedsTail;
   }
 
+  if(VECTOR_isFull(vector)){
+    return kErrorCode_VectorFull;
+  }
+
+  if(!VECTOR_isEmpty(vector)){
+    // El vector tiene cosas, hay que moverlas
+    for (u32 i = vector->tail_; i > position ; i--){
+      (((vector->storage_)+i)->ops_)->setData( ((vector->storage_)+i) , ((vector->storage_)+(i-1) )->data_, ((vector->storage_)+(i-1))->size_);
+    }
+    
+  }
+
   ((vector->storage_)+position)->ops_->setData(((vector->storage_)+position),data,bytes);
 
 
   if(position == vector->tail_){
     vector->tail_++;
   }
+
+  return kErrorCode_Ok;
   
 }
 
@@ -358,6 +372,7 @@ void* VECTOR_extractFirst(Vector *vector){
     for (u32 i = 0; i < vector->tail_; i++){
       ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i+1),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
+    (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
   }
 
   vector->tail_--;

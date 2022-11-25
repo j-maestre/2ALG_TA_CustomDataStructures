@@ -329,7 +329,7 @@ s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//cheke
   }
 
   if( position > vector->tail_){
-    return kErrorCode_VectorPositionExceedsTail;
+    position = vector->tail_;
   }
 
   if(VECTOR_isFull(vector)){
@@ -343,16 +343,11 @@ s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//cheke
     }
     
   }
-
+  
   ((vector->storage_)+position)->ops_->setData(((vector->storage_)+position),data,bytes);
-
-
-  if(position == vector->tail_){
-    vector->tail_++;
-  }
+  vector->tail_++;
 
   return kErrorCode_Ok;
-  
 }
 
 void* VECTOR_extractFirst(Vector *vector){//checked

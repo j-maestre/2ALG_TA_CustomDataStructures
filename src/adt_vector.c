@@ -50,7 +50,7 @@ struct vector_ops_s vector_ops = { .destroy = VECTOR_destroy,
                                    .print = VECTOR_print                   
                                    };
 
-Vector* VECTOR_create(u16 capacity) {
+Vector* VECTOR_create(u16 capacity) {//checked
 	if (0 >= capacity) {
 		return NULL;
 	}
@@ -73,7 +73,7 @@ Vector* VECTOR_create(u16 capacity) {
 	return rslt;
 }
 
-s16 VECTOR_destroy(Vector *vector){
+s16 VECTOR_destroy(Vector *vector){ //checked
   if( NULL != vector){
     if(NULL != vector->storage_){
 
@@ -81,6 +81,7 @@ s16 VECTOR_destroy(Vector *vector){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       MM->free(vector->storage_);
+
     }
 
     MM->free(vector);
@@ -89,13 +90,13 @@ s16 VECTOR_destroy(Vector *vector){
   return kErrorCode_Ok;
 }
 
-s16 VECTOR_softReset(Vector *vector){
+s16 VECTOR_softReset(Vector *vector){ //checked
   if( NULL != vector){
     if( NULL != vector->storage_){  
       for (u32 i = 0; i < vector->capacity_; i++){
         (vector->storage_+i)->ops_->softReset((vector->storage_+i));
       }
-
+      vector->tail_ = 0;
       return kErrorCode_Ok;    
     }
 
@@ -105,7 +106,7 @@ s16 VECTOR_softReset(Vector *vector){
   return kErrorCode_VectorNULL;
 }
 
-s16 VECTOR_reset(Vector *vector){
+s16 VECTOR_reset(Vector *vector){//checked
   if( NULL != vector){
     if( NULL != vector->storage_){
       for (u32 i = 0; i < vector->tail_; i++){
@@ -121,7 +122,7 @@ s16 VECTOR_reset(Vector *vector){
   return kErrorCode_VectorNULL;
 }
 
-s16 VECTOR_resize(Vector *vector, u16 new_size){
+s16 VECTOR_resize(Vector *vector, u16 new_size){ //Checked
   if( NULL == vector){
 
     return kErrorCode_VectorNULL; 
@@ -152,7 +153,7 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
 
   }else{
     // A la baja
-    for (u32 i = 0; i < vector->capacity_; i++){
+    for (u32 i = 0; i < vector->tail_; i++){
 
       if(i<new_size){
         (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
@@ -180,7 +181,7 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){
   
 }
 
-u16 VECTOR_capacity(Vector *vector){
+u16 VECTOR_capacity(Vector *vector){//checked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -188,21 +189,23 @@ u16 VECTOR_capacity(Vector *vector){
   return vector->capacity_;
 }
 
-u16 VECTOR_lenght(Vector *vector){
+u16 VECTOR_lenght(Vector *vector){//checked
   if( NULL == vector){
-    return kErrorCode_VectorNULL;
+    //return kErrorCode_VectorNULL;
+    return kErrorCode_Ok;
   }
   if(vector->tail_ > vector->capacity_){
-    return kErrorCode_VectorTailExceedsCapacity;
+    //return kErrorCode_VectorTailExceedsCapacity;
+    return kErrorCode_Ok;
   }
   
   return vector->tail_;
 
 }
 
-boolean VECTOR_isEmpty(Vector *vector){
+boolean VECTOR_isEmpty(Vector *vector){//Checked
   if( NULL == vector){
-    return kErrorCode_VectorNULL;
+    return False;
   }
 
   if(vector->tail_ == 0){
@@ -212,15 +215,15 @@ boolean VECTOR_isEmpty(Vector *vector){
   return False;
 }
 
-boolean VECTOR_isFull(Vector *vector){
+boolean VECTOR_isFull(Vector *vector){//Checked
   if( NULL == vector){
-    return kErrorCode_VectorNULL;
+    return False;
   }
   // En el caso de que cuando se añada el ultimo elemento, el tail sea +1 respecto a la capacidad
   return (vector->tail_ == vector->capacity_);
 }
 
-void* VECTOR_first(Vector *vector){
+void* VECTOR_first(Vector *vector){//Checked
 
   if(NULL == vector){
     return NULL;
@@ -232,7 +235,7 @@ void* VECTOR_first(Vector *vector){
 
 }
 
-void* VECTOR_last(Vector *vector){
+void* VECTOR_last(Vector *vector){//Checked
 
   if(NULL == vector){
     return NULL;
@@ -250,7 +253,7 @@ void* VECTOR_last(Vector *vector){
   return (vector->storage_ + offset)->data_;
 } 
 
-void* VECTOR_at(Vector *vector, u16 position){
+void* VECTOR_at(Vector *vector, u16 position){//Checked
 
   if(NULL == vector){
     return NULL;
@@ -264,7 +267,7 @@ void* VECTOR_at(Vector *vector, u16 position){
   return (vector->storage_ + position)->data_;
 }
 
-s16 VECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
+s16 VECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -293,7 +296,7 @@ s16 VECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
   return kErrorCode_Ok;
 } 
 
-s16 VECTOR_insertLast(Vector *vector, void *data, u16 bytes){
+s16 VECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -314,7 +317,7 @@ s16 VECTOR_insertLast(Vector *vector, void *data, u16 bytes){
   return kErrorCode_VectorFull;
 }
 
-s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
+s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//cheked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -352,7 +355,7 @@ s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   
 }
 
-void* VECTOR_extractFirst(Vector *vector){
+void* VECTOR_extractFirst(Vector *vector){//checked
   if( NULL == vector){
     return NULL;
   }
@@ -370,7 +373,7 @@ void* VECTOR_extractFirst(Vector *vector){
   if(vector->tail_ > 1){
     //Tiene mas de uno, los movemos todos uno a la izquierda
     for (u32 i = 0; i < vector->tail_; i++){
-      ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i+1),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
+      ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
     (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
   }
@@ -379,7 +382,7 @@ void* VECTOR_extractFirst(Vector *vector){
   return data_tmp;
 }
 
-void* VECTOR_extractAt(Vector *vector, u16 position){
+void* VECTOR_extractAt(Vector *vector, u16 position){//checked
   if( NULL == vector){
     return NULL;
   }
@@ -399,13 +402,14 @@ void* VECTOR_extractAt(Vector *vector, u16 position){
     for (u32 i = position; i < vector->tail_; i++){
       ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
+    (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
   }
 
   vector->tail_--;
   return data_tmp;
 }
 
-void* VECTOR_extractLast(Vector *vector){
+void* VECTOR_extractLast(Vector *vector){//checked
   if( NULL == vector){
     return NULL;
   }
@@ -424,7 +428,7 @@ void* VECTOR_extractLast(Vector *vector){
   return data_tmp;
 }
 
-s16 VECTOR_concat(Vector *vector, Vector *vector_src){
+s16 VECTOR_concat(Vector *vector, Vector *vector_src){//checked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }

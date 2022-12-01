@@ -437,6 +437,9 @@ s16 VECTOR_concat(Vector *vector, Vector *vector_src){//checked
 
 
   MemoryNode *node = MM->malloc(sizeof(MemoryNode) * (vector->capacity_ + vector_src->capacity_));
+  if (NULL == node) {
+    return kErrorCode_NoMemory;
+  }
   for (u32 i = 0; i < (vector->capacity_ + vector_src->capacity_); i++){
     
     MEMNODE_createLite(node+i);

@@ -165,7 +165,7 @@ struct memory_node_ops_s {
 /**
  * \brief Allocate a new MemoryNode 
  * 
- * \return MemoryNode* pointer to the MemoryNode is created
+ * \return MemoryNode* pointer to the MemoryNode created
  */
 MemoryNode* MEMNODE_create();
 
@@ -174,7 +174,9 @@ MemoryNode* MEMNODE_create();
  * 
  * \param node pointer to the pointer to the MemoryNode
  * 
- * \return s16 error code (see also ErrorCode)
+ * \return s16 kErrorCode_MemoryNodeNULL When node is NULL
+ * \return s16 kErrorCode_Memory When there isn't memory
+ * \return s16 kErrorCode_Ok When the function done his job
  */
 s16 MEMNODE_createFromRef(MemoryNode **node);
 
@@ -183,7 +185,8 @@ s16 MEMNODE_createFromRef(MemoryNode **node);
  * 
  * \param node pointer to the MemoryNode
  * 
- * \return s16 error code (see also ErrorCode)
+ * \return s16 kErrorCode_MemoryNodeNULL When node is NULL
+ * \return s16 kErrorCode_Ok When the function has done his job
  */
 s16 MEMNODE_createLite(MemoryNode *node);
 

@@ -59,7 +59,7 @@ MemoryNode* MEMNODE_create() {
 
 s16 MEMNODE_createFromRef(MemoryNode **node) {
   if (NULL == node) {
-    return kErrorCode_Null;
+    return kErrorCode_MemoryNodeNULL;
   }
   *node = MEMNODE_create();
   if (NULL == *node) {

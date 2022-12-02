@@ -244,7 +244,7 @@ void* VECTOR_last(Vector *vector){//Checked
     return NULL;
   }
 
-  int offset = 0;
+  u32 offset = 0;
   if(vector->tail_ > 0){
     offset = vector->tail_ -1;
   } else {

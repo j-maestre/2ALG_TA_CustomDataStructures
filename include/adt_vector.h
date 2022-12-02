@@ -55,7 +55,6 @@ struct vector_ops_s {
 	void* (*at)(Vector *vector, u16 position); // Returns a reference to the element oat a given position
 
 
-
 	// Insertion
 	s16 (*insertFirst)(Vector *vector, void *data, u16 bytes); // Inserts an element in the first position of the vector -> desplazamos todo a la derecha, cuidao si el vector está lleno, cuidao si bytes es 0
 	s16 (*insertLast)(Vector *vector, void *data, u16 bytes); // Inserts an element in the last position of the vector ->

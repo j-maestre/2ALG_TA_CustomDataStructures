@@ -12,7 +12,7 @@
 #include "adt_memory_node.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 
-char *error_codes[] = {{"OK"},{"NULL"},{"Memory error"},{"node is NULL"},{"node->data_ is NULL"},{"bytes is ZERO"},{"No memory when malloc"}};
+char *error_codes[] = {{"OK"},{"NULL"},{"Memory error"},{"node is NULL"},{"node->data_ is NULL"},{"bytes is ZERO"},{"No memory when malloc"},{"Vector is NULL"},{"Storage NULL"},{"Size is ZERO"},{"Vector tail exceeds capacity"},{"Vecot position exceeds capacity"},{"Vector position exceeds tail"},{"Vector is FULL"},{"Callback is NULL"}};
 
 void printFunctionResult(MemoryNode *mn, u8 *msg, s16 error_type) {
 	u8 *error_msg = (u8 *)MM->malloc (sizeof(u8) * 100);

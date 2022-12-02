@@ -183,7 +183,7 @@ s16 VECTOR_resize(Vector *vector, u16 new_size){ //Checked
 
 u16 VECTOR_capacity(Vector *vector){//checked
   if( NULL == vector){
-    return kErrorCode_VectorNULL;
+    return 0;
   }
 
   return vector->capacity_;
@@ -191,12 +191,10 @@ u16 VECTOR_capacity(Vector *vector){//checked
 
 u16 VECTOR_lenght(Vector *vector){//checked
   if( NULL == vector){
-    //return kErrorCode_VectorNULL;
-    return kErrorCode_Ok;
+    return 0;
   }
   if(vector->tail_ > vector->capacity_){
-    //return kErrorCode_VectorTailExceedsCapacity;
-    return kErrorCode_Ok;
+    return 0;
   }
   
   return vector->tail_;
@@ -274,6 +272,9 @@ s16 VECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked
   if( NULL == data){
     return kErrorCode_DataNULL;
   }
+  if (NULL == vector->storage_) {
+    return ;
+  }
   if(bytes == 0){
     return kErrorCode_ZeroBytes;
   }
@@ -300,6 +301,9 @@ s16 VECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
+  if (NULL == vector->storage_) {
+    return kErrorCode_StorageNULL;
+  }
   if( NULL == data){
     return kErrorCode_DataNULL;
   }
@@ -320,6 +324,9 @@ s16 VECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked
 s16 VECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//cheked
   if( NULL == vector){
     return kErrorCode_VectorNULL;
+  }
+  if (NULL == vector->storage_) {
+    return kErrorCode_StorageNULL;
   }
   if( NULL == data){
     return kErrorCode_DataNULL;
@@ -413,7 +420,7 @@ void* VECTOR_extractLast(Vector *vector){//checked
   }
 
   if(VECTOR_isEmpty(vector)){
-    return vector->storage_->data_;
+    return NULL;
   }
 
   void *data_tmp = ((vector->storage_)+(vector->tail_ - 1))->data_;

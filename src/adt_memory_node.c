@@ -121,7 +121,7 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
 
 s16 MEMNODE_reset(MemoryNode *node) {
   if (NULL == node) {
-    return kErrorCode_MemoryNodeNULL;
+    return ;
   }
   if (NULL != node->data_) {
     MM->free(node->data_);
@@ -136,9 +136,6 @@ s16 MEMNODE_reset(MemoryNode *node) {
 s16 MEMNODE_softReset(MemoryNode *node) {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;
-  }
-  if (NULL == node->data_) {
-    return kErrorCode_DataNULL;
   }
 
   node->data_ = NULL;
@@ -190,7 +187,7 @@ s16 MEMNODE_memCopy(MemoryNode *node, void *src, u16 bytes){
   }
 
   if( NULL == src){
-    return kErrorCode_MemoryNodeNULL;
+    return kErrorCode_NULL;
   }
 
   if(bytes == 0){
@@ -222,7 +219,7 @@ s16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes){
   }
 
   if( NULL == src){
-    return kErrorCode_MemoryNodeNULL;
+    return kErrorCode_NULL;
   }
 
   if(bytes == 0){

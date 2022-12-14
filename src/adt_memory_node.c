@@ -22,7 +22,7 @@ static s16 MEMNODE_reset(MemoryNode *node);
 static s16 MEMNODE_softReset(MemoryNode *node);
 static s16 MEMNODE_free(MemoryNode *node);
 static s16 MEMNODE_softFree(MemoryNode *node);
-static s16 MEMNODE_memSet(MemoryNode *node);
+static s16 MEMNODE_memSet(MemoryNode *node, u8 value);
 static s16 MEMNODE_memCopy(MemoryNode *node, void *src, u16 bytes);
 static u16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes);
 static s16 MEMNODE_memMask(MemoryNode *node, u8 mask);
@@ -110,7 +110,7 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   }
   
   if (NULL == src) {
-    return kErrorCode_Null;
+    return kErrorCode_NULL;
   }
   
   node->data_ = src;

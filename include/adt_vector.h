@@ -4,6 +4,11 @@
 // ESAT 2020-2021
 //
 
+/**
+ * @file adt_vector.h
+ * @author Xema Maestre <maestrequi@esat-alumni.com>
+ */
+
 #ifndef __ADT_VECTOR_H__
 #define __ADT_VECTOR_H__
 

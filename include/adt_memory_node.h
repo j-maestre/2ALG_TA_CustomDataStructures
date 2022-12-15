@@ -4,6 +4,11 @@
 // ESAT 2020-2021
 //
 
+/**
+ * @file adt_memory_node.h
+ * @author Hector Ochando <ochandoca@esat-alumni.com>
+ */
+
 #ifndef __ADT_MEMORY_NODE_H__
 #define __ADT_MEMORY_NODE_H__
 

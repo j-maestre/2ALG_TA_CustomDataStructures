@@ -3,6 +3,12 @@
 // Algoritmos & Inteligencia Artificial
 // ESAT 2020-2021
 //
+
+/**
+ * @file adt_vector.h
+ * @author Xema Maestre <maestrequi@esat-alumni.com>
+ */
+
 #ifndef __COMMON_DEF_H__
 #define __COMMON_DEF_H__ 1
 

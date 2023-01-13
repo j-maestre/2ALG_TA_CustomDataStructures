@@ -13,7 +13,7 @@ solution("DS_ALG_AI1" .. _ACTION)
   location(PROJ_DIR .. "/build/")
   language "C"
   kind "ConsoleApp"
-  startproject "PR01_Vector"
+  startproject "PR03_MovableVector"
 
   defines {
     "_CRT_SECURE_NO_WARNINGS",
@@ -49,7 +49,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR00_MemoryNode",
     "PR01_Vector",
     --"PR02_CircularVector",
-    --"PR03_MovableVector",
+    "PR03_MovableVector",
     --"PR04_List",
     --"PR05_DLList",
     --"PR06_CircularList",
@@ -122,4 +122,14 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/adt_vector.h"),
       path.join(PROJ_DIR, "./src/adt_vector.c"),
       path.join(PROJ_DIR, "./tests/test_vector.c"),
+    }
+
+  project "PR03_MovableVector"
+    files {
+      path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+      path.join(PROJ_DIR, "./include/adt_movable_vector.h"),
+      path.join(PROJ_DIR, "./include/adt_vector.h"),
+      path.join(PROJ_DIR, "./src/adt_movable_vector.c"),
+      path.join(PROJ_DIR, "./tests/test_movable_vector.c"),
+      path.join(PROJ_DIR, "./src/adt_memory_node.c")
     }

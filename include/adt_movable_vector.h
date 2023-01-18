@@ -16,6 +16,6 @@
 
 typedef Vector MVector;
 
-MVector* MVECTOR_Create(u16 capacity);
+MVector* MVECTOR_create(u16 capacity);
 
 #endif //__ADT_MOVABLE_VECTOR_H__

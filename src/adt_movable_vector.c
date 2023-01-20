@@ -70,11 +70,43 @@ Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 		MM->free(rslt);
 		return NULL;
 	}
-	for (u32 i = 0; i < rslt->capacity_; i++) {
-		MEMNODE_createLite((rslt->storage_ + i));
-	}
+  for (MemoryNode *current = rslt->storage_, 
+       *end = (rslt->storage_ + (rslt->capacity_ - 1)); current != end; current++) 
+  {
+    MEMNODE_createLite(current);
+  }
 	rslt->ops_ = &mvector_ops;
 	return rslt;
+}
+
+static void MVector_center(Vector *vector){ // Checked by xema && hector
+
+//Version 2.0, en vez de reservar, lo movemos x posiciones izquierda o derecha
+  //Comprobamos que no este lleno
+  if(vector->tail_ < vector->capacity_){
+    u16 mitad = vector->capacity_ / 2.0f;
+    u16 inicio = (vector->tail_-1) / 2.0;
+    u16 new_head = mitad - inicio;
+    u16 new_tail = new_head + (vector->tail_ - vector->head_);
+
+    MemoryNode *aux;
+    aux = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * vector->capacity_);
+    u16 indexOriginal = vector->head_;
+    
+
+    // Rellenamos el memnode auxiliar centrado con los valores del vector original
+    for(u32 i = new_head; i < new_tail; i++){
+      aux->ops_->setData((aux+i),(vector->storage_ + indexOriginal)->data_,(vector->storage_ + indexOriginal)->size_);
+      indexOriginal++;
+    }
+    
+    MM->free(vector->storage_);
+    vector->storage_ = aux;
+    vector->head_ = new_head;
+    vector->tail_ = new_tail;
+
+  }
+
 }
 
 s16 MVECTOR_destroy(Vector *vector){//* checked by xema & hector
@@ -130,7 +162,7 @@ s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
 
 
 
-s16 MVECTOR_resize(Vector *vector, u16 new_size){ //TODO revise
+s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
   if( NULL == vector){
 
     return kErrorCode_VectorNULL; 
@@ -140,58 +172,79 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //TODO revise
     return kErrorCode_SizeZERO;
   }
 
-  if( new_size == vector->capacity_){
+  u16 real_size = new_size << 1;
+
+  if( real_size == vector->capacity_){
     return kErrorCode_Ok;
   }
-
-  MemoryNode *node_tmp = (MemoryNode*) MM->malloc(sizeof(MemoryNode)*new_size);
-  if(node_tmp == NULL){
-    return kErrorCode_NoMemory;
-  }
-  for (u32 i = vector->head_; i < new_size; i++) {
-    MEMNODE_createLite(node_tmp + i);
-  }
   
-  if(new_size > vector->capacity_){
+
+  MemoryNode *new_storage = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * real_size);
+
+  if (new_storage == NULL)
+    return kErrorCode_NoMemory;
+
+
+  MemoryNode *current_src = new_storage;
+  MemoryNode *end = new_storage + real_size;
+
+  do {
+    MEMNODE_createLite(current_src);
+    current_src++;
+  } while(current_src != end);
+
+  u16 new_head = ((real_size - (vector->tail_ - vector->head_)) / 2);
+  u16 new_tail = (new_head + (vector->tail_ - vector->head_));
+
+  MemoryNode *current_dst;
+
+  if (real_size > vector->capacity_) {
     // Al alza
-    for (u32 i = vector->head_; i < vector->tail_; i++){
 
-      (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
-    }
+    current_dst = new_storage + new_head;
+    end = current_dst + (new_tail - 1);
+    current_src = vector->storage_ + vector->head_;
 
-  }else{
+    do {
+      current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
+      current_dst++;
+      current_src++;
+    } while (current_dst != end);
+
+  } else {
     // A la baja
-    for (u32 i = vector->head_; i < vector->tail_; i++){
 
-      if(i<new_size){
-        (node_tmp+i)->ops_->setData((node_tmp+i),((vector->storage_+i)->data_),((vector->storage_+i)->size_));
+    current_dst = new_storage + new_head;
+    current_src = vector->storage_ + vector->head_;
+    end = current_src + (vector->tail_ - 1);
+    MemoryNode *max_dst = current_dst + (new_size - 1);
 
-      }else{
-        (vector->storage_+i)->ops_->reset(vector->storage_ + i);
+    do {
+
+      if (current_dst <= max_dst) {
+        current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
+      } else {
+        current_src->ops_->reset(current_src);
       }
+      
+      current_dst++;
+      current_src++;
+    } while (current_src != end);
+
+    if (new_tail > new_size) {
+      new_tail = new_size;
     }
-
-
-
-
+    
   }
 
   MM->free(vector->storage_);
-  vector->storage_ = node_tmp;
-  vector->capacity_ = new_size << 1;
-    
-  if(vector->tail_ > vector->capacity_){
-    vector->tail_ = vector->capacity_;
-  }
+  vector->storage_ = new_storage;
+  vector->capacity_ = new_size;
+  vector->tail_ = new_tail;
 
-  // new size == capacity
   return kErrorCode_Ok;
   
 }
-
-
-
-
 
 
 u16 MVECTOR_capacity(Vector *vector){//TODO revise
@@ -206,11 +259,12 @@ u16 MVECTOR_lenght(Vector *vector){//TODO revise
   if( NULL == vector){
     return 0;
   }
-  if(vector->tail_ > vector->capacity_){
+ 
+  /*if(vector->tail_ > vector->capacity_){
     return 0;
-  }
+  }*/
   
-  return vector->tail_ >> 1;
+  return vector->tail_ - vector->head_;
 
 }
 
@@ -219,7 +273,7 @@ boolean MVECTOR_isEmpty(Vector *vector){//TODO revise
     return False;
   }
 
-  if(vector->tail_ == 0){
+  if((vector->tail_ - vector->head_) == 0){
     return True;
   }
 
@@ -278,7 +332,7 @@ void* MVECTOR_at(Vector *vector, u16 position){//TODO revise
   return (vector->storage_ + vector->head_ + position)->data_;
 }
 
-s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//
+s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked by xema && hector
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -297,31 +351,14 @@ s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//
     return kErrorCode_VectorFull;
   }
 
-  if(!MVECTOR_isEmpty(vector)){
-
-
-    //Insert first and move head
-    // comprobar que head no sea 0, en caso de que sea 0 pos hacemos lo de siempre
-    if(vector->head_ == 0 && vector->tail_ < vector->capacity_){
-      //No hay hueco a la izquirda pero el vector aun no esta lleno
-
-      // Movemos las cosas
-      for (u32 i = vector->tail_; i > 0 ; i--){
-        (((vector->storage_)+i)->ops_)->setData( ((vector->storage_)+i) , ((vector->storage_)+(i-1) )->data_, ((vector->storage_)+(i-1))->size_);
-      }
-      (vector->storage_)->ops_->setData(vector->storage_,data, bytes);
-    
-    }else{
-      // Hay hueco a la izquierda
-      vector->head_--;
-      (vector->storage_ + (vector->head_))->ops_->setData(vector->storage_,data, bytes);
-    }
-    
+  //Comprobamos que head no esta al principio
+  if(vector->head_ == 0){
+    //Si hay espacio, aprovechamos y lo centramos
+    MVector_center(vector);
   }
 
-
-
-  vector->tail_++;
+  //Metemos en head-1 el nuevo data
+  (vector->storage_)->ops_->setData((vector->storage_ + (vector->head_-1) ),data,bytes);
 
   return kErrorCode_Ok;
 } 

@@ -81,16 +81,19 @@ Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 
 static void MVector_center(Vector *vector){ // Checked by xema && hector
 
-//Version 2.0, en vez de reservar, lo movemos x posiciones izquierda o derecha
+  //Version 2.0, en vez de reservar, lo movemos x posiciones izquierda o derecha
   //Comprobamos que no este lleno
   if(vector->tail_ < vector->capacity_){
-    u16 mitad = vector->capacity_ / 2.0f;
-    u16 inicio = (vector->tail_-1) / 2.0;
+    u16 mitad = vector->capacity_ >> 1;
+    u16 inicio = (vector->tail_-1) >> 1;
     u16 new_head = mitad - inicio;
     u16 new_tail = new_head + (vector->tail_ - vector->head_);
 
     MemoryNode *aux;
     aux = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * vector->capacity_);
+    for(int i = 0; i < vector->capacity_; i++) {
+      MEMNODE_createLite(aux + i);
+    }
     u16 indexOriginal = vector->head_;
     
 
@@ -284,8 +287,8 @@ boolean MVECTOR_isFull(Vector *vector){//TODO revise
   if( NULL == vector){
     return False;
   }
-  // En el caso de que cuando se añada el ultimo elemento, el tail sea +1 respecto a la capacidad
-  return ((vector->tail_ - vector->head_) == (vector->capacity_ >> 1));
+  // En el caso de que cuando se anada el ultimo elemento, el tail sea +1 respecto a la capacidad
+  return ((vector->tail_ - vector->head_) >= (vector->capacity_ >> 1));
 }
 
 void* MVECTOR_first(Vector *vector){//? revise
@@ -300,7 +303,7 @@ void* MVECTOR_first(Vector *vector){//? revise
 
 }
 
-void* MVECTOR_last(Vector *vector){//TODO revise
+void* MVECTOR_last(Vector *vector){//checked by hector && xema
 
   if(NULL == vector){
     return NULL;
@@ -309,13 +312,11 @@ void* MVECTOR_last(Vector *vector){//TODO revise
     return NULL;
   }
 
-  u32 offset = 0;
-  if(vector->tail_ > 0){
-    offset = vector->tail_ -1;
+  if(vector->tail_ > vector->head_){
+    return (vector->storage_ + (vector->tail_ -1))->data_;
   } else {
     return NULL;
   }
-  return (vector->storage_ + offset)->data_;
 } 
 
 void* MVECTOR_at(Vector *vector, u16 position){//TODO revise
@@ -326,10 +327,10 @@ void* MVECTOR_at(Vector *vector, u16 position){//TODO revise
   if( NULL == vector->storage_){
     return NULL;
   }
-  if(position >= vector->tail_ >> 1){
+  if(position >= (vector->tail_ >> 1)){
     return NULL;
   }
-  return (vector->storage_ + vector->head_ + position)->data_;
+  return (vector->storage_ + (vector->head_ + position))->data_;
 }
 
 s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked by xema && hector
@@ -346,14 +347,13 @@ s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked by xema
     return kErrorCode_ZeroBytes;
   }
 
-  // Mover todo lo que haya una posicion a la izquierda en caso de que haya algo y no se pase
   if(MVECTOR_isFull(vector)){
     return kErrorCode_VectorFull;
   }
 
   //Comprobamos que head no esta al principio
   if(vector->head_ == 0){
-    //Si hay espacio, aprovechamos y lo centramos
+    //Si esta al principio y hay espacio, aprovechamos y lo centramos
     MVector_center(vector);
   }
 
@@ -363,7 +363,7 @@ s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked by xema
   return kErrorCode_Ok;
 } 
 
-s16 MVECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked
+s16 MVECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked by hector and xema
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -377,31 +377,93 @@ s16 MVECTOR_insertLast(Vector *vector, void *data, u16 bytes){//cheked
     return kErrorCode_ZeroBytes;
   }
 
-  if(!MVECTOR_isFull(vector)){
-    
-    ((vector->storage_) + (vector->tail_))->ops_->setData((vector->storage_) + (vector->tail_),data,bytes);
+  if(MVECTOR_isFull(vector)){
+    return kErrorCode_VectorFull;
+  }
+
+  if (vector->tail_ > vector->capacity_) {
+    MVector_center(vector);
+  }
+
+  (vector->storage_)->ops_->setData((vector->storage_ + vector->tail_), data, bytes);
+  vector->tail_++;
+  return kErrorCode_Ok;
+
+}
+
+s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//checked by hector && xema
+  if( NULL == vector){
+    return kErrorCode_VectorNULL;
+  }
+  if (NULL == vector->storage_) {
+    return kErrorCode_StorageNULL;
+  }
+  if( NULL == data){
+    return kErrorCode_DataNULL;
+  }
+  if(bytes == 0){
+    return kErrorCode_ZeroBytes;
+  }
+
+  if (MVECTOR_isEmpty(vector)) {
+    vector->storage_->ops_->setData(vector->storage_ + vector->head_, data, bytes);
     vector->tail_++;
     return kErrorCode_Ok;
   }
 
-  return kErrorCode_VectorFull;
-}
-
-s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//cheked
-  if( NULL == vector){
-    return kErrorCode_VectorNULL;
-  }
-  if (NULL == vector->storage_) {
-    return kErrorCode_StorageNULL;
-  }
-  if( NULL == data){
-    return kErrorCode_DataNULL;
-  }
-  if(bytes == 0){
-    return kErrorCode_ZeroBytes;
+  if (MVECTOR_isFull(vector)) {
+    return kErrorCode_VectorFull;
   }
 
-  if( position > vector->tail_){
+  u16 real_position  = vector->head_ + position;
+
+  if (real_position > vector->tail_) {
+    vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
+    vector->tail_++;
+    return kErrorCode_Ok;
+  }
+
+  u8 right_distance = (vector->tail_ - 1) - real_position;
+  u8 left_distance = real_position - vector->head_;
+
+  MemoryNode *destination = vector->storage_ + real_position;
+
+  MemoryNode *current_src;
+  MemoryNode *current_dst;
+
+  if (right_distance > left_distance) {
+    //Move to left
+
+    current_dst = (vector->storage_ + (vector->head_ - 1));
+    current_src = (vector->storage_ + vector->head_);
+
+    while (current_dst != destination) {
+      current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
+      current_dst++;
+      current_src++;
+    }
+    
+    vector->head_--;
+
+  } else {
+    //Move to right
+
+    current_dst = (vector->storage_ + vector->tail_);
+    current_src = (vector->storage_ + (vector->tail_ - 1));
+
+    while (current_dst != destination) {
+      current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
+      current_dst--;
+      current_src--;
+    }
+
+    vector->tail_++;
+
+  }
+
+  destination->ops_->setData(destination, data, bytes);
+
+  /*if( position > vector->tail_){
     position = vector->tail_;
   }
 
@@ -418,12 +480,12 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chek
   }
   
   ((vector->storage_)+position)->ops_->setData(((vector->storage_)+position),data,bytes);
-  vector->tail_++;
+  vector->tail_++;*/
 
   return kErrorCode_Ok;
 }
 
-void* MVECTOR_extractFirst(Vector *vector){//
+void* MVECTOR_extractFirst(Vector *vector){//checked by xema && hector
   if( NULL == vector){
     return NULL;
   }
@@ -436,21 +498,14 @@ void* MVECTOR_extractFirst(Vector *vector){//
   }
 
   //Reservamos el primer data
-  void *data_tmp = (vector->storage_)->data_;
+  void *data_tmp = (vector->storage_ + vector->head_)->data_;
+  vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
+  vector->head_++;
 
-  if(vector->tail_ > 1){
-    //Tiene mas de uno, los movemos todos uno a la izquierda
-    for (u32 i = 0; i < vector->tail_; i++){
-      ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
-    }
-    (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
-  }
-
-  vector->tail_--;
   return data_tmp;
 }
 
-void* MVECTOR_extractAt(Vector *vector, u16 position){//
+void* MVECTOR_extractAt(Vector *vector, u16 position){//TODO revise
   if( NULL == vector){
     return NULL;
   }
@@ -458,16 +513,16 @@ void* MVECTOR_extractAt(Vector *vector, u16 position){//
     return NULL;
   }
 
-  if(position > vector->tail_){
+  if(position > (vector->head_ + vector->tail_)){
     return NULL;
   }
 
-  //Reservamos el primer data
-  void *data_tmp = (vector->storage_ + position)->data_;
+  //Reservamos el data seleccionado
+  void *data_tmp = (vector->storage_ + (vector->head_ + position))->data_;
 
-  if(vector->tail_ > 1){
-    //Tiene mas de uno, los movemos todos uno a la izquierda
-    for (u32 i = position; i < vector->tail_; i++){
+  if((vector->tail_ - vector->head_) > 1){
+    //Tiene mas de uno, los movemos todos uno a la izquierda empezando por la position
+    for (u32 i = position + vector->head_; i < vector->tail_; i++){
       ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
     (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
@@ -477,11 +532,11 @@ void* MVECTOR_extractAt(Vector *vector, u16 position){//
   return data_tmp;
 }
 
-void* MVECTOR_extractLast(Vector *vector){//
+void* MVECTOR_extractLast(Vector *vector){//TODO revise
   if( NULL == vector){
     return NULL;
   }
-  if( NULL == (vector->storage_)+(vector->tail_)){
+  if( NULL == (vector->storage_)+ (vector->tail_ - 1)){
     return NULL;
   }
 
@@ -534,29 +589,29 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//
   return kErrorCode_Ok;
 }
 
-s16 MVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//cheked
+s16 MVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//TODO revise
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
   if( NULL == callback){
     kErrorCode_CallBackNULL;
   }
-  if( NULL == vector->storage_){
+  if( NULL == (vector->storage_ + vector->head_)){
     return kErrorCode_StorageNULL;
   }
 
-  for (u32 i = 0; i < vector->capacity_; i++){
+  for (u32 i = vector->head_; i < vector->tail_; i++){
     callback((vector->storage_+i));
   }
 
   return kErrorCode_Ok;
 }
 
-void MVECTOR_print(Vector *vector){
+void MVECTOR_print(Vector *vector){//revised by xema
   if( NULL == vector){
     return NULL;
   }
-  if( NULL == vector->storage_){
+  if( NULL == (vector->storage_ + vector->head_)){
     return NULL;
   }
 
@@ -566,7 +621,8 @@ void MVECTOR_print(Vector *vector){
   printf("[MVECTOR INFO] Lenght: %d\n",vector->tail_);
   printf("[MVECTOR INFO] Capacity: %d\n",vector->capacity_);
   printf("[MVECTOR INFO] Address: %p\n",vector->storage_);
-  for(u32 i = 0; i < vector->tail_; i++){
+
+  for(u32 i = vector->head_; i < vector->tail_; i++){
     printf("\t[MVECTOR INFO] Storage #%d:\n",i);
     (vector->storage_+i)->ops_->print((vector->storage_+i));
   }

@@ -71,7 +71,7 @@ Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 		return NULL;
 	}
   for (MemoryNode *current = rslt->storage_, 
-       *end = (rslt->storage_ + (rslt->capacity_ - 1)); current != end; current++) 
+       *end = (rslt->storage_ + rslt->capacity_); current != end; current++) 
   {
     MEMNODE_createLite(current);
   }

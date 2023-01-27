@@ -63,8 +63,8 @@ Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 		return NULL;
 	}
   rslt->capacity_ = capacity << 1;
-  rslt->head_ = capacity;
-  rslt->tail_ = capacity;
+  rslt->tail_ = (capacity - 1);
+  rslt->head_ = (capacity - 1);
 	rslt->storage_ = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * rslt->capacity_);
 	if (NULL == rslt->storage_) {
 		MM->free(rslt);
@@ -196,8 +196,14 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     current_src++;
   } while(current_src != end);
 
-  u16 new_head = ((real_size - (vector->tail_ - vector->head_)) / 2);
-  u16 new_tail = (new_head + (vector->tail_ - vector->head_));
+  u16 length = (vector->tail_ - vector->head_);
+
+  if (length > new_size) {
+    length = new_size;
+  }
+
+  u16 new_head = ((real_size - length) / 2);
+  u16 new_tail = (new_head + length);
 
   MemoryNode *current_dst;
 
@@ -205,7 +211,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     // Al alza
 
     current_dst = new_storage + new_head;
-    end = current_dst + (new_tail - 1);
+    end = current_dst + (new_tail - new_head);
     current_src = vector->storage_ + vector->head_;
 
     do {
@@ -242,8 +248,9 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
 
   MM->free(vector->storage_);
   vector->storage_ = new_storage;
-  vector->capacity_ = new_size;
+  vector->capacity_ = real_size;
   vector->tail_ = new_tail;
+  vector->head_ = new_head;
 
   return kErrorCode_Ok;
   
@@ -544,11 +551,13 @@ void* MVECTOR_extractLast(Vector *vector){//TODO revise
     return NULL;
   }
 
-  void *data_tmp = ((vector->storage_)+(vector->tail_ - 1))->data_;
-  vector->storage_->ops_->softReset((vector->storage_) + (vector->tail_ - 1));
+  MemoryNode *data_node = (vector->storage_ + (vector->tail_ - 1));
+  void *data = data_node->data_;
+
+  data_node->ops_->softReset(data_node);
   vector->tail_--;
 
-  return data_tmp;
+  return data;
 }
 
 s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//

@@ -152,6 +152,7 @@ s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       vector->tail_ = vector->capacity_ >> 1;
+      vector->head_ = vector->tail_;
       return kErrorCode_Ok;
     }
 

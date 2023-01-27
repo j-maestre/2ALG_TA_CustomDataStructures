@@ -129,7 +129,6 @@ s16 MVECTOR_destroy(Vector *vector){//* checked by xema & hector
   return kErrorCode_Ok;
 }
 
-
 s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
   if( NULL != vector){
     if( NULL != vector->storage_){  
@@ -145,7 +144,6 @@ s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
 
   return kErrorCode_VectorNULL;
 }
-
 
 s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
   if( NULL != vector){
@@ -163,11 +161,8 @@ s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
   return kErrorCode_VectorNULL;
 }
 
-
-
 s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
   if( NULL == vector){
-
     return kErrorCode_VectorNULL; 
   }
 
@@ -175,21 +170,21 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     return kErrorCode_SizeZERO;
   }
 
-  u16 real_size = new_size << 1;
+  u16 real_new_size = new_size << 1;
 
-  if( real_size == vector->capacity_){
+  if( real_new_size == vector->capacity_){
     return kErrorCode_Ok;
   }
   
+  MemoryNode *new_storage = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * real_new_size);
 
-  MemoryNode *new_storage = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * real_size);
-
-  if (new_storage == NULL)
+  if (new_storage == NULL){
     return kErrorCode_NoMemory;
+  }
 
 
   MemoryNode *current_src = new_storage;
-  MemoryNode *end = new_storage + real_size;
+  MemoryNode *end = new_storage + real_new_size;
 
   do {
     MEMNODE_createLite(current_src);
@@ -202,12 +197,12 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     length = new_size;
   }
 
-  u16 new_head = ((real_size - length) / 2);
+  u16 new_head = ((real_new_size - length) / 2);
   u16 new_tail = (new_head + length);
 
   MemoryNode *current_dst;
 
-  if (real_size > vector->capacity_) {
+  if (real_new_size > vector->capacity_) {
     // Al alza
 
     current_dst = new_storage + new_head;
@@ -225,7 +220,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
 
     current_dst = new_storage + new_head;
     current_src = vector->storage_ + vector->head_;
-    end = current_src + (vector->tail_ - 1);
+    end = current_src + (vector->tail_ - vector->head_);
     MemoryNode *max_dst = current_dst + (new_size - 1);
 
     do {
@@ -240,22 +235,21 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
       current_src++;
     } while (current_src != end);
 
-    if (new_tail > new_size) {
-      new_tail = new_size;
+    if (new_tail > real_new_size) {
+      new_tail = real_new_size;
     }
     
   }
 
   MM->free(vector->storage_);
   vector->storage_ = new_storage;
-  vector->capacity_ = real_size;
+  vector->capacity_ = real_new_size;
   vector->tail_ = new_tail;
   vector->head_ = new_head;
 
   return kErrorCode_Ok;
   
 }
-
 
 u16 MVECTOR_capacity(Vector *vector){//TODO revise
   if( NULL == vector){
@@ -364,8 +358,15 @@ s16 MVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){//checked by xema
     MVector_center(vector);
   }
 
-  //Metemos en head-1 el nuevo data
-  (vector->storage_)->ops_->setData((vector->storage_ + (vector->head_-1) ),data,bytes);
+  u32 new_head = vector->head_;
+  if(!MVECTOR_isEmpty(vector)){
+    new_head--;
+  }
+  
+
+  //Metemos en head el nuevo data
+  (vector->storage_)->ops_->setData((vector->storage_ + (new_head) ),data,bytes);
+  vector->head_ = new_head;
 
   return kErrorCode_Ok;
 } 
@@ -598,7 +599,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//
   return kErrorCode_Ok;
 }
 
-s16 MVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//TODO revise
+s16 MVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//revised by xema
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }

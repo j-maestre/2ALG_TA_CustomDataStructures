@@ -121,7 +121,7 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
 
 s16 MEMNODE_reset(MemoryNode *node) {
   if (NULL == node) {
-    return ;
+    return kErrorCode_MemoryNodeNULL;
   }
   if (NULL != node->data_) {
     MM->free(node->data_);

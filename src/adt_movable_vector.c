@@ -252,7 +252,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
   
 }
 
-u16 MVECTOR_capacity(Vector *vector){//TODO revise
+u16 MVECTOR_capacity(Vector *vector){//revised by xema
   if( NULL == vector){
     return 0;
   }
@@ -260,7 +260,7 @@ u16 MVECTOR_capacity(Vector *vector){//TODO revise
   return vector->capacity_ >> 1;
 }
 
-u16 MVECTOR_lenght(Vector *vector){//TODO revise
+u16 MVECTOR_lenght(Vector *vector){//revised by xema
   if( NULL == vector){
     return 0;
   }
@@ -273,23 +273,22 @@ u16 MVECTOR_lenght(Vector *vector){//TODO revise
 
 }
 
-boolean MVECTOR_isEmpty(Vector *vector){//TODO revise
+boolean MVECTOR_isEmpty(Vector *vector){//revised by xema && hector
   if( NULL == vector){
     return False;
   }
 
-  if((vector->tail_ - vector->head_) == 0){
+  if(vector->tail_ == vector->head_){
     return True;
   }
 
   return False;
 }
 
-boolean MVECTOR_isFull(Vector *vector){//TODO revise
+boolean MVECTOR_isFull(Vector *vector){//revised by xema && hector
   if( NULL == vector){
     return False;
   }
-  // En el caso de que cuando se anada el ultimo elemento, el tail sea +1 respecto a la capacidad
   return ((vector->tail_ - vector->head_) >= (vector->capacity_ >> 1));
 }
 
@@ -321,7 +320,7 @@ void* MVECTOR_last(Vector *vector){//checked by hector && xema
   }
 } 
 
-void* MVECTOR_at(Vector *vector, u16 position){//TODO revise
+void* MVECTOR_at(Vector *vector, u16 position){//revised by xema TODO hector's checks
 
   if(NULL == vector){
     return NULL;
@@ -329,7 +328,7 @@ void* MVECTOR_at(Vector *vector, u16 position){//TODO revise
   if( NULL == vector->storage_){
     return NULL;
   }
-  if(position >= (vector->tail_ >> 1)){
+  if(position >= (vector->tail_ >> 1) || position < 0){
     return NULL;
   }
   return (vector->storage_ + (vector->head_ + position))->data_;
@@ -514,7 +513,7 @@ void* MVECTOR_extractFirst(Vector *vector){//checked by xema && hector
   return data_tmp;
 }
 
-void* MVECTOR_extractAt(Vector *vector, u16 position){//TODO revise
+void* MVECTOR_extractAt(Vector *vector, u16 position){//revised by xema TODO hector's checks
   if( NULL == vector){
     return NULL;
   }
@@ -522,7 +521,12 @@ void* MVECTOR_extractAt(Vector *vector, u16 position){//TODO revise
     return NULL;
   }
 
-  if(position > (vector->head_ + vector->tail_)){
+  if(MVECTOR_isEmpty(vector)){
+    return NULL;
+  }
+
+  //if(position > (vector->head_ + vector->tail_)){
+  if(position > (vector->tail_ - vector->head_)){ // si la posicion esta fuera del rango
     return NULL;
   }
 
@@ -534,6 +538,8 @@ void* MVECTOR_extractAt(Vector *vector, u16 position){//TODO revise
     for (u32 i = position + vector->head_; i < vector->tail_; i++){
       ((vector->storage_)+i)->ops_->setData(((vector->storage_)+i),((vector->storage_)+i+1)->data_,((vector->storage_)+i+1)->size_);
     }
+
+    //El ultimo elemento lo eliminamos porque esta duplicado
     (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
   }
 
@@ -541,7 +547,7 @@ void* MVECTOR_extractAt(Vector *vector, u16 position){//TODO revise
   return data_tmp;
 }
 
-void* MVECTOR_extractLast(Vector *vector){//TODO revise
+void* MVECTOR_extractLast(Vector *vector){//revised by xema TODO hector's checks
   if( NULL == vector){
     return NULL;
   }

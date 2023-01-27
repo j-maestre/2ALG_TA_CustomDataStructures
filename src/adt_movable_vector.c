@@ -79,7 +79,7 @@ Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 	return rslt;
 }
 
-static void MVector_center(Vector *vector){ // Checked by xema && hector
+static void MVector_center(Vector *vector){// Checked by xema && hector
 
   //Version 2.0, en vez de reservar, lo movemos x posiciones izquierda o derecha
   //Comprobamos que no este lleno
@@ -152,6 +152,7 @@ s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       vector->tail_ = vector->capacity_ >> 1;
+      vector->head_ = vector->tail_;
       return kErrorCode_Ok;
     }
 
@@ -561,7 +562,7 @@ void* MVECTOR_extractLast(Vector *vector){//TODO revise
   return data;
 }
 
-s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//
+s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//TODO revise
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -573,28 +574,61 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//
     return kErrorCode_StorageNULL;
   }
 
+  
 
-  MemoryNode *node = MM->malloc(sizeof(MemoryNode) * (vector->capacity_ + vector_src->capacity_));
+  u16 real_new_size = (vector->capacity_ + vector_src->capacity_);
+  u16 length = ((vector->tail_ - vector->head_) + (vector_src->tail_ - vector_src->head_));
+
+  // Reservamos nuevo vector con el tamano de los dos
+  MemoryNode *node = MM->malloc(sizeof(MemoryNode) * real_new_size);
   if (NULL == node) {
     return kErrorCode_NoMemory;
   }
-  for (u32 i = 0; i < (vector->capacity_ + vector_src->capacity_); i++){
-    
+
+  
+  // Create lite de todos los memory node
+  for (u32 i = 0; i < real_new_size; i++){
     MEMNODE_createLite(node+i);
   }
   
-  for (u32 i = 0; i < vector->tail_; i++){
-    (node+i)->ops_->setData((node+i),(vector->storage_+i)->data_,(vector->storage_+i)->size_);
+
+  //Primero sacar cuanto tenemos que meter sumando los dos vectores
+  //Luego sacar la primera posicion donde tenemos que empezar a meter
+
+  u16 new_head = ((real_new_size - length) / 2);
+  u16 new_tail = (new_head + length);
+
+  MemoryNode *current_dst = node + new_head;
+  MemoryNode *current_src = vector->storage_ + vector->head_;
+  MemoryNode *end = vector->storage_ + vector->tail_ - 1;
+
+  if(!MVECTOR_isEmpty(vector)){
+    do {
+      current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
+      current_src->ops_->softReset(current_src);
+      current_dst++;
+      current_src++;
+    } while (current_src != end);
   }
 
-  for (u32 i = 0; i < vector_src->tail_; i++){
-    (node+i+vector->tail_)->ops_->memCopy((node+i + vector->tail_),(vector_src->storage_+i)->data_,(vector_src->storage_+i)->size_);
+  current_src = vector_src->storage_ + vector_src->head_;
+  end = vector_src->storage_ + vector_src->tail_ - 1;
+
+  if(!MVECTOR_isEmpty(vector_src)){
+    do{
+      current_dst->ops_->memCopy(current_dst, current_src->data_, current_src->size_);
+      current_dst++;
+      current_src++;
+    }while(current_src != end);
+
   }
+
 
   MM->free(vector->storage_);
   vector->storage_ = node;
   vector->capacity_ = vector->capacity_ + vector_src->capacity_;
-  vector->tail_ = vector->tail_ + vector_src->tail_;
+  vector->tail_ = new_tail;
+  vector->head_ = new_head;
 
   return kErrorCode_Ok;
 }

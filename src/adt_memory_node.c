@@ -124,6 +124,9 @@ s16 MEMNODE_reset(MemoryNode *node) {
     return kErrorCode_MemoryNodeNULL;
   }
   if (NULL != node->data_) {
+#ifdef VERBOSE_
+    printf("Data freed at location %p\n", node->data_);
+#endif // VERBOSE_
     MM->free(node->data_);
   }
 

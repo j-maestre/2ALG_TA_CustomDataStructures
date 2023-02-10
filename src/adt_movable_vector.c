@@ -429,8 +429,8 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     return kErrorCode_Ok;
   }
 
-  u8 right_distance = (vector->tail_ - 1) - real_position;
-  u8 left_distance = real_position - vector->head_;
+  s16 right_distance = (vector->tail_ - 1) - real_position;
+  s16 left_distance = real_position - vector->head_;
 
   MemoryNode *destination = vector->storage_ + real_position;
 
@@ -444,6 +444,10 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     current_src = (vector->storage_ + vector->head_);
 
     while (current_dst != destination) {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_dst++;
       current_src++;
@@ -458,6 +462,10 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     current_src = (vector->storage_ + (vector->tail_ - 1));
 
     while (current_dst != destination) {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_dst--;
       current_src--;
@@ -466,27 +474,12 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     vector->tail_++;
 
   }
-
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Moveing memory to %p[%p]\n", destination, data);
+#endif
   destination->ops_->setData(destination, data, bytes);
 
-  /*if( position > vector->tail_){
-    position = vector->tail_;
-  }
-
-  if(MVECTOR_isFull(vector)){
-    return kErrorCode_VectorFull;
-  }
-
-  if(!MVECTOR_isEmpty(vector)){
-    // El vector tiene cosas, hay que moverlas
-    for (u32 i = vector->tail_; i > position ; i--){
-      (((vector->storage_)+i)->ops_)->setData( ((vector->storage_)+i) , ((vector->storage_)+(i-1) )->data_, ((vector->storage_)+(i-1))->size_);
-    }
-    
-  }
-  
-  ((vector->storage_)+position)->ops_->setData(((vector->storage_)+position),data,bytes);
-  vector->tail_++;*/
 
   return kErrorCode_Ok;
 }
@@ -608,6 +601,10 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
 
   if(!MVECTOR_isEmpty(vector)){
     do {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_src->ops_->softReset(current_src);
       current_dst++;
@@ -620,6 +617,10 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
 
   if(!MVECTOR_isEmpty(vector_src)){
     do{
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Copying memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
       current_dst->ops_->memCopy(current_dst, current_src->data_, current_src->size_);
       current_dst++;
       current_src++;
@@ -633,6 +634,20 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
   vector->capacity_ = vector->capacity_ + vector_src->capacity_;
   vector->tail_ = new_tail;
   vector->head_ = new_head;
+
+  MemoryNode* data;
+  for (int i = 0; i < vector->capacity_; i++)
+  {
+    data = (vector->storage_ + i);
+    for (int j = 0; j < vector->capacity_; j++)
+    {
+      if (data->data_ == (vector->storage_ + j)->data_ && i != j && (data->data_ != NULL || (vector->storage_ + j)->data_ != NULL))
+      {
+        printf("Same addres in diferents MemoryNodes\n\tMemoryNode1 -> %p\n\t\tdata_ -> %p\n\tMemoryNode2 -> %p\n\t\tdata_ -> %p\n", data, data->data_, (vector->storage_ + j), (vector->storage_ + j)->data_);
+      }
+    }
+      
+  }
 
   return kErrorCode_Ok;
 }

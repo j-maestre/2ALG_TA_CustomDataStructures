@@ -19,7 +19,7 @@ typedef struct memory_node_s {
   void *data_;
   u16 size_;
   struct memory_node_ops_s *ops_;
-} MemoryNode;
+} MemoryNode;//x32 sizeof() = 10 -> 12
 
 // Memory Node's API Declarations
 struct memory_node_ops_s {

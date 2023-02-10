@@ -173,27 +173,126 @@ boolean CVECTOR_isFull(Vector *vector){
 }
 
 void* CVECTOR_first(Vector *vector){
-
+  if( NULL == vector){
+    return NULL;
+  }
+  if( NULL == vector->storage_){
+    return NULL;
+  }
+  return (vector->storage_ + vector->head_)->data_;
 }
 
 void* CVECTOR_last(Vector *vector){
+  if( NULL == vector){
+    return NULL;
+  }
+  if( NULL == vector->storage_){
+    return NULL;
+  }
+  return (vector->storage_ + (vector->tail_ - 1))->data_;
 
 } 
 
 void* CVECTOR_at(Vector *vector, u16 position){
+   if( NULL == vector){
+    return NULL;
+  }
+  if( NULL == vector->storage_){
+    return NULL;
+  }
 
+  return (vector->storage_ + (vector->head_ + (position%vector->capacity_))); // me huele a chamusquina
 }
 
 s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
+  if( NULL == vector){
+    return kErrorCode_VectorNULL;
+  }
+  if( NULL == vector->storage_){
+    return kErrorCode_StorageNULL;
+  }
+  if( NULL == data){
+    return kErrorCode_DataNULL;
+  }
+  if( bytes <= 0){
+    return kErrorCode_ZeroBytes;
+  }
+  if(CVECTOR_isFull(vector)){
+    return kErrorCode_VectorFull;
+  }
+
+  if(vector->head_ == 0){
+    (vector->storage_)->ops_->setData(vector->storage_ + (vector->capacity_ - 1),data, bytes);
+  }else{
+    (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_- 1),data, bytes);
+  }
+
+  vector->head_--;
+  return kErrorCode_Ok;
   
 } 
 
 s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){
+  if( NULL == vector){
+    return kErrorCode_VectorNULL;
+  }
+  if( NULL == vector->storage_){
+    return kErrorCode_StorageNULL;
+  }
+  if( NULL == data){
+    return kErrorCode_DataNULL;
+  }
+  if( bytes <= 0){
+    return kErrorCode_ZeroBytes;
+  }
+  if(CVECTOR_isFull(vector)){
+    return kErrorCode_VectorFull;
+  }
 
+  (vector->storage_)->ops_->setData(vector->storage_ + (vector->tail_),data, bytes);
+  vector->tail_++;
+
+  return kErrorCode_Ok;
 }
 
 s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
+  if( NULL == vector){
+    return kErrorCode_VectorNULL;
+  }
+  if( NULL == vector->storage_){
+    return kErrorCode_StorageNULL;
+  }
+  if( NULL == data){
+    return kErrorCode_DataNULL;
+  }
+  if( bytes <= 0){
+    return kErrorCode_ZeroBytes;
+  }
+  if(CVECTOR_isFull(vector)){
+    return kErrorCode_VectorFull;
+  }
 
+  // Esta vacio, lo metemos al principio y au
+  if(CVECTOR_isEmpty(vector)){
+    vector->storage_->ops_->setData(vector->storage_ + vector->head_, data, bytes);
+    vector->tail_++;
+    return kErrorCode_Ok;
+  }
+
+  // Se ha pasado del tail, lo metemos al final y au
+  if(position > vector->tail_){
+    vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
+    vector->tail_++;
+    return kErrorCode_Ok;
+  }
+
+  
+
+  // Mover las cosas antes de meterlas
+  if(position - (vector->tail_ - 1) < position - vector->head_){
+    //Esta mas cerca del final
+
+  }
 }
 
 void* CVECTOR_extractFirst(Vector *vector){

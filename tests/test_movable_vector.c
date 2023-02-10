@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define VERBOSE_ 1
+
 #include "adt_movable_vector.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 

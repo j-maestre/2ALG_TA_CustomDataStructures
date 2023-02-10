@@ -114,12 +114,23 @@ s16 MVECTOR_destroy(Vector *vector){//* checked by xema & hector
     if(NULL != vector->storage_){
 
       for (u32 i = vector->head_; i < vector->tail_; i++){
+#ifdef VERBOSE_
+        printf("\x1B[34m[VERBOSE_]\x1B[37m");
+        printf("Freeing memory from 0x%p[0x%p]\n", (vector->storage_+i), (vector->storage_+i)->data_);
+#endif
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Freeing memory from 0x%p[0x%p]\n", vector->storage_, vector->storage_->data_);
+#endif
       MM->free(vector->storage_);
 
     }
-
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Freeing memory from 0x%p\n", vector);
+#endif
     MM->free(vector);
   }
 
@@ -169,7 +180,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     return kErrorCode_SizeZERO;
   }
 
-  u16 real_new_size = new_size << 1;
+  s16 real_new_size = new_size << 1;
 
   if( real_new_size == vector->capacity_){
     return kErrorCode_Ok;
@@ -190,7 +201,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     current_src++;
   } while(current_src != end);
 
-  u16 length = (vector->tail_ - vector->head_);
+  s16 length = (vector->tail_ - vector->head_);
 
   if (length > new_size) {
     length = new_size;
@@ -433,7 +444,7 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     return kErrorCode_VectorFull;
   }
 
-  u16 real_position  = vector->head_ + position;
+  s16 real_position  = vector->head_ + position;
 
   if (real_position > vector->tail_) {
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
@@ -586,7 +597,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
   
 
   u16 real_new_size = (vector->capacity_ + vector_src->capacity_);
-  u16 length = ((vector->tail_ - vector->head_) + (vector_src->tail_ - vector_src->head_));
+  s16 length = ((vector->tail_ - vector->head_) + (vector_src->tail_ - vector_src->head_));
 
   // Reservamos nuevo vector con el tamano de los dos
   MemoryNode *node = MM->malloc(sizeof(MemoryNode) * real_new_size);
@@ -604,8 +615,8 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
   //Primero sacar cuanto tenemos que meter sumando los dos vectores
   //Luego sacar la primera posicion donde tenemos que empezar a meter
 
-  u16 new_head = ((real_new_size - length) / 2);
-  u16 new_tail = (new_head + length);
+  s16 new_head = ((real_new_size - length) / 2);
+  s16 new_tail = (new_head + length);
 
   MemoryNode *current_dst = node + new_head;
   MemoryNode *current_src = vector->storage_ + vector->head_;

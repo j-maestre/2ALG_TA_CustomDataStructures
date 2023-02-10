@@ -49,6 +49,7 @@ MemoryNode* MEMNODE_create() {
   MemoryNode *node = MM->malloc(sizeof(MemoryNode));
   if (NULL == node) {
 #ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Error: [%s] not enough memory available\n", __FUNCTION__);
 #endif
     return NULL;
@@ -64,6 +65,7 @@ s16 MEMNODE_createFromRef(MemoryNode **node) {
   *node = MEMNODE_create();
   if (NULL == *node) {
 #ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Error: [%s] not enough memory available\n", __FUNCTION__);
 #endif
     return kErrorCode_Memory;
@@ -125,7 +127,8 @@ s16 MEMNODE_reset(MemoryNode *node) {
   }
   if (NULL != node->data_) {
 #ifdef VERBOSE_
-    printf("Data freed at location %p\n", node->data_);
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Data freed at location 0x%p\n", node->data_);
 #endif // VERBOSE_
     MM->free(node->data_);
   }
@@ -152,8 +155,16 @@ s16 MEMNODE_free(MemoryNode *node) {
   if (NULL != node) {
 
     if (NULL != node->data_) {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Data freed at location 0x%p\n", node->data_);
+#endif // VERBOSE_
       MM->free(node->data_);
     }
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Node freed at location 0x%p\n", node);
+#endif // VERBOSE_
     MM->free(node);
   }
 
@@ -165,7 +176,10 @@ s16 MEMNODE_softFree(MemoryNode* node) {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;
   }
-
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Node freed at location 0x%p\n", node);
+#endif
   MM->free(node);
 
   return kErrorCode_Ok;

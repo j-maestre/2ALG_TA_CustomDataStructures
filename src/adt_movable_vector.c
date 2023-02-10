@@ -140,7 +140,7 @@ s16 MVECTOR_destroy(Vector *vector){//* checked by xema & hector
 s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
   if( NULL != vector){
     if( NULL != vector->storage_){  
-      for (u32 i = vector->head_; i < vector->tail_; i++){
+      for (u32 i = vector->head_; i <= vector->tail_; i++){
         (vector->storage_+i)->ops_->softReset((vector->storage_+i));
       }
       vector->head_ = vector->capacity_ >> 1;
@@ -157,7 +157,7 @@ s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
 s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
   if( NULL != vector){
     if( NULL != vector->storage_){
-      for (u32 i = vector->head_; i < vector->tail_; i++){
+      for (u32 i = vector->head_; i <= vector->tail_; i++){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       vector->tail_ = vector->capacity_ >> 1;

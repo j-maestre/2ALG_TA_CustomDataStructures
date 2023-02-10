@@ -51,9 +51,6 @@ struct vector_ops_s mvector_ops = { .destroy = MVECTOR_destroy,
                                    };
 
 
-
-                                   
-
 Vector* MVECTOR_create(u16 capacity) { //* checked by xema & hector
 	if (0 >= capacity) {
 		return NULL;
@@ -228,7 +225,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
 
       if (current_dst <= max_dst) {
         current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
-      } else {
+      }else{
         current_src->ops_->reset(current_src);
       }
       
@@ -568,7 +565,7 @@ void* MVECTOR_extractLast(Vector *vector){//revised by xema TODO hector's checks
   return data;
 }
 
-s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//TODO revise
+s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -592,7 +589,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//TODO revise
   }
 
   
-  // Create lite de todos los memory node
+  // Create lite de todos los memory node (Absolutamente todos, no solo los de la capacidad falsa?)
   for (u32 i = 0; i < real_new_size; i++){
     MEMNODE_createLite(node+i);
   }
@@ -606,7 +603,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//TODO revise
 
   MemoryNode *current_dst = node + new_head;
   MemoryNode *current_src = vector->storage_ + vector->head_;
-  MemoryNode *end = vector->storage_ + vector->tail_ - 1;
+  MemoryNode *end = vector->storage_ + vector->tail_;
 
   if(!MVECTOR_isEmpty(vector)){
     do {
@@ -618,7 +615,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){//TODO revise
   }
 
   current_src = vector_src->storage_ + vector_src->head_;
-  end = vector_src->storage_ + vector_src->tail_ - 1;
+  end = vector_src->storage_ + vector_src->tail_;
 
   if(!MVECTOR_isEmpty(vector_src)){
     do{

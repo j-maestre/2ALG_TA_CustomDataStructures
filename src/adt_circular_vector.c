@@ -54,22 +54,81 @@ struct vector_ops_s mvector_ops = { .destroy = CVECTOR_destroy,
 
                                    
 
-Vector* CVECTOR_create(u16 capacity) {
+Vector* CVECTOR_create(u16 capacity) { // Checked by xema && Hector
+    if (0 >= capacity) {
+		return NULL;
+    }
+    Vector* vector = (Vector *)MM->malloc(sizeof(Vector));
+    if (NULL == vector) {
+    	return NULL;
+    }
+    vector->capacity_ = capacity;
+    vector->tail_ = 0;
+    vector->head_ = 0;
+	vector->storage_ = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * vector->capacity_);
 
+	if (NULL == vector->storage_) {
+		MM->free(vector);
+		return NULL;
+	}
+    
+    for (MemoryNode *current = vector->storage_, 
+        *end = (vector->storage_ + vector->capacity_); current != end; current++) 
+    {
+        MEMNODE_createLite(current);
+    }
+	vector->ops_ = &mvector_ops;
+	return vector;
 }
 
-static void CVector_center(Vector *vector){
+s16 CVECTOR_destroy(Vector *vector){ // TODO revise
+  if ( NULL != vector){
+    if( NULL != vector->storage_){
+      u16 lenght = CVECTOR_lenght(vector);
+        for(u32 i = vector->head_; i < lenght; i++){
+        (vector->storage_+i)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+      }
 
+      MM->free(vector->storage_);
+    }
+
+    MM->free(vector);
+  }
+  return kErrorCode_Ok;
 }
 
-s16 CVECTOR_destroy(Vector *vector){
-
+s16 CVECTOR_softReset(Vector *vector){ // TODO revise
+  if ( NULL != vector){
+    if( NULL != vector->storage_){
+      u16 lenght = CVECTOR_lenght(vector);
+      for(u32 i = vector->head_; i < lenght; i++){
+        (vector->storage_+i)->ops_->softReset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+      }
+      vector->head_ = 0;
+      vector->tail_ = 0;
+      return kErrorCode_Ok;
+    }
+    
+    return kErrorCode_StorageNULL;
+  }
+  return kErrorCode_VectorNULL;
 }
 
-s16 CVECTOR_softReset(Vector *vector){
-}
-
-s16 CVECTOR_reset(Vector *vector){
+s16 CVECTOR_reset(Vector *vector){ // TODO revise
+  if ( NULL != vector){
+    if( NULL != vector->storage_){
+      u16 lenght = CVECTOR_lenght(vector);
+      for(u32 i = 0; i < lenght; i++){
+        (vector->storage_+i)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+      }
+      vector->head_ = 0;
+      vector->tail_ = 0;
+      return kErrorCode_Ok;
+    }
+    
+    return kErrorCode_StorageNULL;
+  }
+  return kErrorCode_VectorNULL;
 
 }
 
@@ -78,19 +137,39 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){
 }
 
 u16 CVECTOR_capacity(Vector *vector){
+  if( NULL == vector){
+    return 0;
+  }
 
+  return vector->capacity_;
 }
 
 u16 CVECTOR_lenght(Vector *vector){
+  if( NULL == vector){
+      return 0;
+  }
+
+  if(vector->tail_ > vector->head_){
+      return vector->tail_ - vector->head_;
+  }else{
+      return (vector->capacity_ - vector->head_) + vector->tail_;
+  }
 
 }
 
 boolean CVECTOR_isEmpty(Vector *vector){
+  if( NULL == vector){
+    return False;
+  }
 
+  return vector->ops_->length(vector) == 0;
 }
 
 boolean CVECTOR_isFull(Vector *vector){
-  
+  if (vector == NULL)
+    return False;
+
+  return (vector->ops_->length(vector) == vector->capacity_);
 }
 
 void* CVECTOR_first(Vector *vector){

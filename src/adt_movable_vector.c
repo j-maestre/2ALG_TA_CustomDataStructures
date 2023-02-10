@@ -160,8 +160,8 @@ s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
       for (u32 i = vector->head_; i <= vector->tail_; i++){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
+      vector->head_ = vector->capacity_ >> 1;
       vector->tail_ = vector->capacity_ >> 1;
-      vector->head_ = vector->tail_;
       return kErrorCode_Ok;
     }
 
@@ -207,8 +207,8 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     length = new_size;
   }
 
-  u16 new_head = ((real_new_size - length) / 2);
-  u16 new_tail = (new_head + length);
+  s16 new_head = ((real_new_size - length) / 2);
+  s16 new_tail = (new_head + length);
 
   MemoryNode *current_dst;
 
@@ -234,6 +234,7 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
 
     current_dst = new_storage + new_head;
     current_src = vector->storage_ + vector->head_;
+    //end = vector->storage_ + vector->tail_;
     end = current_src + (vector->tail_ - vector->head_);
     MemoryNode *max_dst = current_dst + (new_size - 1);
 
@@ -680,7 +681,7 @@ s16 MVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){//revised b
     return kErrorCode_VectorNULL;
   }
   if( NULL == callback){
-    kErrorCode_CallBackNULL;
+    return kErrorCode_CallBackNULL;
   }
   if( NULL == (vector->storage_ + vector->head_)){
     return kErrorCode_StorageNULL;

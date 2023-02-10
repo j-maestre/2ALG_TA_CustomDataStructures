@@ -209,6 +209,10 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     current_src = vector->storage_ + vector->head_;
 
     do {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_dst++;
       current_src++;
@@ -225,8 +229,16 @@ s16 MVECTOR_resize(Vector *vector, u16 new_size){ //checked by hector && xema
     do {
 
       if (current_dst <= max_dst) {
+#ifdef VERBOSE_
+        printf("\x1B[34m[VERBOSE_]\x1B[37m");
+        printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+#endif
         current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       }else{
+#ifdef VERBOSE_
+        printf("\x1B[34m[VERBOSE_]\x1B[37m");
+        printf("Freeing memory from 0x%p[0x%p]\n", current_src, current_src->data_);
+#endif
         current_src->ops_->reset(current_src);
       }
       
@@ -446,7 +458,7 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     while (current_dst != destination) {
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_dst++;
@@ -464,7 +476,7 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
     while (current_dst != destination) {
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_dst--;
@@ -476,7 +488,7 @@ s16 MVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){//chec
   }
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
-  printf("Moveing memory to %p[%p]\n", destination, data);
+  printf("Moveing memory to 0x%p[0x%p]\n", destination, data);
 #endif
   destination->ops_->setData(destination, data, bytes);
 
@@ -603,7 +615,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
     do {
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Moveing memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
       current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
       current_src->ops_->softReset(current_src);
@@ -619,7 +631,7 @@ s16 MVECTOR_concat(Vector *vector, Vector *vector_src){// Revised by xema
     do{
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Copying memory from %p[%p] to %p[%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+      printf("Copying memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
       current_dst->ops_->memCopy(current_dst, current_src->data_, current_src->size_);
       current_dst++;

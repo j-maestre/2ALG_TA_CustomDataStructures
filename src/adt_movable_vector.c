@@ -140,7 +140,7 @@ s16 MVECTOR_destroy(Vector *vector){//* checked by xema & hector
 s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
   if( NULL != vector){
     if( NULL != vector->storage_){  
-      for (u32 i = vector->head_; i <= vector->tail_; i++){
+      for (u32 i = vector->head_; i < vector->tail_; i++){
         (vector->storage_+i)->ops_->softReset((vector->storage_+i));
       }
       vector->head_ = (vector->capacity_ >> 1) - 1;
@@ -157,7 +157,7 @@ s16 MVECTOR_softReset(Vector *vector){ //* checked by xema & hector
 s16 MVECTOR_reset(Vector *vector){//* checked by xema & hector
   if( NULL != vector){
     if( NULL != vector->storage_){
-      for (u32 i = vector->head_; i <= vector->tail_; i++){
+      for (u32 i = vector->head_; i < vector->tail_; i++){
         (vector->storage_+i)->ops_->reset((vector->storage_+i));
       }
       vector->head_ = (vector->capacity_ >> 1) - 1;
@@ -704,14 +704,14 @@ void MVECTOR_print(Vector *vector){//revised by xema(x2)
   }
 
   printf("[MVECTOR INFO] Address: %p\n",vector);
-  printf("[MVECTOR INFO] Head: %d\n",vector->head_);
-  printf("[MVECTOR INFO] Tail: %d\n",vector->tail_);
+  printf("[MVECTOR INFO] Head: %d / %d\n",vector->head_, 0);
+  printf("[MVECTOR INFO] Tail: %d / %d\n",vector->tail_, vector->tail_ - vector->head_);
   printf("[MVECTOR INFO] Lenght: %d\n",vector->tail_ - vector->head_);
-  printf("[MVECTOR INFO] Capacity: %d\n",vector->capacity_);
+  printf("[MVECTOR INFO] Capacity: %d / %d\n",vector->capacity_, vector->capacity_ >> 1);
   printf("[MVECTOR INFO] Address: %p\n",vector->storage_);
 
   for(u32 i = vector->head_; i < vector->tail_; i++){
-    printf("\t[MVECTOR INFO] Storage #%d:\n",i);
+    printf("\t[MVECTOR INFO] Storage #%d / #%d:\n",i, i - vector->head_);
     (vector->storage_+i)->ops_->print((vector->storage_+i));
   }
   

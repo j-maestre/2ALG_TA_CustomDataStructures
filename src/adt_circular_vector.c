@@ -65,7 +65,7 @@ Vector* CVECTOR_create(u16 capacity) { // Checked by xema && Hector
     vector->capacity_ = capacity;
     vector->tail_ = 0;
     vector->head_ = 0;
-	vector->storage_ = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * vector->capacity_);
+	vector->storage_ = (MemoryNode *) MM->malloc(sizeof(MemoryNode) * capacity);
 
 	if (NULL == vector->storage_) {
 		MM->free(vector);
@@ -133,7 +133,8 @@ s16 CVECTOR_reset(Vector *vector){ // TODO revise
 }
 
 s16 CVECTOR_resize(Vector *vector, u16 new_size){
-  
+
+ return kErrorCode_Ok; 
 }
 
 u16 CVECTOR_capacity(Vector *vector){
@@ -146,13 +147,13 @@ u16 CVECTOR_capacity(Vector *vector){
 
 u16 CVECTOR_lenght(Vector *vector){
   if( NULL == vector){
-      return 0;
+      return kErrorCode_VectorNULL;
   }
 
   if(vector->tail_ > vector->head_){
       return vector->tail_ - vector->head_;
   }else{
-      return (vector->capacity_ - vector->head_) + vector->tail_;
+      return (vector->capacity_ - vector->head_) + vector->tail_ - 1;
   }
 
 }
@@ -286,36 +287,68 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     return kErrorCode_Ok;
   }
 
-  
+  MemoryNode *current_src;
+  MemoryNode *current_dst;
+  MemoryNode *end = (vector->storage_ + position);
 
   // Mover las cosas antes de meterlas
   if(position - (vector->tail_ - 1) < position - vector->head_){
     //Esta mas cerca del final
+    current_dst = (vector->storage_ + (vector->tail_));
+    current_src = (vector->storage_ + (vector->tail_ - 1));
+    u16 index = 0;
+    
+    do{
+      current_dst->ops_->setData(current_dst,current_src->data_,current_src->size_);
+      current_dst -= index++%vector->capacity_;
+      current_src -= index++%vector->capacity_;
+    }while(current_dst != end);
+    
+    
+    vector->tail_++;
+  }else{
+    //Esta mas cerca del principio
+    current_dst = (vector->storage_ + (vector->head_ - 1));
+    current_src = (vector->storage_ + (vector->head_));
+    u16 index = 0;
+    do{
+      current_dst->ops_->setData(current_dst,current_src->data_,current_src->size_);
+      current_dst += index++%vector->capacity_;
+      current_src += index++%vector->capacity_;
+    }while(current_dst != end);
+    
+    vector->head_ -= (vector->head_ - 1) % vector->capacity_;
 
   }
+
+  current_dst->ops_->setData(current_dst,data,bytes);
+  return kErrorCode_Ok;
 }
 
 void* CVECTOR_extractFirst(Vector *vector){
 
+  return NULL;
 }
 
 void* CVECTOR_extractAt(Vector *vector, u16 position){
-
+  return NULL;
 }
 
 void* CVECTOR_extractLast(Vector *vector){
-
+  return NULL;
 }
 
 s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
 
+
+  return kErrorCode_Ok;
 }
 
 s16 CVECTOR_traverse(Vector *vector, void (*callback)(MemoryNode *)){
-
+  return kErrorCode_Ok;
 }
 
-void MVECTOR_print(Vector *vector){
+void CVECTOR_print(Vector *vector){
 
   
 }

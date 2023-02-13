@@ -261,7 +261,7 @@ s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){
   }
 
   (vector->storage_)->ops_->setData(vector->storage_ + (vector->tail_),data, bytes);
-  vector->tail_ = (vector->tail_+1) % vector->capacity_ ;
+  vector->tail_ = (vector->tail_+1) % (vector->capacity_+1) ;
 
   return kErrorCode_Ok;
 }
@@ -286,7 +286,7 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   // Esta vacio, lo metemos al principio y au
   if(CVECTOR_isEmpty(vector)){
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
-    vector->tail_ = (vector->tail_+1) % vector->capacity_;
+    vector->tail_ = (vector->tail_+1) % (vector->capacity_+1);
     return kErrorCode_Ok;
   }
 
@@ -344,7 +344,7 @@ void* CVECTOR_extractFirst(Vector *vector){
 
   void *data_tmp = (vector->storage_ + vector->head_)->data_;
   vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
-  vector->head_ = (vector->head_+1) % vector->capacity_;
+  vector->head_ = (vector->head_+1) % (vector->capacity_+1);
 
   return data_tmp;
 }

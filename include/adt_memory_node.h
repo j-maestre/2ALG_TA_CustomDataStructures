@@ -18,6 +18,8 @@
 typedef struct memory_node_s {
   void *data_;
   u16 size_;
+  struct memory_node_s *next_;
+  struct memory_node_s *previous_;
   struct memory_node_ops_s *ops_;
 } MemoryNode;//x32 sizeof() = 10 -> 12
 

@@ -50,7 +50,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR01_Vector",
     "PR02_CircularVector",
     "PR03_MovableVector",
-    --"PR04_List",
+    "PR04_List",
     --"PR05_DLList",
     --"PR06_CircularList",
     --"PR07_CircularDLList",
@@ -142,4 +142,13 @@ solution("DS_ALG_AI1" .. _ACTION)
        path.join(PROJ_DIR, "./tests/test_circular_vector.c"),
        path.join(PROJ_DIR, "./src/adt_circular_vector.c"),
        path.join(PROJ_DIR, "./src/adt_memory_node.c")
+    }
+
+  project "PR04_List"
+    files {
+        path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+        path.join(PROJ_DIR, "./src/adt_memory_node.c"),
+        path.join(PROJ_DIR, "./include/adt_list.h"),
+        path.join(PROJ_DIR, "./src/adt_list.c"),
+        path.join(PROJ_DIR, "./tests/test_list.c"),
     }

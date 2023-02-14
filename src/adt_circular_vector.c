@@ -134,6 +134,7 @@ s16 CVECTOR_reset(Vector *vector){ // TODO revise
 }
 
 s16 CVECTOR_resize(Vector *vector, u16 new_size){
+  
 
  return kErrorCode_Ok; 
 }
@@ -151,10 +152,19 @@ u16 CVECTOR_lenght(Vector *vector){
       return kErrorCode_VectorNULL;
   }
 
-  if(vector->tail_ >= vector->head_){
+  if(vector->tail_ > vector->head_){
       return vector->tail_ - vector->head_;
+  }else if(vector->tail_ < vector->head_){
+      return (vector->capacity_ - vector->head_) + vector->tail_;
   }else{
-      return (vector->capacity_ - vector->head_) + vector->tail_ - 1;
+
+    // If head == tail
+    if((vector->storage_+vector->head_)->data_ == NULL){
+      return 0;
+    }else{
+      return vector->capacity_;
+    }
+
   }
 
 }
@@ -344,7 +354,7 @@ void* CVECTOR_extractFirst(Vector *vector){
 
   void *data_tmp = (vector->storage_ + vector->head_)->data_;
   vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
-  vector->head_ = (vector->head_+1) % (vector->capacity_+1);
+  vector->head_ = (vector->head_+1) % (vector->capacity_);
 
   return data_tmp;
 }
@@ -361,8 +371,7 @@ void* CVECTOR_extractAt(Vector *vector, u16 position){
     return NULL;
   }
 
-  //if(position > (vector->head_ + vector->tail_)){
-  if(position > (vector->tail_ - vector->head_) || position < 0){ // si la posicion esta fuera del rango
+  if(position >= CVECTOR_lenght(vector)){
     return NULL;
   }
 
@@ -395,8 +404,15 @@ void* CVECTOR_extractLast(Vector *vector){
     return NULL;
   }
 
-  void *data = (vector->storage_ + (vector->tail_ - 1))->data_;
-  vector->tail_ -= (vector->tail_-1) % vector->capacity_;
+
+  
+  if(vector->tail_ == 0){
+    vector->tail_ = vector->capacity_-1;
+  }else{
+    vector->tail_--;
+  }
+
+  void *data = (vector->storage_ + (vector->tail_))->data_;
   vector->storage_->ops_->softReset(vector->storage_+vector->tail_);
 
   return data;

@@ -22,6 +22,7 @@ static s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes);
 static s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes);
 static s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position);
 static void* CVECTOR_extractFirst(Vector *vector);
+static void* CVECTOR_extractFirstInternal(Vector *vector, u16 *size);
 static void* CVECTOR_extractLast(Vector *vector);
 static void* CVECTOR_extractAt(Vector *vector, u16 position);
 static s16 CVECTOR_concat(Vector *vector, Vector *vector_src);
@@ -134,8 +135,44 @@ s16 CVECTOR_reset(Vector *vector){ // TODO revise
 }
 
 s16 CVECTOR_resize(Vector *vector, u16 new_size){
-  
+  if (NULL == vector)
+    return kErrorCode_VectorNULL;
+  if (NULL == vector->storage_)
+    return kErrorCode_StorageNULL;
 
+  MemoryNode *new_storage = (MemoryNode *)MM->malloc(sizeof(MemoryNode) * new_size);
+  if (new_storage == NULL)
+    return kErrorCode_NoMemory;
+
+  for (int i = 0; i < new_size; i++)
+    MEMNODE_createLite((new_storage + i));
+
+  u16 size;
+  MemoryNode *current_dst = new_storage;
+  u16 length = vector->ops_->length(vector);
+  for (int i = 0; i < length; i++)
+  {
+    if (i < new_size)
+    {
+      void *data = CVECTOR_extractFirstInternal(vector, &size);
+      current_dst->ops_->setData(current_dst, data, size);
+      current_dst++;
+    }
+    else
+    {
+      (vector->storage_ + vector->head_)->ops_->reset((vector->storage_ + vector->head_));
+    }
+  }
+
+  MM->free(vector->storage_);
+  vector->storage_ = new_storage;
+  vector->head_ = 0;
+  vector->capacity_ = new_size;
+  if (length < new_size)
+    vector->tail_ = length;
+  else
+    vector->tail_ = new_size;
+  
  return kErrorCode_Ok; 
 }
 
@@ -353,6 +390,26 @@ void* CVECTOR_extractFirst(Vector *vector){
   }
 
   void *data_tmp = (vector->storage_ + vector->head_)->data_;
+  vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
+  vector->head_ = (vector->head_+1) % (vector->capacity_);
+
+  return data_tmp;
+}
+
+void* CVECTOR_extractFirstInternal(Vector *vector, u16 *size){
+  if( NULL == vector){
+    return NULL;
+  }
+  if( NULL == vector->storage_){
+    return NULL;
+  }
+
+  if(CVECTOR_isEmpty(vector)){
+    return NULL;
+  }
+
+  void *data_tmp = (vector->storage_ + vector->head_)->data_;
+  *size = (vector->storage_ + vector->head_)->size_;
   vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
   vector->head_ = (vector->head_+1) % (vector->capacity_);
 

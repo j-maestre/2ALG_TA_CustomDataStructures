@@ -511,6 +511,8 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
   s16 new_head = ((real_new_size - length) / 2);
   s16 new_tail = (new_head + length); // + 1 ???
 
+
+  // TODO Esta mal, hay que modularizarlo
   MemoryNode *current_dst = node + new_head;
   MemoryNode *current_src = vector->storage_ + vector->head_;
   MemoryNode *end = vector->storage_ + vector->tail_;

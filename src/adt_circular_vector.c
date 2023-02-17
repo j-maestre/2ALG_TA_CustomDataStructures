@@ -442,7 +442,11 @@ void* CVECTOR_extractAt(Vector *vector, u16 position){
     }
 
     //El ultimo elemento lo eliminamos porque esta duplicado
-    (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
+    if(vector->tail_ == 0){
+      (vector->storage_+(vector->capacity_-1))->ops_->softReset(vector->storage_+(vector->capacity_-1));
+    }else{
+      (vector->storage_+(vector->tail_-1))->ops_->softReset(vector->storage_+(vector->tail_-1));
+    }
   }
 
   vector->tail_ = (vector->tail_ - 1) % vector->capacity_ ;
@@ -511,11 +515,12 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
   s16 new_head = ((real_new_size - length) / 2);
   s16 new_tail = (new_head + length); // + 1 ???
 
+  MemoryNode *current_dst = node;
+  MemoryNode *current_src = vector->storage_;
+  //MemoryNode *end = vector->storage_ + vector->tail_;
 
-  // TODO Esta mal, hay que modularizarlo
-  MemoryNode *current_dst = node + new_head;
-  MemoryNode *current_src = vector->storage_ + vector->head_;
-  MemoryNode *end = vector->storage_ + vector->tail_;
+  u16 index_dst = new_head;
+  u16 index_src = vector->head_;
 
   if(!CVECTOR_isEmpty(vector)){
     do {
@@ -523,15 +528,19 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
       printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
-      current_dst->ops_->setData(current_dst, current_src->data_, current_src->size_);
-      current_src->ops_->softReset(current_src);
-      current_dst++;
-      current_src++;
-    } while (current_src != end);
+      (current_dst + index_dst)->ops_->setData((current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+      (current_src + index_src)->ops_->softReset((current_src + index_src));
+
+      index_dst = (index_dst+1)%real_new_size;
+      index_src = (index_src+1)%vector->capacity_;
+    }while (index_dst != vector->tail_);
+    //} while (index_src != vector->tail_);
   }
 
-  current_src = vector_src->storage_ + vector_src->head_;
-  end = vector_src->storage_ + vector_src->tail_;
+  current_src = vector_src->storage_;
+  //end = vector_src->storage_ + vector_src->tail_;
+
+  index_src = vector_src->head_;
 
   if(!CVECTOR_isEmpty(vector_src)){
     do{
@@ -539,10 +548,11 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
       printf("Copying memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
-      current_dst->ops_->memCopy(current_dst, current_src->data_, current_src->size_);
-      current_dst++;
-      current_src++;
-    }while(current_src != end);
+      current_dst->ops_->memCopy((current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+
+      index_dst = (index_dst+1)%real_new_size;
+      index_src = (index_src+1)%vector->capacity_;
+    }while(index_dst != vector_src->tail_);
 
   }
 

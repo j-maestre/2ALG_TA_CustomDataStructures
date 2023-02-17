@@ -87,8 +87,9 @@ s16 CVECTOR_destroy(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
         u16 lenght = CVECTOR_lenght(vector);
+        //Vector3 tiene elementos duplicados en la primera y en la segunda posicion
         for(u32 i = 0; i < lenght; i++){
-        (vector->storage_+(vector->head_+i))->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+        (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
       MM->free(vector->storage_);
     }
@@ -153,12 +154,20 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema
   {
     if (i < new_size)
     {
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", vector->storage_, vector->storage_->data_, current_dst, current_dst->data_);
+#endif
       void *data = CVECTOR_extractFirstInternal(vector, &size);
       current_dst->ops_->setData(current_dst, data, size);
       current_dst++;
     }
     else{
-      (vector->storage_ + vector->head_)->ops_->reset((vector->storage_ + ((vector->head_ + i) % vector->capacity_)));
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Freeing memory from 0x%p[0x%p]\n", (vector->storage_ + ((vector->head_ + i) % vector->capacity_)), (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->data_);
+#endif
+      (vector->storage_ + (vector->head_ + i)%vector->capacity_)->ops_->reset((vector->storage_ + ((vector->head_ + i) % vector->capacity_)));
     }
   }
 
@@ -283,7 +292,7 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xem
   
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
-    printf("Moveing memory 0x%p[0x%p]\n", vector->storage_ + (vector->head_), data);
+    printf("Moving memory 0x%p[0x%p]\n", vector->storage_ + (vector->head_), data);
 #endif
 
  
@@ -341,24 +350,59 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   // Se ha pasado del tail, lo metemos al final y au
   if(position > CVECTOR_lenght(vector)){
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
-    vector->tail_ = (vector->tail_+1) % vector->capacity_;
+    vector->tail_ = (vector->tail_+1) % (vector->capacity_ + 1);
     return kErrorCode_Ok;
   }
 
+  //Si esta al principio
+  if(position == 0){
+
+    if(vector->head_ == 0){
+      vector->head_ = vector->capacity_-1;
+    }else{
+      vector->head_--;
+    }
+    (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
+    return kErrorCode_Ok;
+  }
+
+
+
+
+
   MemoryNode *current_src = vector->storage_;
   MemoryNode *current_dst = vector->storage_;
-  MemoryNode *end = (vector->storage_ + position);
   
+  u16 index_dst = vector->tail_;
+  u16 index_src = vector->tail_ - 1;
+  if(vector->tail_ == 0){
+    index_src = vector->capacity_ - 1;
+  }
+  
+  while(index_dst != position){
+    (current_dst+index_dst)->ops_->setData((current_dst+index_dst),(current_src + index_src)->data_, (current_src+index_src)->size_);
+
+    if(index_dst == 0){
+      index_dst = vector->capacity_;
+    }
+    if(index_src == 0){
+      index_src == vector->capacity_;
+    }
+    index_dst--;
+    index_src--;
+    
+  }
+
+  return kErrorCode_Ok;
+/*
+  MemoryNode *end = (vector->storage_ + position);
   // Al final
   // TODO distinguir si esta mas cerca del principio o del final
   u16 index_dst = vector->tail_;
   u16 index_src = vector->tail_ - 1;
 
-  if(vector->tail_ == 0){
-    index_src = vector->capacity_ - 1;
-  }
 
-  while(index_dst != position){
+  while(index_dst != position-1){
     (current_dst+index_dst)->ops_->setData((current_dst+index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
 
     if(index_dst == 0){
@@ -374,8 +418,8 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   };
 
 
-  (current_dst + index_dst)->ops_->setData((current_dst + index_dst),data,bytes);
-  return kErrorCode_Ok;
+  (current_dst + index_dst)->ops_->setData((vector->storage_ + position),data,bytes);
+  return kErrorCode_Ok;*/
 }
 
 void* CVECTOR_extractFirst(Vector *vector){

@@ -83,14 +83,13 @@ Vector* CVECTOR_create(u16 capacity) { // Checked by xema && Hector
 	return vector;
 }
 
-s16 CVECTOR_destroy(Vector *vector){ // TODO revise
+s16 CVECTOR_destroy(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
-      u16 lenght = CVECTOR_lenght(vector);
-        for(u32 i = vector->head_; i < lenght; i++){
-        (vector->storage_+i)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+        u16 lenght = CVECTOR_lenght(vector);
+        for(u32 i = 0; i < lenght; i++){
+        (vector->storage_+(vector->head_+i))->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
-
       MM->free(vector->storage_);
     }
 
@@ -99,12 +98,12 @@ s16 CVECTOR_destroy(Vector *vector){ // TODO revise
   return kErrorCode_Ok;
 }
 
-s16 CVECTOR_softReset(Vector *vector){ // TODO revise
+s16 CVECTOR_softReset(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
       u16 lenght = CVECTOR_lenght(vector);
-      for(u32 i = vector->head_; i < lenght; i++){
-        (vector->storage_+i)->ops_->softReset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+      for(u32 i = vector->head_; i < lenght; i = (i + 1) % vector->capacity_ ){
+        (vector->storage_+i)->ops_->softReset((vector->storage_+(vector->head_+i)));
       }
       vector->head_ = 0;
       vector->tail_ = 0;
@@ -116,12 +115,12 @@ s16 CVECTOR_softReset(Vector *vector){ // TODO revise
   return kErrorCode_VectorNULL;
 }
 
-s16 CVECTOR_reset(Vector *vector){ // TODO revise
+s16 CVECTOR_reset(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
       u16 lenght = CVECTOR_lenght(vector);
-      for(u32 i = 0; i < lenght; i++){
-        (vector->storage_+i)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
+      for(u32 i = 0; i < lenght; i = (i + 1) % vector->capacity_){
+        (vector->storage_+i)->ops_->reset((vector->storage_+(vector->head_+i)));
       }
       vector->head_ = 0;
       vector->tail_ = 0;
@@ -134,7 +133,7 @@ s16 CVECTOR_reset(Vector *vector){ // TODO revise
 
 }
 
-s16 CVECTOR_resize(Vector *vector, u16 new_size){
+s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema
   if (NULL == vector)
     return kErrorCode_VectorNULL;
   if (NULL == vector->storage_)
@@ -158,9 +157,8 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){
       current_dst->ops_->setData(current_dst, data, size);
       current_dst++;
     }
-    else
-    {
-      (vector->storage_ + vector->head_)->ops_->reset((vector->storage_ + vector->head_));
+    else{
+      (vector->storage_ + vector->head_)->ops_->reset((vector->storage_ + ((vector->head_ + i) % vector->capacity_)));
     }
   }
 
@@ -184,7 +182,7 @@ u16 CVECTOR_capacity(Vector *vector){
   return vector->capacity_;
 }
 
-u16 CVECTOR_lenght(Vector *vector){
+u16 CVECTOR_lenght(Vector *vector){ // revised by xema
   if( NULL == vector){
       return kErrorCode_VectorNULL;
   }
@@ -231,18 +229,23 @@ void* CVECTOR_first(Vector *vector){
   return (vector->storage_ + vector->head_)->data_;
 }
 
-void* CVECTOR_last(Vector *vector){
+void* CVECTOR_last(Vector *vector){ // revised by xema
   if( NULL == vector){
     return NULL;
   }
   if( NULL == vector->storage_){
     return NULL;
   }
-  return (vector->storage_ + (vector->tail_ - 1))->data_;
+  u16 index = vector->tail_;
+
+  if (index == 0) {
+      index = vector->capacity_;
+  }
+  return (vector->storage_ + (index - 1))->data_;
 
 } 
 
-void* CVECTOR_at(Vector *vector, u16 position){
+void* CVECTOR_at(Vector *vector, u16 position){ // revised by xema
    if( NULL == vector){
     return NULL;
   }
@@ -250,10 +253,10 @@ void* CVECTOR_at(Vector *vector, u16 position){
     return NULL;
   }
 
-  return (vector->storage_ + (vector->head_ + (position%vector->capacity_))); // me huele a chamusquina
+  return (vector->storage_ + ((vector->head_ + position) % vector->capacity_));
 }
 
-s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
+s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xema
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -272,13 +275,11 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
 
   if(vector->head_ == 0){
     vector->head_ = vector->capacity_-1;
-    (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
-
   }else{
-
-    vector->head_ = ((int)vector->head_ - 1) % vector->capacity_;
-    (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
+    vector->head_--;
   }
+
+  (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
   
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
@@ -290,7 +291,7 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){
   
 } 
 
-s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){
+s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){ // revised by xema
   if( NULL == vector){
     return kErrorCode_VectorNULL;
   }
@@ -332,13 +333,13 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
 
   // Esta vacio, lo metemos al principio y au
   if(CVECTOR_isEmpty(vector)){
-    vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
+    vector->storage_->ops_->setData(vector->storage_ + vector->head_, data, bytes);
     vector->tail_ = (vector->tail_+1) % (vector->capacity_+1);
     return kErrorCode_Ok;
   }
 
   // Se ha pasado del tail, lo metemos al final y au
-  if(position > vector->tail_){
+  if(position > CVECTOR_lenght(vector)){
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
     vector->tail_ = (vector->tail_+1) % vector->capacity_;
     return kErrorCode_Ok;
@@ -512,8 +513,8 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
   //Primero sacar cuanto tenemos que meter sumando los dos vectores
   //Luego sacar la primera posicion donde tenemos que empezar a meter
 
-  s16 new_head = ((real_new_size - length) / 2);
-  s16 new_tail = (new_head + length); // + 1 ???
+  s16 new_head = 0;
+  s16 new_tail = (new_head + length);
 
   MemoryNode *current_dst = node;
   MemoryNode *current_src = vector->storage_;
@@ -533,8 +534,8 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
 
       index_dst = (index_dst+1)%real_new_size;
       index_src = (index_src+1)%vector->capacity_;
-    }while (index_dst != vector->tail_);
-    //} while (index_src != vector->tail_);
+    
+    } while (index_src != vector->tail_);
   }
 
   current_src = vector_src->storage_;
@@ -549,10 +550,11 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
       printf("Copying memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
 #endif
       current_dst->ops_->memCopy((current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+      //(current_src + index_src)->ops_->softReset((current_src + index_src));
 
       index_dst = (index_dst+1)%real_new_size;
       index_src = (index_src+1)%vector->capacity_;
-    }while(index_dst != vector_src->tail_);
+    }while(index_src != vector_src->tail_);
 
   }
 
@@ -563,7 +565,7 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
   vector->tail_ = new_tail;
   vector->head_ = new_head;
 
-  MemoryNode* data;
+  /*MemoryNode* data;
   for (int i = 0; i < vector->capacity_; i++)
   {
     data = (vector->storage_ + i);
@@ -575,7 +577,7 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
       }
     }
       
-  }
+  }*/
 
   return kErrorCode_Ok;
 }

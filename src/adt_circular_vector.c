@@ -367,31 +367,32 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   }
 
 
-
-
-
   MemoryNode *current_src = vector->storage_;
   MemoryNode *current_dst = vector->storage_;
   
   u16 index_dst = vector->tail_;
   u16 index_src = vector->tail_ - 1;
+  u16 real_position = (vector->head_+position )% vector->capacity_;
   if(vector->tail_ == 0){
     index_src = vector->capacity_ - 1;
   }
   
-  while(index_dst != position){
+  while(index_dst != real_position){
+
     (current_dst+index_dst)->ops_->setData((current_dst+index_dst),(current_src + index_src)->data_, (current_src+index_src)->size_);
 
-    if(index_dst == 0){
-      index_dst = vector->capacity_;
-    }
-    if(index_src == 0){
-      index_src == vector->capacity_;
-    }
     index_dst--;
     index_src--;
+
+    if(index_dst < 0){
+      index_dst = vector->capacity_-1;
+    }
+    if(index_src < 0){
+      index_src == vector->capacity_-1;
+    }
     
   }
+  (current_dst + real_position)->ops_->setData((vector->storage_ + real_position), data, bytes);
 
   return kErrorCode_Ok;
 /*

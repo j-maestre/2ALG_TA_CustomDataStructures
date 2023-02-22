@@ -283,10 +283,10 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xem
   }
 
   if(vector->head_ == 0){
-    vector->head_ = vector->capacity_-1;
-  }else{
-    vector->head_--;
+    vector->head_ = vector->capacity_;
   }
+  
+  vector->head_--;
 
   (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
   
@@ -358,10 +358,11 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   if(position == 0){
 
     if(vector->head_ == 0){
-      vector->head_ = vector->capacity_-1;
-    }else{
-      vector->head_--;
+      vector->head_ = vector->capacity_;
     }
+    
+    vector->head_--;
+    
     (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
     return kErrorCode_Ok;
   }
@@ -393,6 +394,7 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     
   }
   (current_dst + real_position)->ops_->setData((vector->storage_ + real_position), data, bytes);
+  vector->tail_ = (vector->tail_ + 1) % vector->capacity_+1;
 
   return kErrorCode_Ok;
 /*

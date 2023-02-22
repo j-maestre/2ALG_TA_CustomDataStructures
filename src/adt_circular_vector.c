@@ -262,7 +262,7 @@ void* CVECTOR_at(Vector *vector, u16 position){ // revised by xema
     return NULL;
   }
 
-  return (vector->storage_ + ((vector->head_ + position) % vector->capacity_));
+  return (vector->storage_ + ((vector->head_ + position) % vector->capacity_))->data_;
 }
 
 s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xema
@@ -340,6 +340,8 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     return kErrorCode_VectorFull;
   }
 
+  // TODO optimizar esto
+
   // Esta vacio, lo metemos al principio y au
   if(CVECTOR_isEmpty(vector)){
     vector->storage_->ops_->setData(vector->storage_ + vector->head_, data, bytes);
@@ -367,13 +369,15 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     return kErrorCode_Ok;
   }
 
+  // Fin optimizar
+
 
   MemoryNode *current_src = vector->storage_;
   MemoryNode *current_dst = vector->storage_;
   
   u16 index_dst = vector->tail_;
   u16 index_src = vector->tail_ - 1;
-  u16 real_position = (vector->head_+position )% vector->capacity_;
+  u16 real_position = (vector->head_+position) % vector->capacity_;
   if(vector->tail_ == 0){
     index_src = vector->capacity_ - 1;
   }
@@ -394,7 +398,7 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     
   }
   (current_dst + real_position)->ops_->setData((vector->storage_ + real_position), data, bytes);
-  vector->tail_ = (vector->tail_ + 1) % vector->capacity_+1;
+  vector->tail_ = (vector->tail_ + 1) % (vector->capacity_+1);
 
   return kErrorCode_Ok;
 /*
@@ -497,7 +501,10 @@ void* CVECTOR_extractAt(Vector *vector, u16 position){
     }
   }
 
-  vector->tail_ = (vector->tail_ - 1) % vector->capacity_ ;
+  if(vector->tail_ == 0){
+    vector->tail_ = vector->capacity_;
+  }
+  vector->tail_--;
   return data_tmp;
 }
 
@@ -516,11 +523,11 @@ void* CVECTOR_extractLast(Vector *vector){
 
   
   if(vector->tail_ == 0){
-    vector->tail_ = vector->capacity_-1;
-  }else{
-    vector->tail_--;
+    vector->tail_ = vector->capacity_;
   }
 
+  vector->tail_--;
+  
   void *data = (vector->storage_ + (vector->tail_))->data_;
   vector->storage_->ops_->softReset(vector->storage_+vector->tail_);
 

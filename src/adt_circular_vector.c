@@ -87,7 +87,6 @@ s16 CVECTOR_destroy(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
         u16 lenght = CVECTOR_lenght(vector);
-        //Vector3 tiene elementos duplicados en la primera y en la segunda posicion
         for(u32 i = 0; i < lenght; i++){
         (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
@@ -103,8 +102,8 @@ s16 CVECTOR_softReset(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
       u16 lenght = CVECTOR_lenght(vector);
-      for(u32 i = vector->head_; i < lenght; i = (i + 1) % vector->capacity_ ){
-        (vector->storage_+i)->ops_->softReset((vector->storage_+(vector->head_+i)));
+      for(u32 i = 0; i < lenght; i++ ){
+        (vector->storage_)->ops_->softReset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
       vector->head_ = 0;
       vector->tail_ = 0;
@@ -120,8 +119,8 @@ s16 CVECTOR_reset(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
       u16 lenght = CVECTOR_lenght(vector);
-      for(u32 i = 0; i < lenght; i = (i + 1) % vector->capacity_){
-        (vector->storage_+i)->ops_->reset((vector->storage_+(vector->head_+i)));
+      for(u32 i = 0; i < lenght; i++ ){
+        (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
       vector->head_ = 0;
       vector->tail_ = 0;
@@ -282,11 +281,14 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xem
     return kErrorCode_VectorFull;
   }
 
-  if(vector->head_ == 0){
-    vector->head_ = vector->capacity_;
-  }
-  
-  vector->head_--;
+  //if(!CVECTOR_isEmpty(vector)){
+
+    if(vector->head_ == 0){
+      vector->head_ = vector->capacity_;
+    }
+    
+    vector->head_--;
+  //}
 
   (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
   
@@ -318,7 +320,7 @@ s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){ // revised by xem
   }
 
   (vector->storage_)->ops_->setData(vector->storage_ + (vector->tail_),data, bytes);
-  vector->tail_ = (vector->tail_+1) % (vector->capacity_+1) ;
+  vector->tail_ = (vector->tail_+1) % (vector->capacity_+1);
 
   return kErrorCode_Ok;
 }

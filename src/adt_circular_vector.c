@@ -354,7 +354,7 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   // Se ha pasado del tail, lo metemos al final y au
   if(position > CVECTOR_lenght(vector)){
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
-    vector->tail_ = (vector->tail_+1) % (vector->capacity_ + 1);
+    vector->tail_ = (vector->tail_+1) % (vector->capacity_);
     return kErrorCode_Ok;
   }
 

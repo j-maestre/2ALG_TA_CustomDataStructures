@@ -26,6 +26,8 @@ static s16 MEMNODE_memSet(MemoryNode *node, u8 value);
 static s16 MEMNODE_memCopy(MemoryNode *node, void *src, u16 bytes);
 static u16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes);
 static s16 MEMNODE_memMask(MemoryNode *node, u8 mask);
+static s16 MEMNODE_setNext(MemoryNode *node, MemoryNode *next_node);
+static s16 MEMNODE_setPrevious(MemoryNode *node, MemoryNode *previous_node);
 static void MEMNODE_print(MemoryNode *node);
 
 
@@ -42,6 +44,8 @@ struct memory_node_ops_s memory_node_ops = { .data = MEMNODE_data,
                                              .memConcat = MEMNODE_memConcat,
                                              .memMask = MEMNODE_memMask,
                                              .print = MEMNODE_print,
+                                             .setNext = MEMNODE_setNext,
+                                             .setPrevious = MEMNODE_setPrevious
 };
 
 // Memory Node Definitions
@@ -78,6 +82,8 @@ s16 MEMNODE_initWithoutCheck(MemoryNode *node) {
   node->data_ = NULL;
   node->size_ = 0;
   node->ops_ = &memory_node_ops;
+  node->next_ = NULL;
+  node->previous_ = NULL;
   return kErrorCode_Ok;
 }
 
@@ -121,6 +127,24 @@ s16 MEMNODE_setData(MemoryNode* node, void* src, u16 bytes) {
   return kErrorCode_Ok;
 }
 
+s16 MEMNODE_setNext(MemoryNode *node, MemoryNode *next_node)
+{
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+  node->next_ = next_node;
+  return kErrorCode_Ok;
+}
+
+s16 MEMNODE_setPrevois(MemoryNode *node, MemoryNode *prevoius_node)
+{
+  if (NULL == node) {
+    return kErrorCode_MemoryNodeNULL;
+  }
+  node->previous_ = prevoius_node;
+  return kErrorCode_Ok;  
+}
+
 s16 MEMNODE_reset(MemoryNode *node) {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;
@@ -128,7 +152,7 @@ s16 MEMNODE_reset(MemoryNode *node) {
   if (NULL != node->data_) {
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
-    printf("Data freed at location 0x%p\n", node->data_);
+    printf("Data freed in the node with location[0x%p] at location 0x%p\n", node, node->data_);
 #endif // VERBOSE_
     MM->free(node->data_);
   }
@@ -144,6 +168,11 @@ s16 MEMNODE_softReset(MemoryNode *node) {
     return kErrorCode_MemoryNodeNULL;
   }
 
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Data reseted in the node with location[0x%p] at location 0x%p\n", node, node->data_);
+#endif // VERBOSE_
+
   node->data_ = NULL;
   node->size_ = 0;
 
@@ -154,17 +183,14 @@ s16 MEMNODE_free(MemoryNode *node) {
   
   if (NULL != node) {
 
-    if (NULL != node->data_) {
 #ifdef VERBOSE_
-      printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Data freed at location 0x%p\n", node->data_);
-#endif // VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Freeing data from node[0x%p] with location[0x%p] and size[%d]\n", node, node->data_, node->size_);
+#endif
+    
+    if (NULL != node->data_) {
       MM->free(node->data_);
     }
-#ifdef VERBOSE_
-    printf("\x1B[34m[VERBOSE_]\x1B[37m");
-    printf("Node freed at location 0x%p\n", node);
-#endif // VERBOSE_
     MM->free(node);
   }
 
@@ -178,7 +204,7 @@ s16 MEMNODE_softFree(MemoryNode* node) {
   }
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
-  printf("Node freed at location 0x%p\n", node);
+  printf("Node freed at location[0x%p], without freeing data[0x%p] with size[%d]\n", node, node->data_, node->size_);
 #endif
   MM->free(node);
 

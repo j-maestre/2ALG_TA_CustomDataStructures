@@ -70,6 +70,16 @@ Vector* CVECTOR_create(u16 capacity) { // Checked by xema && Hector
 		return NULL;
 	}
     
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Creating new storage for the vector[0x%p] with adress = 0x%p\n", vector, vector->storage_);
+  for (int i = 0; i < capacity; i++)
+  {
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Position %d from storage has llocation [0x%p]\n", i, &vector->storage_[i]);
+  }
+#endif
+
   for (MemoryNode *current = vector->storage_, 
       *end = (vector->storage_ + vector->capacity_); current != end; current++) 
   {
@@ -88,6 +98,12 @@ s16 CVECTOR_destroy(Vector *vector){ // revised by xema
     if( NULL != vector->storage_){
         u16 lenght = CVECTOR_lenght(vector);
         for(u32 i = 0; i < lenght; i++){
+
+#ifdef VERBOSE_
+          printf("\x1B[34m[VERBOSE_]\x1B[37m");
+          printf("Freeing data from vector[0x%p] in node[0x%p] with data[0x%p] and size[%d]\n", vector, (vector->storage_ + ((vector->head_ + i) % vector->capacity_)), (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->data_, (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->size_);
+#endif
+
             (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
         }
       MM->free(vector->storage_);
@@ -103,6 +119,12 @@ s16 CVECTOR_softReset(Vector *vector){ // revised by xema
     if( NULL != vector->storage_){
       u16 lenght = CVECTOR_lenght(vector);
       for(u32 i = 0; i < lenght; i++ ){
+
+#ifdef VERBOSE_
+        printf("\x1B[34m[VERBOSE_]\x1B[37m");
+        printf("Resetting data from vector[0x%p] in node[0x%p] with data[0x%p] and size[%d]\n", vector, (vector->storage_ + ((vector->head_ + i) % vector->capacity_)), (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->data_, (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->size_);
+#endif
+
         (vector->storage_)->ops_->softReset((vector->storage_+((vector->head_+i)%vector->capacity_)));
       }
       vector->head_ = 0;
@@ -143,6 +165,16 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
   if (new_storage == NULL)
     return kErrorCode_NoMemory;
 
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Creating new storage for the vector[0x%p] with adress = 0x%p\n", vector, new_storage);
+  for (int i = 0; i < new_size; i++)
+  {
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Position %d from storage has llocation [0x%p]\n", i, &new_storage[i]);
+  }
+#endif
+
   for (int i = 0; i < new_size; i++)
     MEMNODE_createLite((new_storage + i));
 
@@ -155,7 +187,7 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
     {
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", vector->storage_, vector->storage_->data_, current_dst, current_dst->data_);
+      printf("Moving memory from 0x%p[0x%p] to 0x%p[0x%p]\n", vector->storage_, vector->storage_->data_, current_dst, current_dst->data_);
 #endif
       void *data = CVECTOR_extractFirstInternal(vector, &size);
       current_dst->ops_->setData(current_dst, data, size);
@@ -294,7 +326,7 @@ s16 CVECTOR_insertFirst(Vector *vector, void *data, u16 bytes){// revised by xem
   
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
-    printf("Moving memory 0x%p[0x%p]\n", vector->storage_ + (vector->head_), data);
+    printf("Moving memory 0x%p[0x%p] wit size %d\n", vector->storage_ + (vector->head_), data, bytes);
 #endif
 
  
@@ -318,6 +350,11 @@ s16 CVECTOR_insertLast(Vector *vector, void *data, u16 bytes){ // revised by xem
   if(CVECTOR_isFull(vector)){
     return kErrorCode_VectorFull;
   }
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Moving memory 0x%p[0x%p] with size %d\n", vector->storage_ + (vector->tail_), data, bytes);
+#endif
 
   (vector->storage_)->ops_->setData(vector->storage_ + (vector->tail_),data, bytes);
   vector->tail_ = (vector->tail_+1) % (vector->capacity_);
@@ -346,6 +383,10 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
 
   // Esta vacio, lo metemos al principio y au
   if(CVECTOR_isEmpty(vector)){
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Moving memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->head_, data, bytes);
+#endif
     vector->storage_->ops_->setData(vector->storage_ + vector->head_, data, bytes);
     vector->tail_ = (vector->tail_+1) % (vector->capacity_);
     return kErrorCode_Ok;
@@ -353,6 +394,10 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
 
   // Se ha pasado del tail, lo metemos al final y au
   if(position > CVECTOR_lenght(vector)){
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Moving memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->tail_, data, bytes);
+#endif
     vector->storage_->ops_->setData(vector->storage_ + vector->tail_, data, bytes);
     vector->tail_ = (vector->tail_+1) % (vector->capacity_);
     return kErrorCode_Ok;
@@ -367,6 +412,10 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     
     vector->head_--;
     
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Moving memory 0x%p[0x%p] with size %d\n", vector->storage_ + (vector->head_), data, bytes);
+#endif
     (vector->storage_)->ops_->setData(vector->storage_ + (vector->head_),data, bytes);
     return kErrorCode_Ok;
   }
@@ -386,6 +435,11 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
   
   while(index_dst != real_position){
 
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Moving memory 0x%p[0x%p] with size %d\n", (current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+#endif
+
     (current_dst+index_dst)->ops_->setData((current_dst+index_dst),(current_src + index_src)->data_, (current_src+index_src)->size_);
 
     index_dst--;
@@ -399,6 +453,12 @@ s16 CVECTOR_insertAt(Vector *vector, void *data, u16 bytes, u16 position){
     }
     
   }
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Moving memory 0x%p[0x%p] with size %d\n", (vector->storage_ + real_position), data, bytes);
+#endif
+
   (current_dst + real_position)->ops_->setData((vector->storage_ + real_position), data, bytes);
   vector->tail_ = (vector->tail_ + 1) % (vector->capacity_);
 
@@ -444,6 +504,12 @@ void* CVECTOR_extractFirst(Vector *vector){
   }
 
   void *data_tmp = (vector->storage_ + vector->head_)->data_;
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Resetting memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->head_, (vector->storage_ + vector->head_)->data_, (vector->storage_ + vector->head_)->size_);
+#endif
+
   vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
   vector->head_ = (vector->head_+1) % (vector->capacity_);
 
@@ -464,6 +530,12 @@ void* CVECTOR_extractFirstInternal(Vector *vector, u16 *size){
 
   void *data_tmp = (vector->storage_ + vector->head_)->data_;
   *size = (vector->storage_ + vector->head_)->size_;
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Resetting memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->head_, (vector->storage_ + vector->head_)->data_, (vector->storage_ + vector->head_)->size_);
+#endif
+
   vector->storage_->ops_->softReset(vector->storage_ + vector->head_);
   vector->head_ = (vector->head_+1) % (vector->capacity_);
 
@@ -499,6 +571,10 @@ void* CVECTOR_extractAt(Vector *vector, u16 position){
 
 
   while(index_src != vector->tail_){
+#ifdef VERBOSE_
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Moving memory 0x%p[0x%p] with size %d\n", (current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+#endif
     (current_dst+index_dst)->ops_->setData((current_dst+index_dst),(current_src + index_src)->data_, (current_src+index_src)->size_);
 
     index_dst = (index_dst+1)%vector->capacity_;
@@ -511,6 +587,12 @@ void* CVECTOR_extractAt(Vector *vector, u16 position){
   }
 
   vector->tail_--;
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Resetting memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->tail_, (vector->storage_ + vector->tail_)->data_, (vector->storage_ + vector->tail_)->size_);
+#endif
+
   vector->storage_->ops_->softReset(vector->storage_+vector->tail_);
 
   return data_tmp;
@@ -537,6 +619,12 @@ void* CVECTOR_extractLast(Vector *vector){
   vector->tail_--;
   
   void *data = (vector->storage_ + (vector->tail_))->data_;
+
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Resetting memory 0x%p[0x%p] with size %d\n", vector->storage_ + vector->tail_, (vector->storage_ + vector->tail_)->data_, (vector->storage_ + vector->tail_)->size_);
+#endif
+
   vector->storage_->ops_->softReset(vector->storage_+vector->tail_);
 
   return data;
@@ -565,6 +653,15 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
     return kErrorCode_NoMemory;
   }
 
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Creating new storage for the vector[0x%p] with adress = 0x%p\n", vector, node);
+  for (int i = 0; i < real_new_size; i++)
+  {
+    printf("\x1B[34m[VERBOSE_]\x1B[37m");
+    printf("Position %d from storage has llocation [0x%p]\n", i, &node[i]);
+  }
+#endif
   
   // Create lite de todos los memory node
   for (u32 i = 0; i < real_new_size; i++){
@@ -589,9 +686,15 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
     do {
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Moveing memory from 0x%p[0x%p] to 0x%p[0x%p]\n", current_src, current_src->data_, current_dst, current_dst->data_);
+      printf("Moving memory from 0x%p[0x%p] to 0x%p[0x%p]\n", (current_src + index_src), (current_src + index_src)->data_, current_dst + index_dst, (current_dst + index_dst)->data_);
 #endif
       (current_dst + index_dst)->ops_->setData((current_dst + index_dst), (current_src + index_src)->data_, (current_src + index_src)->size_);
+
+#ifdef VERBOSE_
+      printf("\x1B[34m[VERBOSE_]\x1B[37m");
+      printf("Resetting memory 0x%p[0x%p] with size %d\n", (current_src + index_src), (current_src + index_src)->data_, (current_src + index_src)->size_);
+#endif
+
       (current_src + index_src)->ops_->softReset((current_src + index_src));
 
       index_dst = (index_dst+1)%real_new_size;

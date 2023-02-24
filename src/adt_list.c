@@ -22,11 +22,12 @@ static s16 List_insertAt(List *list, void *data, u16 bytes, u16 position);
 static void* List_extractFirst(List *list);
 static void* List_extractLast(List *list);
 static void* List_extractAt(List *list, u16 position);
-static s16 List_concat(List *list, List *List_src);
+static s16 List_concat(List *list, List *list_src);
 static s16 List_traverse(List *list, void (*callback)(MemoryNode *));
 static void List_print(List *list);
 static void List_initWithoutCheck(List *list);
 static MemoryNode *List_extractLastInternal(List *list);
+static MemoryNode* List_atInternal(List *list, u16 position);
 
 struct list_ops_s list_ops = { .destroy = List_destroy,
                                    .softReset = List_softReset,
@@ -50,7 +51,7 @@ struct list_ops_s list_ops = { .destroy = List_destroy,
                                    .print = List_print                   
                                    };
 
-List* List_create(u16 capacity) {
+List* LIST_create(u16 capacity) {
   if (capacity == 0)
     return NULL;
 
@@ -87,12 +88,12 @@ s16 List_destroy(List *list){
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Destroying list in location[0x%p] with capacity[%d] and length[%d]\n", list, list->capacity_, list->lenght_);
 #endif
-  
-  MemoryNode *current = list->head_;
-  MemoryNode *next = list->head_->next_;
 
-  while (current != NULL)
+  MemoryNode *current = list->head_;
+  MemoryNode *next = NULL;
+  for (int i = 0; i < list->lenght_ && next != NULL; i++)
   {
+    next = current->next_;
     current->ops_->free(current);
     current = next;
     next = next->next_;
@@ -133,6 +134,9 @@ s16 List_reset(List *list){
   if (list == NULL)
     return kErrorCode_NULL;
 
+  if (list->ops_->isEmpty(list))
+    return kErrorCode_Ok;
+
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Resetting list in location[0x%p] with capacity[%d] and length[%d]\n", list, list->capacity_, list->lenght_);
@@ -145,7 +149,8 @@ s16 List_reset(List *list){
   {
     current->ops_->softFree(current);
     current = next;
-    next = next->next_;
+    if (next != NULL)
+      next = next->next_;
   }
 
   list->lenght_ = 0;
@@ -209,6 +214,15 @@ void* List_last(List *list){
 } 
 
 void* List_at(List *list, u16 position){
+  MemoryNode *node = List_atInternal(list, position);
+  if (node != NULL)
+    return node->data_;
+
+  return NULL;
+}
+
+MemoryNode* List_atInternal(List *list, u16 position)
+{
   if (list == NULL)
     return NULL;
 
@@ -222,9 +236,8 @@ void* List_at(List *list, u16 position){
     current = current->next_;
   }
   
-  return current->data_;
+  return current;
 }
-
 
 s16 List_insertFirst(List *list, void *data, u16 bytes){
   if (list == NULL)
@@ -299,6 +312,7 @@ s16 List_insertLast(List *list, void *data, u16 bytes){
 #endif
     new_node->next_ = list->head_;
     list->head_ = new_node;
+    list->tail_ = new_node;
   }
   else
   {
@@ -368,6 +382,8 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){
     list->head_ = new_node;
     list->tail_ = new_node;
   }
+
+  list->lenght_++;
   
   return kErrorCode_Ok;
 }
@@ -386,6 +402,8 @@ void* List_extractFirst(List *list){
     list->head_ = extract_node->next_;
     if (list->lenght_ == 1)
       list->tail_ = NULL;
+
+    list->lenght_--;
     return extract_node->data_;
   }
   
@@ -410,7 +428,7 @@ MemoryNode* List_extractLastInternal(List *list)
   else
   {
     // more than one node in the list
-    while (current->next_ != list->tail_)
+    while (current->next_->next_ != NULL)
     {
       current = current->next_;
     }
@@ -431,21 +449,82 @@ void* List_extractLast(List *list){
 }
 
 void* List_extractAt(List *list, u16 position){
+  if (list == NULL)
+    return NULL;
+
+  if (list->lenght_ < position)
+    position = list->lenght_;
   
-  return 0;
+  MemoryNode *current = list->head_;
+  for (s16 i = 0; i < position - 1; i++)
+  {
+    current = current->next_;
+  }
+
+  MemoryNode *extract_node = current->next_;
+  if (extract_node != NULL)
+    current->next_ = extract_node->next_;
+  else
+    current->next_ = NULL;
+  
+  
+  if (extract_node != NULL)
+  {
+    list->lenght_--;
+    return extract_node->data_;
+  }
+  
+  return NULL;
 }
 
-s16 List_concat(List *list, List *ist_src){
-  
+s16 List_concat(List *list, List *list_src){
+  if (list == NULL || list_src == NULL)
+    return kErrorCode_NULL;
 
-  return 0;
+  u16 new_capacity = list->capacity_ + list_src->capacity_;
+
+  list->ops_->resize(list, new_capacity);
+
+  MemoryNode *copy_node = MEMNODE_create();
+  MemoryNode *current;
+  for (u16 i = 0; i < list_src->lenght_; i++)
+  {
+    current = List_atInternal(list_src, i);
+    copy_node->ops_->memCopy(copy_node, current->data_, current->size_);
+    list->ops_->insertLast(list, copy_node->data_, copy_node->size_);
+    copy_node->ops_->softReset(copy_node);
+  }
+  
+  copy_node->ops_->softFree(copy_node);
+  
+  return kErrorCode_Ok;
 }
 
 s16 List_traverse(List *list, void (*callback)(MemoryNode *)){
- 
+  if (list == NULL)
+    return kErrorCode_NULL;
+
+  if (callback == NULL)
+    return kErrorCode_CallBackNULL;
+  
+  MemoryNode *current  = list->head_;
+  for (u16 i = 0; i < list->lenght_; i++)
+  {
+    callback(current);
+    current = current->next_;
+  }
+  
   return kErrorCode_Ok;
 }
 
 void List_print(List *list){
+  if (list == NULL)
+    return;
   
+  MemoryNode *current  = list->head_;
+  for (u16 i = 0; i < list->lenght_ && current != NULL; i++)
+  {
+    current->ops_->print(current);
+    current = current->next_;
+  }
 }

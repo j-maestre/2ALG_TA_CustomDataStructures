@@ -31,6 +31,7 @@ typedef enum {
   kErrorCode_VectorFull = -13,
   kErrorCode_CallBackNULL = -14,
   kErrorCode_ListFull = -15,
+  kErrorCode_ListNULL = -16,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

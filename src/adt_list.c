@@ -51,7 +51,7 @@ struct list_ops_s list_ops = { .destroy = List_destroy,
                                    .print = List_print                   
                                    };
 
-List* LIST_create(u16 capacity) {
+List* LIST_create(u16 capacity) { // Checked by xema and hector
   if (capacity == 0)
     return NULL;
 
@@ -71,8 +71,7 @@ List* LIST_create(u16 capacity) {
 	return list;
 }
 
-void List_initWithoutCheck(List *list)
-{
+void List_initWithoutCheck(List *list){
   list->capacity_ = 0;
   list->lenght_ = 0;
   list->head_ = NULL;
@@ -80,9 +79,15 @@ void List_initWithoutCheck(List *list)
   list->ops_ = &list_ops;
 }
 
-s16 List_destroy(List *list){ 
+s16 List_destroy(List *list){ // Checked by xema
   if (list == NULL)
-    return kErrorCode_NULL;
+    return kErrorCode_ListNULL;
+
+  if (list->ops_->isEmpty(list))
+  {
+    MM->free(list);
+    return kErrorCode_Ok;
+  }
 
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
@@ -90,23 +95,24 @@ s16 List_destroy(List *list){
 #endif
 
   MemoryNode *current = list->head_;
-  MemoryNode *next = NULL;
-  for (int i = 0; i < list->lenght_ && next != NULL; i++)
-  {
-    next = current->next_;
+  MemoryNode *next = current->next_;
+  for (int i = 0; i < list->lenght_-1 && current != NULL; i++){
     current->ops_->free(current);
     current = next;
-    next = next->next_;
+    next = next->next_; 
   }
 
+  current->ops_->free(current);
   list->lenght_ = 0;
   list->head_ = NULL;
   list->tail_ = NULL;
   
+  MM->free(list);
+
   return kErrorCode_Ok;
 }
 
-s16 List_softReset(List *list){ 
+s16 List_softReset(List *list){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -116,13 +122,11 @@ s16 List_softReset(List *list){
 #endif
   
   MemoryNode *current = list->head_;
-  MemoryNode *next = list->head_->next_;
 
   while (current != NULL)
   {
     current->ops_->softFree(current);
-    current = next;
-    next = next->next_;
+    current = current->next_;
   }
 
   list->lenght_ = 0;

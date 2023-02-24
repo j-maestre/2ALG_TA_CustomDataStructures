@@ -15,11 +15,11 @@
 #include "adt_memory_node.h"
 
 typedef struct adt_list_s {
-	u16 head_;
-	u16 tail_;
+	MemoryNode *head_;
+	MemoryNode *tail_;
 	u16 capacity_;
-	MemoryNode *storage_;
-	struct list_ops_s *ops;
+	u16 lenght_;
+	struct list_ops_s *ops_;
 } List;
 
 
@@ -85,6 +85,6 @@ struct list_ops_s {
 	void (*print)(List *list);
 };
 
-List *LIST_Create(u16 capacity);
+List *LIST_create(u16 capacity);
 
 #endif //__ADT_LIST_H__

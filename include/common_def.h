@@ -30,6 +30,7 @@ typedef enum {
   kErrorCode_VectorPositionExceedsTail = -12,
   kErrorCode_VectorFull = -13,
   kErrorCode_CallBackNULL = -14,
+  kErrorCode_ListFull = -15,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

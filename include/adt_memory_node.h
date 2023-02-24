@@ -50,6 +50,10 @@ struct memory_node_ops_s {
    */
   s16(*setData) (MemoryNode *node, void *src, u16 bytes);
 
+  s16(*setNext) (MemoryNode *node, MemoryNode *next_node);
+
+  s16(*setPrevious) (MemoryNode *node, MemoryNode *previous_node);
+ 
   /**
    * \brief Get the data size of the MemoryNode
    * 

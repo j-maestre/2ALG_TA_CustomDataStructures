@@ -94,23 +94,32 @@ Vector* CVECTOR_create(u16 capacity) { // Checked by xema && Hector
 }
 
 s16 CVECTOR_destroy(Vector *vector){ // revised by xema
-  if ( NULL != vector){
-    if( NULL != vector->storage_){
-        u16 lenght = CVECTOR_lenght(vector);
-        for(u32 i = 0; i < lenght; i++){
+
+
+  if ( NULL == vector){
+    return kErrorCode_VectorNULL;
+  }
+  if( NULL == vector->storage_){
+    return kErrorCode_StorageNULL;
+  }
+
+  for(u32 i = 0; i < vector->capacity_; i++){
 
 #ifdef VERBOSE_
           printf("\x1B[34m[VERBOSE_]\x1B[37m");
           printf("Freeing data from vector[0x%p] in node[0x%p] with data[0x%p] and size[%d]\n", vector, (vector->storage_ + ((vector->head_ + i) % vector->capacity_)), (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->data_, (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->size_);
 #endif
 
-            (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
-        }
-      MM->free(vector->storage_);
+      (vector->storage_)->ops_->reset((vector->storage_+i));
     }
+    
+    vector->head_ = 0;
+    vector->tail_ = 0;
+    vector->capacity_ = 0;
+    MM->free(vector->storage_);
+    vector->storage_ = NULL;
 
     MM->free(vector);
-  }
   return kErrorCode_Ok;
 }
 
@@ -140,6 +149,7 @@ s16 CVECTOR_softReset(Vector *vector){ // revised by xema
 s16 CVECTOR_reset(Vector *vector){ // revised by xema
   if ( NULL != vector){
     if( NULL != vector->storage_){
+
       u16 lenght = CVECTOR_lenght(vector);
       for(u32 i = 0; i < lenght; i++ ){
         (vector->storage_)->ops_->reset((vector->storage_+((vector->head_+i)%vector->capacity_)));
@@ -148,6 +158,7 @@ s16 CVECTOR_reset(Vector *vector){ // revised by xema
       vector->tail_ = 0;
       return kErrorCode_Ok;
     }
+
     
     return kErrorCode_StorageNULL;
   }
@@ -181,7 +192,9 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
   u16 size;
   MemoryNode *current_dst = new_storage;
   u16 length = vector->ops_->length(vector);
-  for (int i = 0; i < length; i++)
+  u16 index_aux = 0;
+  
+  for (int i = 0; i < vector->capacity_; i++)
   {
     if (i < new_size)
     {
@@ -191,6 +204,7 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
 #endif
       void *data = CVECTOR_extractFirstInternal(vector, &size);
       current_dst->ops_->setData(current_dst, data, size);
+
       current_dst++;
     }
     else{
@@ -198,7 +212,8 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
       printf("Freeing memory from 0x%p[0x%p]\n", (vector->storage_ + ((vector->head_ + i) % vector->capacity_)), (vector->storage_ + ((vector->head_ + i) % vector->capacity_))->data_);
 #endif
-      (vector->storage_ + (vector->head_ + i)%vector->capacity_)->ops_->reset((vector->storage_ + ((vector->head_ + i) % vector->capacity_)));
+      (vector->storage_ + ((vector->head_ + index_aux)%vector->capacity_))->ops_->reset((vector->storage_ + (((vector->head_ + index_aux) % vector->capacity_))));
+      index_aux++;
     }
   }
 
@@ -207,9 +222,9 @@ s16 CVECTOR_resize(Vector *vector, u16 new_size){ // revised by xema x2
   vector->head_ = 0;
   vector->capacity_ = new_size;
   if (length < new_size)
-    vector->tail_ = length;
+    vector->tail_ = length % new_size;
   else
-    vector->tail_ = new_size;
+    vector->tail_ = new_size % new_size;
   
  return kErrorCode_Ok; 
 }
@@ -229,6 +244,7 @@ u16 CVECTOR_lenght(Vector *vector){ // revised by xema
 
   if(vector->tail_ > vector->head_){
       return vector->tail_ - vector->head_;
+
   }else if(vector->tail_ < vector->head_){
       return (vector->capacity_ - vector->head_) + vector->tail_;
   }else{
@@ -673,7 +689,7 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
   //Luego sacar la primera posicion donde tenemos que empezar a meter
 
   s16 new_head = 0;
-  s16 new_tail = (new_head + length);
+  s16 new_tail = length;
 
   MemoryNode *current_dst = node;
   MemoryNode *current_src = vector->storage_;
@@ -692,7 +708,7 @@ s16 CVECTOR_concat(Vector *vector, Vector *vector_src){
 
 #ifdef VERBOSE_
       printf("\x1B[34m[VERBOSE_]\x1B[37m");
-      printf("Resetting memory 0x%p[0x%p] with size %d\n", (current_src + index_src), (current_src + index_src)->data_, (current_src + index_src)->size_);
+      printf("Soft Resetting memory 0x%p[0x%p] with size %d\n", (current_src + index_src), (current_src + index_src)->data_, (current_src + index_src)->size_);
 #endif
 
       (current_src + index_src)->ops_->softReset((current_src + index_src));

@@ -65,7 +65,7 @@ List* LIST_create(u16 capacity) { // Checked by xema and hector
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("List has been created with location[0x%p] and capacity[%d]\n", list, capacity);
 #endif
-  
+
   list->capacity_ = capacity;
   
 	return list;
@@ -134,7 +134,7 @@ s16 List_softReset(List *list){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 List_reset(List *list){
+s16 List_reset(List *list){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -162,7 +162,7 @@ s16 List_reset(List *list){
   return kErrorCode_Ok;
 }
 
-s16 List_resize(List *list, u16 new_size){ 
+s16 List_resize(List *list, u16 new_size){ // Checked
   if (list == NULL)
    return kErrorCode_NULL;
 
@@ -178,39 +178,39 @@ s16 List_resize(List *list, u16 new_size){
   return kErrorCode_Ok;
 }
 
-u16 List_capacity(List *list){
+u16 List_capacity(List *list){  // Checked by xema
   if (list == NULL)
     return 0;
   return list->capacity_;
 }
 
-u16 List_lenght(List *list){
+u16 List_lenght(List *list){ // Checked by xema
   if (list == NULL)
     return 0;
   return list->lenght_;
 
 }
 
-boolean List_isEmpty(List *list){
+boolean List_isEmpty(List *list){  // Checked by xema
   if (list == NULL)
     return False;
   return (list->lenght_ == 0);
 }
 
-boolean List_isFull(List *list){
+boolean List_isFull(List *list){ // Checked by xema
   if (list == NULL)
     return True;
   return (list->lenght_ == list->capacity_);
 }
 
-void* List_first(List *list){
+void* List_first(List *list){  // Checked by xema
   if (list == NULL)
     return NULL;
   
   return list->head_;
 }
 
-void* List_last(List *list){
+void* List_last(List *list){  // Checked by xema
   if (list == NULL)
     return NULL;
   
@@ -225,7 +225,7 @@ void* List_at(List *list, u16 position){
   return NULL;
 }
 
-MemoryNode* List_atInternal(List *list, u16 position)
+MemoryNode* List_atInternal(List *list, u16 position) // Checked by xema
 {
   if (list == NULL)
     return NULL;
@@ -233,7 +233,7 @@ MemoryNode* List_atInternal(List *list, u16 position)
   MemoryNode *current = list->head_;
 
   if (position > list->lenght_)
-    position = list->lenght_;
+    return list->tail_;
   
   for (u16 i = 0; i < position; i++)
   {
@@ -243,7 +243,7 @@ MemoryNode* List_atInternal(List *list, u16 position)
   return current;
 }
 
-s16 List_insertFirst(List *list, void *data, u16 bytes){
+s16 List_insertFirst(List *list, void *data, u16 bytes){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -283,7 +283,7 @@ s16 List_insertFirst(List *list, void *data, u16 bytes){
 } 
 
 
-s16 List_insertLast(List *list, void *data, u16 bytes){
+s16 List_insertLast(List *list, void *data, u16 bytes){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -307,19 +307,19 @@ s16 List_insertLast(List *list, void *data, u16 bytes){
   new_node->ops_->setData(new_node, data, bytes);
 
   
-  //new_node->next_ = NULL;
+  // Si la lista esta vacia
   if (list->tail_ == NULL)
   {
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Inserting node[0x%p] in the head of the list[0x%p] because the list is empty\n", new_node, list);
 #endif
-    new_node->next_ = list->head_;
+    new_node->next_ = NULL;
     list->head_ = new_node;
     list->tail_ = new_node;
-  }
-  else
-  {
+    
+  // Si tiene cosas dentro
+  }else{
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Inserting node[0x%p] in the tail of the list[0x%p]\n", new_node, list);
@@ -335,7 +335,7 @@ s16 List_insertLast(List *list, void *data, u16 bytes){
 }
 
 
-s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){
+s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -382,7 +382,7 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Inserting node[0x%p] in the head of the list[0x%p] because the list is empty\n", new_node, list);
 #endif
-    new_node->next_ = list->head_;
+    new_node->next_ = NULL;
     list->head_ = new_node;
     list->tail_ = new_node;
   }
@@ -392,7 +392,7 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){
   return kErrorCode_Ok;
 }
 
-void* List_extractFirst(List *list){
+void* List_extractFirst(List *list){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -404,9 +404,11 @@ void* List_extractFirst(List *list){
     printf("Extracting node[0x%p] from the head of the list[0x%p]\n", extract_node, list);
 #endif
     list->head_ = extract_node->next_;
-    if (list->lenght_ == 1)
+    if (list->lenght_ == 1){
       list->tail_ = NULL;
-
+      list->head_ = NULL;
+    }
+    
     list->lenght_--;
     return extract_node->data_;
   }
@@ -414,8 +416,7 @@ void* List_extractFirst(List *list){
   return NULL;
 }
 
-MemoryNode* List_extractLastInternal(List *list)
-{
+MemoryNode* List_extractLastInternal(List *list){ // Checked by xema
   if (list == NULL)
     return NULL;
   
@@ -423,15 +424,13 @@ MemoryNode* List_extractLastInternal(List *list)
   if (current == NULL)
     return NULL;
 
-  if (list->lenght_ == 1)
-  {
+  if (list->lenght_ == 1){
     // only one node in the list
     list->head_ = NULL;
     list->tail_ = NULL;
-  }
-  else
-  {
+  }else{
     // more than one node in the list
+    // Llegamos hasta el penultimo
     while (current->next_->next_ != NULL)
     {
       current = current->next_;
@@ -444,7 +443,7 @@ MemoryNode* List_extractLastInternal(List *list)
   return current;
 }
 
-void* List_extractLast(List *list){
+void* List_extractLast(List *list){ // Checked by xema
   MemoryNode *extract_node = List_extractLastInternal(list);
   if (extract_node != NULL)
     return extract_node->data_;
@@ -452,7 +451,8 @@ void* List_extractLast(List *list){
   return NULL;
 }
 
-void* List_extractAt(List *list, u16 position){
+
+void* List_extractAt(List *list, u16 position){ // Checked by xema
   if (list == NULL)
     return NULL;
 
@@ -481,7 +481,7 @@ void* List_extractAt(List *list, u16 position){
   return NULL;
 }
 
-s16 List_concat(List *list, List *list_src){
+s16 List_concat(List *list, List *list_src){ // Checked by xema
   if (list == NULL || list_src == NULL)
     return kErrorCode_NULL;
 
@@ -504,7 +504,7 @@ s16 List_concat(List *list, List *list_src){
   return kErrorCode_Ok;
 }
 
-s16 List_traverse(List *list, void (*callback)(MemoryNode *)){
+s16 List_traverse(List *list, void (*callback)(MemoryNode *)){ // Checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 

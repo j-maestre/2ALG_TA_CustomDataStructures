@@ -136,7 +136,7 @@ s16 MEMNODE_setNext(MemoryNode *node, MemoryNode *next_node)
   return kErrorCode_Ok;
 }
 
-s16 MEMNODE_setPrevois(MemoryNode *node, MemoryNode *prevoius_node)
+s16 MEMNODE_setPrevious(MemoryNode *node, MemoryNode *prevoius_node)
 {
   if (NULL == node) {
     return kErrorCode_MemoryNodeNULL;

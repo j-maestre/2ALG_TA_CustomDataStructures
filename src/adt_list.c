@@ -274,8 +274,9 @@ s16 List_insertFirst(List *list, void *data, u16 bytes){ // Checked by xema
   new_node->next_ = list->head_;
   list->head_ = new_node;
 
-  if (list->tail_ == NULL)
+  if (list->tail_ == NULL){
     list->tail_ = new_node;
+  }
   
   list->lenght_++;
   
@@ -347,6 +348,10 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked b
 
   if (list->ops_->isFull(list))
     return kErrorCode_ListFull;
+
+  if (list->ops_->isEmpty(list) || position == 0) {
+    return list->ops_->insertFirst(list,data,bytes);
+  }
   
   MemoryNode *new_node = MEMNODE_create();
   if (new_node == NULL)
@@ -358,8 +363,9 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked b
 #endif
   new_node->ops_->setData(new_node, data, bytes);
 
-  if (position > list->lenght_)
-    position = list->lenght_;
+  if (position > list->lenght_) {
+    return list->ops_->insertLast(list,data,bytes);
+  }
 
   MemoryNode *current = list->head_;
   for (s16 i = 0; i < position - 1; i++)
@@ -375,6 +381,7 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked b
 #endif
     new_node->next_ = current->next_;
     current->next_ = new_node;
+    
   }
   else
   {

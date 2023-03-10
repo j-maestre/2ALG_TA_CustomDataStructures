@@ -190,6 +190,7 @@ s16 MEMNODE_free(MemoryNode *node) {
     
     if (NULL != node->data_) {
       MM->free(node->data_);
+      node->data_ = NULL;
     }
     MM->free(node);
   }

@@ -151,14 +151,15 @@ s16 List_reset(List *list){ // Checked by xema
 
   while (current != NULL)
   {
-    current->ops_->softFree(current);
+    current->ops_->reset(current);
     current = next;
     if (next != NULL)
       next = next->next_;
   }
 
   list->lenght_ = 0;
-  
+  list->head_ = NULL;
+  list->tail_ = NULL;
   return kErrorCode_Ok;
 }
 
@@ -444,8 +445,12 @@ MemoryNode* List_extractLastInternal(List *list){ // Checked by xema
     }
     list->tail_ = current;
     current = current->next_;
+    list->tail_->next_ = NULL;
   }
-
+#ifdef VERBOSE_
+  printf("\x1B[34m[VERBOSE_]\x1B[37m");
+  printf("Extracting node[0x%p] from the head of the list[0x%p]\n", current, list);
+#endif
   list->lenght_--;
   return current;
 }

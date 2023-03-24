@@ -151,7 +151,7 @@ s16 List_reset(List *list){ // Checked by xema
 
   while (current != NULL)
   {
-    current->ops_->reset(current);
+    current->ops_->free(current);
     current = next;
     if (next != NULL)
       next = next->next_;
@@ -354,6 +354,10 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked b
     return list->ops_->insertFirst(list,data,bytes);
   }
   
+  if (position > list->lenght_) {
+    return list->ops_->insertLast(list, data, bytes);
+  }
+
   MemoryNode *new_node = MEMNODE_create();
   if (new_node == NULL)
     return kErrorCode_NoMemory;
@@ -362,11 +366,7 @@ s16 List_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked b
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Moving data to node[0x%p] with location[0x%p] and size[%d]\n", new_node, data, bytes);
 #endif
-  new_node->ops_->setData(new_node, data, bytes);
-
-  if (position > list->lenght_) {
-    return list->ops_->insertLast(list,data,bytes);
-  }
+  new_node->ops_->setData(new_node, data, bytes); 
 
   MemoryNode *current = list->head_;
   for (s16 i = 0; i < position - 1; i++)
@@ -405,6 +405,7 @@ void* List_extractFirst(List *list){ // Checked by xema
     return kErrorCode_NULL;
 
   MemoryNode *extract_node = list->head_;
+  void* extract_data;
   if (extract_node != NULL)
   {
 #ifdef VERBOSE_
@@ -418,7 +419,9 @@ void* List_extractFirst(List *list){ // Checked by xema
     }
     
     list->lenght_--;
-    return extract_node->data_;
+    extract_data = extract_node->data_;
+    extract_node->ops_->softFree(extract_node);
+    return extract_data;
   }
   
   return NULL;
@@ -457,10 +460,20 @@ MemoryNode* List_extractLastInternal(List *list){ // Checked by xema
 
 void* List_extractLast(List *list){ // Checked by xema
   MemoryNode *extract_node = List_extractLastInternal(list);
-  if (extract_node != NULL)
-    return extract_node->data_;
+  void* data;
+  if (extract_node != NULL) 
+  {
+    data = extract_node->data_;
+    extract_node->ops_->softFree(extract_node);
+  }
+  else
+  {
+    data = NULL;
+  }
 
-  return NULL;
+
+
+  return data;
 }
 
 
@@ -487,7 +500,9 @@ void* List_extractAt(List *list, u16 position){ // Checked by xema
   if (extract_node != NULL)
   {
     list->lenght_--;
-    return extract_node->data_;
+    void *data = extract_node->data_;
+    extract_node->ops_->softFree(extract_node);
+    return data;
   }
   
   return NULL;

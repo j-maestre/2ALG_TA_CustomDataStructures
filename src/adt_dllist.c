@@ -299,12 +299,16 @@ s16 DLLIST_insertFirst(List *list, void *data, u16 bytes){ // TODO revise
   if(list->head_ != NULL){
     new_node->next_ = list->head_; 
     list->head_->previous_ = new_node;
+    list->head_ = new_node;
+    list->head_->previous_ = NULL;
   }else{
     // Head es null (esta vacio)
     list->tail_ = new_node;
+    list->head_ = new_node;
+    list->head_->next_ = NULL;
+    list->head_->previous_ = NULL;
   }
   
-  list->head_ = new_node;
   list->lenght_++;
   
   return kErrorCode_Ok;
@@ -335,13 +339,14 @@ s16 DLLIST_insertLast(List *list, void *data, u16 bytes){ // TODO revise checked
   new_node->ops_->setData(new_node, data, bytes);
 
   // Si la lista esta vacia
-  if (list->tail_ == NULL){
+  if (list->head_ == NULL){
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Inserting node[0x%p] in the head of the list[0x%p] because the list is empty\n", new_node, list);
 #endif
     new_node->next_ = NULL;
     list->head_ = new_node;
+    list->tail_ = new_node;
   }else{
   // Si tiene cosas dentro
 
@@ -350,10 +355,10 @@ s16 DLLIST_insertLast(List *list, void *data, u16 bytes){ // TODO revise checked
   printf("Inserting node[0x%p] in the tail of the list[0x%p]\n", new_node, list);
 #endif
 
-    list->tail_->next_ = new_node;
+    list->tail_ = new_node;
+    list->tail_->next_ = NULL;
   }
 
-  list->tail_ = new_node;
   list->lenght_++;
   
   return kErrorCode_Ok;

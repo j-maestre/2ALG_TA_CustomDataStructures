@@ -9,13 +9,13 @@
  * @author Hector Ochando <ochandoca@esat-alumni.com>
  */
 
-#ifndef __ADT_LIST_H__
-#define __ADT_LIST_H__
+#ifndef __ADT_DLLIST_H__
+#define __ADT_DLLIST_H__
 
 #include "adt_list.h"
 
 typedef List DLList;
 
-DLList*DLLIST_create(u16 capacity);
+DLList *DLLIST_create(u16 capacity);
 
-#endif //__ADT_LIST_H__
+#endif //__ADT_DLLIST_H__

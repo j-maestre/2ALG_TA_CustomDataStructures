@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "adt_list.h"
+#include "adt_dllist.h"
 #include "common_def.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 
@@ -26,6 +26,24 @@ static s16 DLLIST_concat(List *list, List *list_src);
 static s16 DLLIST_traverse(List *list, void (*callback)(MemoryNode *));
 static void DLLIST_print(List *list);
 static void DLLIST_initWithoutCheck(List *list);
+static s16 DLLIST_destroyWithoutCheck(List *list);
+static s16 DLLIST_softResetWithoutCheck(List *list);
+static s16 DLLIST_resetWithoutCheck(List *list);
+static s16 DLLIST_resizeWithoutCheck(List *list, u16 new_size);
+static u16 DLLIST_capacityWithoutCheck(List *list);
+static u16 DLLIST_lenghtWithoutCheck(List *list);
+static boolean DLLIST_isEmptyWithoutCheck(List *list);
+static boolean DLLIST_isFullWithoutCheck(List *list);
+static void* DLLIST_firstWithoutCheck(List *list);
+static void* DLLIST_lastWithoutCheck(List *list);
+static void* DLLIST_atWithoutCheck(List *list, u16 position);
+static s16 DLLIST_insertFirstWithoutCheck(List *list, void *data, u16 bytes);
+static s16 DLLIST_insertLastWithoutCheck(List *list, void *data, u16 bytes);
+static s16 DLLIST_insertAtWithoutCheck(List *list, void *data, u16 bytes, u16 position);
+static void* DLLIST_extractFirstWithoutCheck(List *list);
+static void* DLLIST_extractLastWithoutCheck(List *list);
+static void* DLLIST_extractAtWithoutCheck(List *list, u16 position);
+static s16 DLLIST_concatWithoutCheck(List *list, List *list_src);
 static MemoryNode *DLLIST_extractLastInternal(List *list);
 static MemoryNode* DLLIST_atInternal(List *list, u16 position);
 
@@ -51,7 +69,7 @@ struct list_ops_s list_ops = { .destroy = DLLIST_destroy,
                                    .print = DLLIST_print                   
                                    };
 
-List* DLLIST_create(u16 capacity) { // Checked by xema and hector
+List* DLLIST_create(u16 capacity) {
   if (capacity == 0)
     return NULL;
 
@@ -68,7 +86,7 @@ List* DLLIST_create(u16 capacity) { // Checked by xema and hector
 
   list->capacity_ = capacity;
   
-	return list;
+	return list; 
 }
 
 void DLLIST_initWithoutCheck(List *list){
@@ -79,7 +97,7 @@ void DLLIST_initWithoutCheck(List *list){
   list->ops_ = &list_ops;
 }
 
-s16 DLLIST_destroy(List *list){ // Checked by xema
+s16 DLLIST_destroy(List *list){
   if (list == NULL)
     return kErrorCode_ListNULL;
 
@@ -112,7 +130,7 @@ s16 DLLIST_destroy(List *list){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 DLLIST_softReset(List *list){ // Checked by xema
+s16 DLLIST_softReset(List *list){
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -134,7 +152,7 @@ s16 DLLIST_softReset(List *list){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 DLLIST_reset(List *list){ // Checked by xema
+s16 DLLIST_reset(List *list){
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -163,15 +181,18 @@ s16 DLLIST_reset(List *list){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 DLLIST_resize(List *list, u16 new_size){ // Checked
+s16 DLLIST_resize(List *list, u16 new_size){ // TODO revise
   if (list == NULL)
    return kErrorCode_NULL;
 
   MemoryNode *current = NULL;
   while (list->lenght_ > new_size)
   {
-    current = DLLIST_extractLastInternal(list);
+    //current = DLLIST_extractLastInternal(list);
+    current = list->tail_;
+    list->tail_ = current->previous_;
     current->ops_->free(current);
+    list->lenght_--;
   }
 
   list->capacity_ = new_size;
@@ -179,39 +200,39 @@ s16 DLLIST_resize(List *list, u16 new_size){ // Checked
   return kErrorCode_Ok;
 }
 
-u16 DLLIST_capacity(List *list){  // Checked by xema
+u16 DLLIST_capacity(List *list){
   if (list == NULL)
     return 0;
   return list->capacity_;
 }
 
-u16 DLLIST_lenght(List *list){ // Checked by xema
+u16 DLLIST_lenght(List *list){
   if (list == NULL)
     return 0;
   return list->lenght_;
 
 }
 
-boolean DLLIST_isEmpty(List *list){  // Checked by xema
+boolean DLLIST_isEmpty(List *list){
   if (list == NULL)
     return False;
   return (list->lenght_ == 0);
 }
 
-boolean DLLIST_isFull(List *list){ // Checked by xema
+boolean DLLIST_isFull(List *list){
   if (list == NULL)
     return True;
   return (list->lenght_ == list->capacity_);
 }
 
-void* DLLIST_first(List *list){  // Checked by xema
+void* DLLIST_first(List *list){
   if (list == NULL)
     return NULL;
   
   return list->head_;
 }
 
-void* DLLIST_last(List *list){  // Checked by xema
+void* DLLIST_last(List *list){
   if (list == NULL)
     return NULL;
   
@@ -219,14 +240,14 @@ void* DLLIST_last(List *list){  // Checked by xema
 } 
 
 void* DLLIST_at(List *list, u16 position){
-  MemoryNode *node = List_atInternal(list, position);
+  MemoryNode *node = DLLIST_atInternal(list, position);
   if (node != NULL)
     return node->data_;
 
   return NULL;
 }
 
-MemoryNode* DLLIST_atInternal(List *list, u16 position) // Checked by xema
+MemoryNode* DLLIST_atInternal(List *list, u16 position)
 {
   if (list == NULL)
     return NULL;
@@ -244,7 +265,7 @@ MemoryNode* DLLIST_atInternal(List *list, u16 position) // Checked by xema
   return current;
 }
 
-s16 DLLIST_insertFirst(List *list, void *data, u16 bytes){ // Checked by xema
+s16 DLLIST_insertFirst(List *list, void *data, u16 bytes){ // TODO revise
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -265,27 +286,32 @@ s16 DLLIST_insertFirst(List *list, void *data, u16 bytes){ // Checked by xema
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Moving data to node[0x%p] with location[0x%p] and size[%d]\n", new_node, data, bytes);
 #endif
-  new_node->ops_->setData(new_node, data, bytes);
 
+  new_node->ops_->setData(new_node, data, bytes);
+  
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Inserting node[0x%p] in the head of the list[0x%p]\n", new_node, list);
 #endif
-  
-  new_node->next_ = list->head_;
-  list->head_ = new_node;
 
-  if (list->tail_ == NULL){
+  
+  // Tiene cosas
+  if(list->head_ != NULL){
+    new_node->next_ = list->head_; 
+    list->head_->previous_ = new_node;
+  }else{
+    // Head es null (esta vacio)
     list->tail_ = new_node;
   }
   
+  list->head_ = new_node;
   list->lenght_++;
   
   return kErrorCode_Ok;
 } 
 
 
-s16 List_insertLast(List *list, void *data, u16 bytes){ // Checked by xema
+s16 DLLIST_insertLast(List *list, void *data, u16 bytes){ // TODO revise checked by xema
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -308,36 +334,34 @@ s16 List_insertLast(List *list, void *data, u16 bytes){ // Checked by xema
 #endif
   new_node->ops_->setData(new_node, data, bytes);
 
-  
   // Si la lista esta vacia
-  if (list->tail_ == NULL)
-  {
+  if (list->tail_ == NULL){
 #ifdef VERBOSE_
     printf("\x1B[34m[VERBOSE_]\x1B[37m");
     printf("Inserting node[0x%p] in the head of the list[0x%p] because the list is empty\n", new_node, list);
 #endif
     new_node->next_ = NULL;
     list->head_ = new_node;
-    list->tail_ = new_node;
-    
-  // Si tiene cosas dentro
   }else{
+  // Si tiene cosas dentro
+
 #ifdef VERBOSE_
   printf("\x1B[34m[VERBOSE_]\x1B[37m");
   printf("Inserting node[0x%p] in the tail of the list[0x%p]\n", new_node, list);
 #endif
-    list->tail_->next_ = new_node;
-    list->tail_ = new_node;
-  }
-    
 
+    list->tail_->next_ = new_node;
+  }
+
+  list->tail_ = new_node;
   list->lenght_++;
   
   return kErrorCode_Ok;
 }
 
 
-s16 DLLIST_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked by xema
+s16 DLLIST_insertAt(List *list, void *data, u16 bytes, u16 position){
+  // TODO comprobar si está mas cerca del final
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -400,7 +424,7 @@ s16 DLLIST_insertAt(List *list, void *data, u16 bytes, u16 position){ // Checked
   return kErrorCode_Ok;
 }
 
-void* DLLIST_extractFirst(List *list){ // Checked by xema
+void* DLLIST_extractFirst(List *list){
   if (list == NULL)
     return kErrorCode_NULL;
 
@@ -427,7 +451,7 @@ void* DLLIST_extractFirst(List *list){ // Checked by xema
   return NULL;
 }
 
-MemoryNode* DLLIST_extractLastInternal(List *list){ // Checked by xema
+MemoryNode* DLLIST_extractLastInternal(List *list){ 
   if (list == NULL)
     return NULL;
   
@@ -458,13 +482,20 @@ MemoryNode* DLLIST_extractLastInternal(List *list){ // Checked by xema
   return current;
 }
 
-void* DLLIST_extractLast(List *list){ // Checked by xema
-  MemoryNode *extract_node = DLLIST_extractLastInternal(list);
+void* DLLIST_extractLast(List *list){ // TODO revise checked by xema
+  
+  if(NULL == list){
+    return NULL;
+  }
+
+  MemoryNode *extract_node = list->tail_;
+  
   void* data;
-  if (extract_node != NULL) 
-  {
+  if (extract_node != NULL) {
+    list->tail_ = extract_node->previous_;
     data = extract_node->data_;
     extract_node->ops_->softFree(extract_node);
+    list->lenght_--;
   }
   else
   {
@@ -477,7 +508,8 @@ void* DLLIST_extractLast(List *list){ // Checked by xema
 }
 
 
-void* DLLIST_extractAt(List *list, u16 position){ // Checked by xema
+void* DLLIST_extractAt(List *list, u16 position){
+  // TODO comprobar si esta mas cerca del final
   if (list == NULL)
     return NULL;
 
@@ -508,7 +540,7 @@ void* DLLIST_extractAt(List *list, u16 position){ // Checked by xema
   return NULL;
 }
 
-s16 DLLIST_concat(List *list, List *list_src){ // Checked by xema
+s16 DLLIST_concat(List *list, List *list_src){
   if (list == NULL || list_src == NULL)
     return kErrorCode_NULL;
 
@@ -531,7 +563,7 @@ s16 DLLIST_concat(List *list, List *list_src){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 DLLIST_traverse(List *list, void (*callback)(MemoryNode *)){ // Checked by xema
+s16 DLLIST_traverse(List *list, void (*callback)(MemoryNode *)){ 
   if (list == NULL)
     return kErrorCode_NULL;
 

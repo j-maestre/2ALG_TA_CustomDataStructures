@@ -25,7 +25,7 @@ int main() {
 
 	// list created just to have a reference to the operations
 	DLList *ls = NULL;
-	ls = LIST_create(1);
+	ls = DLLIST_create(1);
 	if (NULL == ls) {
 		printf("\n create returned a null node in list for ops");
 		return -1;

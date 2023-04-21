@@ -160,36 +160,40 @@ void calculateTimeForFunction() {
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
-	// *** Concat *** //
+	// *** Concat 1 *** //
   v2 = NULL;
   v2 = VECTOR_create(capacity*2);
   FillVector(v2,data_2);
-	
+  
   QueryPerformanceCounter(&time_start);
-	for (u32 rep = 0; rep < 1; ++rep) {
-    v->ops_->concat(v,v2);
-    v->ops_->resize(v,capacity);
-    //v->ops_->softReset(v);
-    //v->ops_->resize(v,capacity);
-    //FillVector(v,data);
-  }
-	QueryPerformanceCounter(&time_end);
-	printf("\n*** Vector Concat %d ***\n",middle);
-	PrintTime(frequency,time_start,time_end);
-	///////////////////////////////////////////////////////////////////////
-
-
-	///////////////////////////////////////////////////////////////////////
-	printf("\n*** Resize ***\n");
-	QueryPerformanceCounter(&time_start);
-	//v->ops_->resize(v,capacity*2);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
+  // Aqui arriba lo mismo
+  v->ops_->concat(v,v2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
 	///////////////////////////////////////////////////////////////////////
 
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 2 *** //
+  QueryPerformanceCounter(&time_start);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
+  // Lo concateno, osea, copio los datos del v2 y los pongo al final del v1
+  v->ops_->concat(v,v2);
+  //v->ops_->reset(v);
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+	///////////////////////////////////////////////////////////////////////
 
-	
-
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 3 *** //
+  QueryPerformanceCounter(&time_start);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
+  // Lo concateno, osea, copio los datos del v2 y los pongo al final del v1
+  v->ops_->concat(v,v2);
+  //v->ops_->reset(v);
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+	///////////////////////////////////////////////////////////////////////
 
 
 	for (u32 i = 0; i < capacity*2; i++) {
@@ -197,11 +201,10 @@ void calculateTimeForFunction() {
 		MM->free(data_2[i]);
 
 	}
-  //MM->free(v);
-  //MM->free(v2);
-  v->ops_->softReset(v);
-  v2->ops_->softReset(v2);
+
+
 	v->ops_->destroy(v);
+  v2->ops_->softReset(v2);
 	v2->ops_->destroy(v2);
 	
 }

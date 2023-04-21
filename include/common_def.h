@@ -13,7 +13,7 @@
 #define __COMMON_DEF_H__ 1
 
 #ifdef DEBUG
-#define VERBOSE_ 
+//#define VERBOSE_ 
 #endif // DEBUG
 
 typedef enum {

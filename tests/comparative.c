@@ -16,10 +16,13 @@
 #include "adt_list.h"
 #include "adt_dllist.h"
 
-void* data[10000];
+void* data[20000];
+void* data_2[20000];
 Vector *v = NULL;
+Vector *v2 = NULL;
 u16 capacity = 10000;
-u16 size = sizeof(data);
+u16 size = 0;
+
 
 double elapsed_time = 0.0f;
 u32 repetitions = 10000;
@@ -32,13 +35,19 @@ void TESTBASE_generateDataForComparative() {
 	// Insert last de tamaño variable de 1 hasta capacity.
 	// Insert at de tamaño variable en posicion aleatoria entre 1 hasta capacity.
 
+	size = sizeof(u16);
+
+
 	v = NULL;
 	v = VECTOR_create(capacity);
 	//v->ops_->insertFirst(v,data,sizeof(data));
-	for(u16 i = 0; i < capacity; i++){
+	for(u16 i = 0; i < capacity*2; i++){
 		u16 *number = MM->malloc(sizeof(u16));
+		u16 *number2 = MM->malloc(sizeof(u16));
 		*number = 5;
+		*number2 = 9;
 		data[i] = number;
+		data_2[i] = number2;
 	}
 
 }
@@ -47,6 +56,12 @@ int64_t Millis() {
   struct timespec now;
   timespec_get(&now, TIME_UTC);
   return ((int64_t)now.tv_sec) * 1000 + ((int64_t)now.tv_nsec) / 1000000;
+}
+
+void FillVector(Vector *v, void* data[]){
+  for(u32 i = 0; i < repetitions; i++){
+    v->ops_->insertFirst(v,data[i],size);
+  }
 }
 
 void PrintTime(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER time_end){
@@ -75,11 +90,11 @@ void calculateTimeForFunction() {
 	// *** Insert First *** //
 	// Meassurement time
 	// start timer
-
 	QueryPerformanceCounter(&time_start);
 	// execute function to meassure 'repetitions' times
 	for (u32 rep = 0; rep < repetitions; ++rep) {
 		v->ops_->insertFirst(v,data[rep],size);
+    data[rep] = NULL;
 	}
 	// stop timer
 	QueryPerformanceCounter(&time_end);
@@ -91,8 +106,8 @@ void calculateTimeForFunction() {
 	// *** Extract First *** //
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
-		v->ops_->extractFirst(v);
-	}
+		data[rep] = v->ops_->extractFirst(v);
+  }
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract First ***\n");
 	PrintTime(frequency,time_start,time_end);
@@ -103,6 +118,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
 		v->ops_->insertLast(v,data[rep],size);
+    data[rep] = NULL;
 	}
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert Last ***\n");
@@ -113,7 +129,7 @@ void calculateTimeForFunction() {
 	// *** Extract Last *** //
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
-		v->ops_->extractLast(v);
+    data[rep] = v->ops_->extractLast(v);
 	}
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract Last ***\n");
@@ -123,9 +139,10 @@ void calculateTimeForFunction() {
 	// *** Insert At *** //
 	u16 middle = v->capacity_/2;
 	QueryPerformanceCounter(&time_start);
-	for (u32 rep = 0; rep < repetitions/2; ++rep) {
+	for (u32 rep = 0; rep < repetitions; ++rep) {
 		v->ops_->insertAt(v,data[rep],size,middle);
-	}
+    data[rep] = NULL;
+  }
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert At position %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
@@ -135,10 +152,29 @@ void calculateTimeForFunction() {
 	// *** Extract At *** //
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
-		v->ops_->extractAt(v,middle);
-	}
+    data[rep] = v->ops_->extractAt(v,0);
+  }
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract At position %d ***\n",middle);
+	PrintTime(frequency,time_start,time_end);
+	///////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat *** //
+  v2 = NULL;
+  v2 = VECTOR_create(capacity*2);
+  FillVector(v2,data_2);
+	
+  QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < 1; ++rep) {
+    v->ops_->concat(v,v2);
+    v->ops_->resize(v,capacity);
+    //v->ops_->softReset(v);
+    //v->ops_->resize(v,capacity);
+    //FillVector(v,data);
+  }
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** Vector Concat %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
 	///////////////////////////////////////////////////////////////////////
 
@@ -146,7 +182,7 @@ void calculateTimeForFunction() {
 	///////////////////////////////////////////////////////////////////////
 	printf("\n*** Resize ***\n");
 	QueryPerformanceCounter(&time_start);
-	v->ops_->resize(v,capacity*2);
+	//v->ops_->resize(v,capacity*2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
 	///////////////////////////////////////////////////////////////////////
@@ -155,11 +191,18 @@ void calculateTimeForFunction() {
 	
 
 
-	for(u16 i = 0; i < capacity; i++){
+
+	for (u32 i = 0; i < capacity*2; i++) {
 		MM->free(data[i]);
+		MM->free(data_2[i]);
+
 	}
-	//v->ops_->destroy(v);
-	MM->free(v);
+  //MM->free(v);
+  //MM->free(v2);
+  v->ops_->softReset(v);
+  v2->ops_->softReset(v2);
+	v->ops_->destroy(v);
+	v2->ops_->destroy(v2);
 	
 }
 

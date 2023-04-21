@@ -12,7 +12,9 @@
 #ifndef __COMMON_DEF_H__
 #define __COMMON_DEF_H__ 1
 
-#define VERBOSE_
+#ifdef DEBUG
+#define VERBOSE_ 
+#endif // DEBUG
 
 typedef enum {
   kErrorCode_Ok = 0,

@@ -47,7 +47,7 @@ static s16 DLLIST_concatWithoutCheck(List *list, List *list_src);
 static MemoryNode *DLLIST_extractLastInternal(List *list);
 static MemoryNode* DLLIST_atInternal(List *list, u16 position);
 
-struct list_ops_s list_ops = { .destroy = DLLIST_destroy,
+struct list_ops_s list_ops_d = { .destroy = DLLIST_destroy,
                                    .softReset = DLLIST_softReset,
                                    .reset = DLLIST_reset,
                                    .resize = DLLIST_resize,
@@ -94,7 +94,7 @@ void DLLIST_initWithoutCheck(List *list){
   list->lenght_ = 0;
   list->head_ = NULL;
   list->tail_ = NULL;
-  list->ops_ = &list_ops;
+  list->ops_ = &list_ops_d;
 }
 
 s16 DLLIST_destroy(List *list){

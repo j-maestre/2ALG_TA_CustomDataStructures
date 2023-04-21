@@ -64,6 +64,59 @@ void FillVector(Vector *v, void* data[]){
   }
 }
 
+void SaveResult(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER time_end, const char* operation, const char *header){
+  FILE *f;
+
+	//try to open the file
+  int err = fopen_s(&f, "statics.csv", "r");
+
+	if (err == 0) 
+	{  // If file can be open
+		fclose(f);
+		fopen_s(&f, "statics.csv", "a");
+	}
+	else
+	{  // If file can't be open
+		fopen_s(&f, "statics.csv", "w"); //Create the file
+		fclose(f);
+		fopen_s(&f, "statics.csv", "a");
+	}
+
+
+  char content[128];
+  // SaveResult(frequency, time_start, time_end,"Vector Insert First");
+  //memcpy_s(content,sizeof(content),operation,strlen(operation));
+  //strcat(content,";");
+  // ;Time Elapsed;Average Time
+  
+  // Insert First Vector;10.5;0.2
+  // Insert Last Vector;12.3;0.3
+	//Donde esta el elapsed time?
+	//donde esta el average
+
+	if (header != NULL){
+	  snprintf(content, sizeof(content), ";%s\n", header);	
+		fwrite(content, 1, sizeof(content), f);
+		snprintf(content, sizeof(content), ";Time Elapsed;Average Time\n", header);	
+		fwrite(content, 1, sizeof(content), f);
+	}
+
+	elapsed_time = (time_end.QuadPart - time_start.QuadPart) * 1000000.0f / frequency.QuadPart;
+	double average_time = elapsed_time / repetitions;
+
+	if (content != NULL)
+	{
+		snprintf(content, sizeof(content), "%s;%d;%d\n", operation, elapsed_time, average_time);
+		fwrite(content, 1, sizeof(content), f);
+	}
+
+	fclose(f);
+
+  //creo que ya esta
+  // En que carpeta lo va a pillar?
+	//en la de exe
+}
+
 void PrintTime(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER time_end){
 	///////////////////////////////////////////////////////////////////////
 	// compute the elapsed time in microseconds
@@ -74,11 +127,12 @@ void PrintTime(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER 
 	double average_time = elapsed_time / repetitions;
 	printf("Average time: %f ms\n", average_time);
 	///////////////////////////////////////////////////////////////////////
+
 }
 
 void calculateTimeForFunction() {
 	LARGE_INTEGER frequency;				// ticks per second
-	LARGE_INTEGER  time_start, time_end;    // ticks in interval
+	LARGE_INTEGER  time_start, time_end;    // ticks in interval, 
 	
 
 	///////////////////////////////////////////////////////////////////////
@@ -100,6 +154,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert First ***\n");
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Insert First", "Vector");
 	///////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////
@@ -111,6 +166,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract First ***\n");
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Extract First", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -123,6 +179,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert Last ***\n");
 	PrintTime(frequency,time_start,time_end);
+    SaveResult(frequency, time_start, time_end,"Insert Last", NULL);
 	/////////////////////////////////////////////////////////////////////
 	
 	/////////////////////////////////////////////////////////////////////
@@ -134,7 +191,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract Last ***\n");
 	PrintTime(frequency,time_start,time_end);
-
+  SaveResult(frequency, time_start, time_end,"Extract Last", NULL);
 	/////////////////////////////////////////////////////////////////////
 	// *** Insert At *** //
 	u16 middle = v->capacity_/2;
@@ -146,6 +203,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert At position %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Insert At", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -157,6 +215,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Extract At position %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Extract At", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -171,6 +230,7 @@ void calculateTimeForFunction() {
   v->ops_->concat(v,v2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -182,6 +242,7 @@ void calculateTimeForFunction() {
   //v->ops_->reset(v);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -193,6 +254,7 @@ void calculateTimeForFunction() {
   //v->ops_->reset(v);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
+  SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 

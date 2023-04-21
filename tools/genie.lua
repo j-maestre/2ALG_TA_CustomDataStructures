@@ -59,6 +59,18 @@ solution("DS_ALG_AI1" .. _ACTION)
     --"PR10_Logger",
     "PR11_Comparative",
     --"PR12_SortingAlgorithms",
+    --"PR13_CPP_MemoryNode",
+    --"PR14_CPP_Vector",
+    --"PR15_CPP_CircularVector",
+    --"PR16_CPP_MovableVector",
+    --"PR17_CPP_List",
+    --"PR18_CPP_DLList",
+    --"PR19_CPP_CircularList",
+    --"PR20_CPP_CircularDLList",
+    --"PR21_CPP_Stack",
+    --"PR22_CPP_Queue",
+    --"PR23_CPP_Logger",
+    --"PR24_CPP_Comparative",
   }
 
 --[[************************* PROJECT GENERATOR FUNCTION *************************]]--

@@ -14,6 +14,7 @@ IF EXIST ..\build\PR09_Queue rmdir /s /q ..\build\PR09_Queue
 IF EXIST ..\build\PR10_Logger rmdir /s /q ..\build\PR10_Logger
 IF EXIST ..\build\PR11_Comparative rmdir /s /q ..\build\PR11_Comparative
 IF EXIST ..\build\PR12_SortingAlgorithms rmdir /s /q ..\build\PR12_SortingAlgorithms
+IF EXIST ..\build\PR06_CircularList rmdir /s /q ..\build\PR06_CircularList
 IF EXIST ..\bin\debug rmdir /s /q ..\bin\debug
 IF EXIST ..\bin\release rmdir /s /q ..\bin\release
 IF EXIST ..\build rmdir /s /q ..\build

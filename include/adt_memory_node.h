@@ -21,7 +21,7 @@ typedef struct memory_node_s {
   struct memory_node_s *next_;
   struct memory_node_s *previous_;
   struct memory_node_ops_s *ops_;
-} MemoryNode;//x32 sizeof() = 10 -> 12
+} MemoryNode;//x32 sizeof() = 20
 
 // Memory Node's API Declarations
 struct memory_node_ops_s {

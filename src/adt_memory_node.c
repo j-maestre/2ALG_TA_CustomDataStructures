@@ -327,7 +327,10 @@ void MEMNODE_print(MemoryNode *node){
   if( NULL != node->data_)printf("[Node Info] Data address: %p\n", node->data_);
   printf("[Node Info] content: ");
   for (u32 i = 0; i < node->size_; i++){
-    printf("%c",((u8 *) node->data_)[i]);
+    if (node->data_ != NULL)
+    {
+      printf("%c",((u8 *) node->data_)[i]);
+    }
   }
   printf("\n");
 

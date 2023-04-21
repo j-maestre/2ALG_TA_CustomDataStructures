@@ -159,12 +159,12 @@ void* QUEUE_dequeue(Queue *queue)
 {
   if (queue == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   if (queue->storage_ == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   return queue->storage_->ops_->extractFirst(queue->storage_);
@@ -188,12 +188,12 @@ void* QUEUE_front(Queue *queue)
 {
   if (queue == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   if (queue->storage_ == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   return queue->storage_->ops_->first(queue->storage_);
@@ -203,12 +203,12 @@ void* QUEUE_back(Queue *queue)
 {
   if (queue == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   if (queue->storage_ == NULL)
   {
-    return kErrorCode_NULL;
+    return NULL;
   }
 
   return queue->storage_->ops_->last(queue->storage_);

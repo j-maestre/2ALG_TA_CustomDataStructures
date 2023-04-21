@@ -57,7 +57,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR08_Stack",
     "PR09_Queue",
     --"PR10_Logger",
-    --"PR11_Comparative",
+    "PR11_Comparative",
     --"PR12_SortingAlgorithms",
   }
 
@@ -182,4 +182,17 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/adt_list.h"),
       path.join(PROJ_DIR, "./src/adt_list.c"),
       path.join(PROJ_DIR, "./tests/test_queue.c"),
+    }
+
+    project "PR11_Comparative"
+    files {
+        path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+        path.join(PROJ_DIR, "./include/adt_vector.h"),
+        path.join(PROJ_DIR, "./include/adt_list.h"),
+        path.join(PROJ_DIR, "./include/adt_dllist.h"),
+        path.join(PROJ_DIR, "./src/adt_vector.c"),
+        path.join(PROJ_DIR, "./src/adt_list.c"),
+        path.join(PROJ_DIR, "./src/adt_dllist.c"),
+        path.join(PROJ_DIR, "./src/adt_memory_node.c") ,
+        path.join(PROJ_DIR, "./tests/comparative.c"),
     }

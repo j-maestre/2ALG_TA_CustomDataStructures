@@ -163,7 +163,7 @@ s16 List_reset(List *list){ // Checked by xema
   return kErrorCode_Ok;
 }
 
-s16 List_resize(List *list, u16 new_size){ // Checked
+s16 List_resize(List *list, u32 new_size){ // Checked
   if (list == NULL)
    return kErrorCode_NULL;
 
@@ -442,8 +442,10 @@ MemoryNode* List_extractLastInternal(List *list){ // Checked by xema
   }else{
     // more than one node in the list
     // Llegamos hasta el penultimo
+      u32 index_debug = 0;
     while (current->next_->next_ != NULL)
     {
+        index_debug++;
       current = current->next_;
     }
     list->tail_ = current;
@@ -480,6 +482,9 @@ void* List_extractLast(List *list){ // Checked by xema
 void* List_extractAt(List *list, u16 position){ // Checked by xema
   if (list == NULL)
     return NULL;
+  if (position == 0) {
+      return List_extractFirst(list);
+  }
 
   if (list->lenght_ < position)
     position = list->lenght_;
@@ -512,13 +517,13 @@ s16 List_concat(List *list, List *list_src){ // Checked by xema
   if (list == NULL || list_src == NULL)
     return kErrorCode_NULL;
 
-  u16 new_capacity = list->capacity_ + list_src->capacity_;
+  u32 new_capacity = list->capacity_ + list_src->capacity_;
 
   list->ops_->resize(list, new_capacity);
 
   MemoryNode *copy_node = MEMNODE_create();
   MemoryNode *current;
-  for (u16 i = 0; i < list_src->lenght_; i++)
+  for (u32 i = 0; i < list_src->lenght_; i++)
   {
     current = List_atInternal(list_src, i);
     copy_node->ops_->memCopy(copy_node, current->data_, current->size_);

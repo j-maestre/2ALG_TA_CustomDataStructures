@@ -482,7 +482,7 @@ s16 DLLIST_insertAt(List* list, void* data, u16 bytes, u16 position)
   }
 
   MemoryNode* node = NULL;
-  if (position > list->lenght_)
+  if (position >= list->lenght_)
   {
     return DLLIST_insertLastWithoutCheck(list, data, bytes);
   }
@@ -492,8 +492,8 @@ s16 DLLIST_insertAt(List* list, void* data, u16 bytes, u16 position)
     {
       return DLLIST_insertFirstWithoutCheck(list, data, bytes);
     }
-    else
-    {
+    else{
+
       return DLLIST_insertAtWithoutCheck(list, data, bytes, position);
     }
   }

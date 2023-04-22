@@ -65,40 +65,34 @@ void FillVector(Vector *v, void* data[]){
 }
 
 void SaveResult(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER time_end, const char* operation, const char *header){
-  FILE *f;
+  	FILE *f;
 
 	//try to open the file
-  int err = fopen_s(&f, "statics.csv", "r");
+	int err = fopen_s(&f, "statics.csv", "r");
 
 	if (err == 0) 
 	{  // If file can be open
 		fclose(f);
 		fopen_s(&f, "statics.csv", "a");
+		printf("File openen directly in Append\n");
 	}
 	else
 	{  // If file can't be open
 		fopen_s(&f, "statics.csv", "w"); //Create the file
 		fclose(f);
 		fopen_s(&f, "statics.csv", "a");
+		printf("File created and openened in Append\n");
 	}
 
 
-  char content[128];
-  // SaveResult(frequency, time_start, time_end,"Vector Insert First");
-  //memcpy_s(content,sizeof(content),operation,strlen(operation));
-  //strcat(content,";");
-  // ;Time Elapsed;Average Time
-  
-  // Insert First Vector;10.5;0.2
-  // Insert Last Vector;12.3;0.3
-	//Donde esta el elapsed time?
-	//donde esta el average
+	char content[256];
 
 	if (header != NULL){
-	  snprintf(content, sizeof(content), ";%s\n", header);	
-		fwrite(content, 1, sizeof(content), f);
-		snprintf(content, sizeof(content), ";Time Elapsed;Average Time\n", header);	
-		fwrite(content, 1, sizeof(content), f);
+		snprintf(content, sizeof(content), ";%s;\n\0", header);	
+		fwrite(content, 1, strlen(content), f);
+		snprintf(content, sizeof(content), ";Time Elapsed;Average Time\n\0", header);	
+		fwrite(content, 1, strlen(content), f);
+		printf("*** HEADER ***\n %s\n",content);
 	}
 
 	elapsed_time = (time_end.QuadPart - time_start.QuadPart) * 1000000.0f / frequency.QuadPart;
@@ -106,15 +100,12 @@ void SaveResult(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER
 
 	if (content != NULL)
 	{
-		snprintf(content, sizeof(content), "%s;%d;%d\n", operation, elapsed_time, average_time);
-		fwrite(content, 1, sizeof(content), f);
+		snprintf(content, sizeof(content), "%s;%.4f;%.4f\n\0", operation, elapsed_time, average_time);
+		printf("*** CONTENT  ***\n %s\n",content);
+		fwrite(content, 1, strlen(content), f);
 	}
 
 	fclose(f);
-
-  //creo que ya esta
-  // En que carpeta lo va a pillar?
-	//en la de exe
 }
 
 void PrintTime(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER time_end){
@@ -154,7 +145,7 @@ void calculateTimeForFunction() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** Vector Insert First ***\n");
 	PrintTime(frequency,time_start,time_end);
-  SaveResult(frequency, time_start, time_end,"Insert First", "Vector");
+  	SaveResult(frequency, time_start, time_end,"Insert First", "Vector");
 	///////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////

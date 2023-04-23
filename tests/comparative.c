@@ -15,6 +15,8 @@
 #include "adt_vector.h"
 #include "adt_list.h"
 #include "adt_dllist.h"
+//#include <iostream>
+//#include <vector>
 
 void* data[20000];
 void* data_2[20000];
@@ -34,11 +36,16 @@ DLList * dlist2;
 u16 capacity = 10000;
 u16 size = 0;
 
+int u16_size;
+
+//std::vector<u16> std_vector;
 
 double elapsed_time = 0.0f;
 u32 repetitions = 10000;
 
 void TESTBASE_generateDataForComparative() {
+
+	u16_size = sizeof(u16);
 
 	FILE *f;
 	
@@ -134,9 +141,11 @@ void SaveResult(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER
 	char content[256];
 
 	if (header != NULL){
-		snprintf(content, sizeof(content), ";%s;\n\0", header);	
+		snprintf(content, sizeof(content), ";%s;\n\0",header);	
+		//snprintf(content, sizeof(content), ";%s;;STD %s\n\0", header,header);	
 		fwrite(content, 1, strlen(content), f);
-		snprintf(content, sizeof(content), ";Time Elapsed;Average Time\n\0");	
+		snprintf(content, sizeof(content), ";Time Elapsed;Average Time;\n\0");	
+		//snprintf(content, sizeof(content), ";Time Elapsed;Average Time;Time Elapsed;Average Time\n\0");	
 		fwrite(content, 1, strlen(content), f);
 	}
 

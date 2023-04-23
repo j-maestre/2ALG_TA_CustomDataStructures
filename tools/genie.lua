@@ -58,24 +58,28 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR09_Queue",
     --"PR10_Logger",
     "PR11_Comparative",
-    --"PR12_SortingAlgorithms",
-    --"PR13_CPP_MemoryNode",
-    --"PR14_CPP_Vector",
-    --"PR15_CPP_CircularVector",
-    --"PR16_CPP_MovableVector",
-    --"PR17_CPP_List",
-    --"PR18_CPP_DLList",
-    --"PR19_CPP_CircularList",
-    --"PR20_CPP_CircularDLList",
-    --"PR21_CPP_Stack",
-    --"PR22_CPP_Queue",
-    --"PR23_CPP_Logger",
-    --"PR24_CPP_Comparative",
+    "PR12_Comparative_STD",
+    --"PR13_SortingAlgorithms",
+    --"PR14_CPP_MemoryNode",
+    --"PR15_CPP_Vector",
+    --"PR16_CPP_CircularVector",
+    --"PR17_CPP_MovableVector",
+    --"PR18_CPP_List",
+    --"PR19_CPP_DLList",
+    --"PR20_CPP_CircularList",
+    --"PR21_CPP_CircularDLList",
+    --"PR22_CPP_Stack",
+    --"PR23_CPP_Queue",
+    --"PR24_CPP_Logger",
+    --"PR25_CPP_Comparative",
   }
 
 --[[************************* PROJECT GENERATOR FUNCTION *************************]]--
   for i, prj in ipairs(projects_names) do
     project(prj)
+      if prj == "PR12_Comparative_STD" then 
+        language "C++"
+      end
       location (PROJ_DIR .. "/build/" .. prj .. "/" .. _ACTION)
       platforms {
         "x32",
@@ -216,4 +220,16 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./src/adt_dllist.c"),
         path.join(PROJ_DIR, "./src/adt_memory_node.c") ,
         path.join(PROJ_DIR, "./tests/comparative.c"),
+    }
+    project "PR12_Comparative_STD"
+    files {
+        path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+        path.join(PROJ_DIR, "./include/adt_vector.h"),
+        path.join(PROJ_DIR, "./include/adt_list.h"),
+        path.join(PROJ_DIR, "./include/adt_dllist.h"),
+        path.join(PROJ_DIR, "./src/adt_vector.c"),
+        path.join(PROJ_DIR, "./src/adt_list.c"),
+        path.join(PROJ_DIR, "./src/adt_dllist.c"),
+        path.join(PROJ_DIR, "./src/adt_memory_node.c") ,
+        path.join(PROJ_DIR, "./tests/comparative.cc"),
     }

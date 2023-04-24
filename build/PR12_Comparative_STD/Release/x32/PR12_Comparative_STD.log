@@ -1,0 +1,11 @@
+﻿  comparative.cc
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(201,25): warning C4267: 'inicializando': conversión de 'size_t' a 'u16'; posible pérdida de datos
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(201,25): warning C4267: 	u16 middle = v.size()/2;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(201,25): warning C4267: 	                       ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(347,25): warning C4267: 'inicializando': conversión de 'size_t' a 'u16'; posible pérdida de datos
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(347,25): warning C4267: 	u16 middle = l.size()/2;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(347,25): warning C4267: 	                       ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(556,12): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(556,12): warning C4244: 	srand(time(NULL));
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.cc(556,12): warning C4244: 	          ^
+  PR12_Comparative_STD.vcxproj -> D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\bin\Release\x32\PR12_Comparative_STD.exe

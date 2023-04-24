@@ -1,0 +1,53 @@
+﻿  adt_vector.c
+  adt_list.c
+  adt_dllist.c
+  adt_memory_node.c
+  comparative.c
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(450,21): warning C4018: '<': no coinciden signed/unsigned
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(450,21): warning C4018:   for (u32 i = 0; i < (vector->capacity_ + vector_src->capacity_); i++){
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(450,21): warning C4018:                     ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(491,16): warning C4098: 'VECTOR_print': función 'void' que devuelve un valor
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(491,16): warning C4098:     return NULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(491,16): warning C4098:                ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(494,16): warning C4098: 'VECTOR_print': función 'void' que devuelve un valor
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(494,16): warning C4098:     return NULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_vector.c(494,16): warning C4098:                ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(166,33): warning C4028: parámetro formal 2 distinto de la declaración
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(166,33): warning C4028: s16 List_resize(List *list, u32 new_size){ // Checked
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(166,33): warning C4028:                                 ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(405,27): warning C4047: 'return': 'void *' es distinto en los niveles de direccionamiento indirecto de 'int'
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(405,27): warning C4047:     return kErrorCode_NULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_list.c(405,27): warning C4047:                           ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(260,62): warning C4142: 'MEMNODE_memConcat': nueva definición de tipo sin efecto
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(260,62): warning C4142: s16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes){
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(260,62): warning C4142:                                                              ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(27): message : vea la declaración de 'MEMNODE_memConcat'
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(27): message : static u16 MEMNODE_memConcat(MemoryNode *node, void *src, u16 bytes);
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(322,37): warning C4098: 'MEMNODE_print': función 'void' que devuelve un valor
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(322,37): warning C4098:     return kErrorCode_MemoryNodeNULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_memory_node.c(322,37): warning C4098:                                     ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(269,31): warning C4047: 'return': 'void *' es distinto en los niveles de direccionamiento indirecto de 'int'
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(269,31): warning C4047:     return kErrorCode_ListNULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(269,31): warning C4047:                               ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(288,31): warning C4047: 'return': 'void *' es distinto en los niveles de direccionamiento indirecto de 'int'
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(288,31): warning C4047:     return kErrorCode_ListNULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(288,31): warning C4047:                               ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(312,31): warning C4047: 'return': 'void *' es distinto en los niveles de direccionamiento indirecto de 'int'
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(312,31): warning C4047:     return kErrorCode_ListNULL;
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(312,31): warning C4047:                               ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(448,21): warning C4018: '<': no coinciden signed/unsigned
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(448,21): warning C4018:   for (u32 i = 0; i < position - 1; i++)
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\src\adt_dllist.c(448,21): warning C4018:                     ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(305,20): warning C4018: '<': no coinciden signed/unsigned
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(305,20): warning C4018: 	for (u32 i = 0; i < capacity*2; i++) {
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(305,20): warning C4018: 	                  ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(440,20): warning C4018: '<': no coinciden signed/unsigned
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(440,20): warning C4018: 	for (u32 i = 0; i < capacity*2; i++) {
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(440,20): warning C4018: 	                  ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(576,19): warning C4018: '<': no coinciden signed/unsigned
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(576,19): warning C4018: for (u32 i = 0; i < capacity*2; i++) {
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(576,19): warning C4018:                   ^
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(589,18): warning C4244: 'función': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(589,18): warning C4244: 	srand(time(NULL));
+D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\tests\comparative.c(589,18): warning C4244: 	                ^
+  PR11_Comparative.vcxproj -> D:\Asignaturas\Algoritmos\2ALG_TA_ochandoca_maestrequi\bin\Release\x32\PR11_Comparative.exe

@@ -14,6 +14,8 @@
 //#include "common_def.h"
 #include <iostream>
 #include <vector>
+#include <list>
+#include <forward_list>
 
 u16 data[20000];
 u16 data_2[20000];
@@ -29,6 +31,11 @@ int u16_size;
 
 std::vector<u16> v;
 std::vector<u16> v2;
+std::list<u16> l;
+std::list<u16> l2;
+
+std::forward_list<u16> fl;
+std::forward_list<u16> fl2;
 
 double elapsed_time = 0.0f;
 u32 repetitions = 10000;
@@ -269,11 +276,304 @@ void calculateTimeForFunction() {
 
 }
 
+void calculateTimeForFunctionDDLList() {
+	LARGE_INTEGER frequency;				// ticks per second
+	LARGE_INTEGER  time_start, time_end;    // ticks in interval, 
+	
+
+	///////////////////////////////////////////////////////////////////////
+	// Frequency: ticks per second
+	QueryPerformanceFrequency(&frequency);
+	///////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////
+	// *** Insert First *** //
+	// Meassurement time
+	// start timer
+	QueryPerformanceCounter(&time_start);
+	// execute function to meassure 'repetitions' times
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		l.insert(l.begin(),data[rep]);
+		//v[rep] = data[rep];
+    	data[rep] = NULL;
+	}
+	// stop timer
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Insert First ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Insert First", "STD Double Linked List");
+	///////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////
+	// *** Extract First *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		data[rep] = l.front();
+		l.erase(l.begin());
+
+  	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Extract First ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract First", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Insert Last *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		l.push_back(data[rep]);
+    	data[rep] = NULL;
+	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Insert Last ***\n");
+	PrintTime(frequency,time_start,time_end);
+    SaveResult(frequency, time_start, time_end,"Insert Last", NULL);
+	/////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////////////////////////////////////////////////
+	// *** Extract Last *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+    	data[rep] = l.back();
+		l.pop_back();
+	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Extract Last ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract Last", NULL);
+	/////////////////////////////////////////////////////////////////////
+	// *** Insert At *** //
+	u16 middle = l.size()/2;
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		std::list<u16>::iterator it = l.begin();
+		advance(it, middle);
+		l.insert(it,data[rep]);
+    	data[rep] = NULL;
+  }
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Insert At position %d ***\n",middle);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Insert At", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Extract At *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		std::list<u16>::iterator it = l.begin();
+		advance(it, middle);
+		data[rep] = *it;
+		l.erase(it);
+  	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** DLList Extract At position %d ***\n",middle);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract At", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		l.insert(l.begin(),data[rep]);
+		l2.insert(l2.begin(),data[rep]);
+	}
+
+	//merge()
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 1 *** //
+	printf("\n*** DLList Concat with %d and %d size ***\n",l.size(),l2.size());
+	l.insert(l.end(), l2.begin(), l2.end());
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
+	///////////////////////////////////////////////////////////////////////
+  	QueryPerformanceCounter(&time_start);
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 2 *** //
+  	QueryPerformanceCounter(&time_start);
+	printf("\n*** DLList Concat with %d and %d size ***\n",l.size(),l2.size());
+	l.insert(l.end(), l2.begin(), l2.end());
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
+	///////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 3 *** //
+  	QueryPerformanceCounter(&time_start);
+	printf("\n*** DLList Concat with %d and %d size ***\n",l.size(),l2.size());
+	l.insert(l.end(), l2.begin(), l2.end());
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
+	///////////////////////////////////////////////////////////////////////
+	
+
+}
+
+void calculateTimeForFunctionList() {
+	LARGE_INTEGER frequency;				// ticks per second
+	LARGE_INTEGER  time_start, time_end;    // ticks in interval, 
+	
+
+	///////////////////////////////////////////////////////////////////////
+	// Frequency: ticks per second
+	QueryPerformanceFrequency(&frequency);
+	///////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////
+	// *** Insert First *** //
+	// Meassurement time
+	// start timer
+	QueryPerformanceCounter(&time_start);
+	// execute function to meassure 'repetitions' times
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		fl.push_front(data[rep]);
+		//v[rep] = data[rep];
+    	data[rep] = NULL;
+	}
+	// stop timer
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Insert First ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Insert First", "STD List");
+	///////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////
+	// *** Extract First *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		data[rep] = fl.front();
+		fl.pop_front();
+  	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Extract First ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract First", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Insert Last *** //
+	QueryPerformanceCounter(&time_start);
+
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		auto before_end = fl.before_begin();
+		for (auto& _ : fl)
+			++before_end;
+
+		fl.insert_after(before_end,data[rep]);
+		data[rep] = NULL;
+	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Insert Last ***\n");
+	PrintTime(frequency,time_start,time_end);
+    SaveResult(frequency, time_start, time_end,"Insert Last", NULL);
+	/////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////////////////////////////////////////////////
+	// *** Extract Last *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		std::forward_list<u16>::iterator prev;
+		std::forward_list<u16>::iterator end = fl.end();
+
+		for (auto it = fl.before_begin(); it != end;) {
+			prev = it;
+			if (++it == end){
+				//data[rep] = *it;
+				break;
+			}
+			
+    	}
+		data[rep] = 5;
+		//data[rep] = *prev;
+		fl.erase_after(prev);
+	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Extract Last ***\n");
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract Last", NULL);
+	/////////////////////////////////////////////////////////////////////
+	// *** Insert At *** //
+	u16 middle = std::distance(fl.begin(),fl.end()) / 2; // It must be 5000
+	
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		auto it = fl.begin();
+		advance(it, middle);
+		fl.insert_after(it,data[rep]);
+    	data[rep] = NULL;
+  }
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Insert At position %d ***\n",middle);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Insert At", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Extract At *** //
+	QueryPerformanceCounter(&time_start);
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		auto it = fl.begin();
+		advance(it, middle);
+		data[rep] = *it;
+		fl.erase_after(it);
+  	}
+	QueryPerformanceCounter(&time_end);
+	printf("\n*** List Extract At position %d ***\n",middle);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Extract At", NULL);
+	///////////////////////////////////////////////////////////////////////
+
+
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		fl.push_front(data[rep]);
+		fl2.push_front(data[rep]);
+	}
+
+	//merge()
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 1 *** //
+	printf("\n*** List Concat with %d and %d size ***\n",l.size(),l2.size());
+	fl.merge(fl2);
+	//l.insert(l.end(), l2.begin(), l2.end());
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
+	///////////////////////////////////////////////////////////////////////
+  	QueryPerformanceCounter(&time_start);
+
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 2 *** //
+  	QueryPerformanceCounter(&time_start);
+	printf("\n*** List Concat with %d and %d size ***\n",l.size(),l2.size());
+	//l.insert(l.end(), l2.begin(), l2.end());
+	fl.merge(fl2);
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
+	///////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// *** Concat 3 *** //
+  	QueryPerformanceCounter(&time_start);
+	printf("\n*** List Concat with %d and %d size ***\n",l.size(),l2.size());
+	//l.insert(l.end(), l2.begin(), l2.end());
+	fl.merge(fl2);
+	QueryPerformanceCounter(&time_end);
+	PrintTime(frequency,time_start,time_end);
+  	SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
+	///////////////////////////////////////////////////////////////////////
+	
+
+}
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
 	TESTBASE_generateDataForComparative();
 	calculateTimeForFunction();
+	calculateTimeForFunctionList();
+	calculateTimeForFunctionDDLList();
 	//MM->status();
 	printf("Press ENTER to continue\n");
 	getchar();

@@ -1,33 +1,33 @@
 ;Vector;
-;Time Elapsed;Average Time
-Insert First;1114568.0000;111.4568
-Extract First;1087951.7500;108.7952
-Insert Last;881.0001;0.0881
-Extract Last;630.4000;0.0630
-Insert At;271984.2188;27.1984
-Extract At;1073233.3750;107.3233
-Concat 1;8218.0000;0.8218
-Concat 2;8693.1992;0.8693
-Concat 3;9129.8994;0.9130
+;Time Elapsed;Average Time;
+Insert First;105188.1016;10.5188
+Extract First;130365.4922;13.0365
+Insert Last;57.5000;0.0057
+Extract Last;64.0000;0.0064
+Insert At;29106.7988;2.9107
+Extract At;166669.2031;16.6669
+Concat 1;6828.7998;0.6829
+Concat 2;7901.5000;0.7902
+Concat 3;8360.2998;0.8360
 ;List;
-;Time Elapsed;Average Time
-Insert First;7914.6001;0.7915
-Extract First;7284.3999;0.7284
-Insert Last;7953.5996;0.7954
-Extract Last;127313.6016;12.7314
-Insert At;65230.8984;6.5231
-Extract At;7494.7002;0.7495
-Concat 1;132612.8906;13.2613
-Concat 2;131221.3906;13.1221
-Concat 3;131494.9062;13.1495
+;Time Elapsed;Average Time;
+Insert First;6717.1001;0.6717
+Extract First;6632.3003;0.6632
+Insert Last;7096.0996;0.7096
+Extract Last;76944.8984;7.6945
+Insert At;42710.8984;4.2711
+Extract At;7102.8999;0.7103
+Concat 1;88002.2031;8.8002
+Concat 2;86853.3047;8.6853
+Concat 3;86398.5000;8.6398
 ;DList;
-;Time Elapsed;Average Time
-Insert First;8000.1001;0.8000
-Extract First;7420.0000;0.7420
-Insert Last;7993.1997;0.7993
-Extract Last;7405.9995;0.7406
-Insert At;59078.9023;5.9079
-Extract At;7538.9004;0.7539
-Concat 1;116789.2031;11.6789
-Concat 2;119732.3047;11.9732
-Concat 3;117312.8984;11.7313
+;Time Elapsed;Average Time;
+Insert First;6858.4004;0.6858
+Extract First;6737.0000;0.6737
+Insert Last;7122.8999;0.7123
+Extract Last;6880.7998;0.6881
+Insert At;41220.0977;4.1220
+Extract At;8486.8994;0.8487
+Concat 1;84811.6016;8.4812
+Concat 2;82802.2969;8.2802
+Concat 3;83686.3984;8.3686

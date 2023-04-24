@@ -28,6 +28,7 @@ u16 size = 0;
 int u16_size;
 
 std::vector<u16> v;
+std::vector<u16> v2;
 
 double elapsed_time = 0.0f;
 u32 repetitions = 10000;
@@ -217,16 +218,22 @@ void calculateTimeForFunction() {
   	SaveResult(frequency, time_start, time_end,"Extract At", NULL);
 	///////////////////////////////////////////////////////////////////////
 
+
+	for (u32 rep = 0; rep < repetitions; ++rep) {
+		v.insert(v.begin(),data[rep]);
+		v2.insert(v2.begin(),data[rep]);
+	}
+
+
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 1 *** //
-  	/*v2 = NULL;
-  	v2 = VECTOR_create(capacity*2);
-  	FillVector(v2,data_2);
-  
   	QueryPerformanceCounter(&time_start);
-	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
-  	// Aqui arriba lo mismo
-  	v->ops_->concat(v,v2);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v.size(),v2.size());
+	v.insert(
+      v.end(),
+      std::make_move_iterator(v2.begin()),
+      std::make_move_iterator(v2.end())
+    );
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
   	SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
@@ -235,37 +242,31 @@ void calculateTimeForFunction() {
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 2 *** //
   	QueryPerformanceCounter(&time_start);
-	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
-  	// Lo concateno, osea, copio los datos del v2 y los pongo al final del v1
-  	v->ops_->concat(v,v2);
-  	//v->ops_->reset(v);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v.size(),v2.size());
+	v.insert(
+      v.end(),
+      std::make_move_iterator(v2.begin()),
+      std::make_move_iterator(v2.end())
+    );
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
   	SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
 	///////////////////////////////////////////////////////////////////////
-
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 3 *** //
   	QueryPerformanceCounter(&time_start);
-	printf("\n*** Vector Concat with %d and %d size ***\n",v->capacity_,v2->capacity_);
-  	// Lo concateno, osea, copio los datos del v2 y los pongo al final del v1
-  	v->ops_->concat(v,v2);
-  	//v->ops_->reset(v);
+	printf("\n*** Vector Concat with %d and %d size ***\n",v.size(),v2.size());
+	v.insert(
+      v.end(),
+      std::make_move_iterator(v2.begin()),
+      std::make_move_iterator(v2.end())
+    );
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
   	SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 
-	for (u32 i = 0; i < capacity*2; i++) {
-		MM->free(data[i]);
-		MM->free(data_2[i]);
-	}
-
-
-	v->ops_->destroy(v);
-  	v2->ops_->softReset(v2);
-	v2->ops_->destroy(v2);*/
 }
 
 

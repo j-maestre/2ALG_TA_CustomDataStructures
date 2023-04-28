@@ -131,7 +131,7 @@ s16 DLLIST_destroy(List* list)
 
 s16 DLLIST_softResetWithoutCheck(List* list)
 {
-  if (list->lenght_)
+  if (list->lenght_ == 0)
   {
     return kErrorCode_Ok;
   }
@@ -151,7 +151,7 @@ s16 DLLIST_softResetWithoutCheck(List* list)
 
 s16 DLLIST_softReset(List* list) 
 {
-  if (list != NULL)
+  if (list == NULL)
   {
     return kErrorCode_ListNULL;
   }

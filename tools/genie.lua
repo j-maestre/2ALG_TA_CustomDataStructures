@@ -59,7 +59,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     --"PR10_Logger",
     "PR11_Comparative",
     "PR12_Comparative_STD",
-    --"PR13_SortingAlgorithms",
+    "PR13_SortingAlgorithms",
     --"PR14_CPP_MemoryNode",
     --"PR15_CPP_Vector",
     --"PR16_CPP_CircularVector",
@@ -232,4 +232,16 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./src/adt_dllist.c"),
         path.join(PROJ_DIR, "./src/adt_memory_node.c") ,
         path.join(PROJ_DIR, "./tests/comparative.cc"),
+    }
+    project "PR13_SortingAlgorithms"
+    files {
+        path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+        path.join(PROJ_DIR, "./include/adt_vector.h"),
+        path.join(PROJ_DIR, "./include/adt_list.h"),
+        path.join(PROJ_DIR, "./include/adt_dllist.h"),
+        path.join(PROJ_DIR, "./src/adt_vector.c"),
+        path.join(PROJ_DIR, "./src/adt_list.c"),
+        path.join(PROJ_DIR, "./src/adt_dllist.c"),
+        path.join(PROJ_DIR, "./src/adt_memory_node.c"),
+        path.join(PROJ_DIR, "./tests/sorting.c")
     }

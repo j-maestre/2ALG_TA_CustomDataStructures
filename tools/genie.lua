@@ -60,7 +60,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR11_Comparative",
     "PR12_Comparative_STD",
     "PR13_SortingAlgorithms",
-    --"PR14_CPP_MemoryNode",
+    "PR14_CPP_MemoryNode",
     --"PR15_CPP_Vector",
     --"PR16_CPP_CircularVector",
     --"PR17_CPP_MovableVector",
@@ -77,7 +77,7 @@ solution("DS_ALG_AI1" .. _ACTION)
 --[[************************* PROJECT GENERATOR FUNCTION *************************]]--
   for i, prj in ipairs(projects_names) do
     project(prj)
-      if prj == "PR12_Comparative_STD" then 
+      if prj == "PR12_Comparative_STD" then
         language "C++"
       end
       location (PROJ_DIR .. "/build/" .. prj .. "/" .. _ACTION)
@@ -149,7 +149,7 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./tests/test_movable_vector.c"),
       path.join(PROJ_DIR, "./src/adt_memory_node.c")
     }
-    
+
   project "PR02_CircularVector"
     files {
        path.join(PROJ_DIR, "./include/adt_memory_node.h"),
@@ -253,3 +253,11 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./src/adt_memory_node.c"),
         path.join(PROJ_DIR, "./tests/sorting.c")
     }
+
+    project "PR14_CPP_MemoryNode"
+      language "C++"
+      files {
+        path.join(PROJ_DIR, "./include/memory_node.h"),
+        path.join(PROJ_DIR, "./src/memory_node.cc"),
+        path.join(PROJ_DIR, "./tests/test_memory_node.cc"),
+      }

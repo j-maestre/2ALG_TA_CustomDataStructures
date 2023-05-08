@@ -60,7 +60,7 @@ void TESTBASE_generateDataForComparative() {
 	list = LIST_create(capacity);
 	dlist = NULL;
 	dlist = DLLIST_create(capacity);
-	for(u16 i = 0; i < capacity*2; i++){
+	for(u16 i = 0; i < capacity; i++){
 		u16 *number = MM->malloc(sizeof(u16));
 		u16 *number2 = MM->malloc(sizeof(u16));
 		*number = 5;
@@ -69,7 +69,7 @@ void TESTBASE_generateDataForComparative() {
 		data_2[i] = number2;
 	}
 
-	for(u16 i = 0; i < capacity * 2; i++){
+	for(u16 i = 0; i < capacity; i++){
 		u16 *number = MM->malloc(sizeof(u16));
 		u16 *number2 = MM->malloc(sizeof(u16));
 
@@ -79,7 +79,7 @@ void TESTBASE_generateDataForComparative() {
 		data_list[i] = number;
 		data_list_2[i] = number2;
 	}
-	for(u16 i = 0; i < capacity * 2; i++){
+	for(u16 i = 0; i < capacity; i++){
 		u16 *number = MM->malloc(sizeof(u16));
 		u16 *number2 = MM->malloc(sizeof(u16));
 
@@ -302,7 +302,7 @@ void calculateTimeForFunction() {
 	///////////////////////////////////////////////////////////////////////
 
 
-	for (u32 i = 0; i < capacity*2; i++) {
+	for (u32 i = 0; i < capacity; i++) {
 		MM->free(data[i]);
 		MM->free(data_2[i]);
 	}
@@ -437,14 +437,14 @@ void calculateTimeForFunctionList() {
 	///////////////////////////////////////////////////////////////////////
 
 
-	for (u32 i = 0; i < capacity*2; i++) {
+	for (u32 i = 0; i < capacity; i++) {
 		MM->free(data_list[i]);
 		MM->free(data_list_2[i]);
 	}
 
 	//list->ops_->softReset(list);
 	list->ops_->destroy(list);
-  	list2->ops_->softReset(list2);
+  list2->ops_->softReset(list2);
 	list2->ops_->destroy(list2);
 }
 
@@ -466,13 +466,13 @@ void calculateTimeForFunctionDList() {
 	// execute function to meassure 'repetitions' times
 	for (u32 rep = 0; rep < repetitions; ++rep) {
 		dlist->ops_->insertFirst(dlist,data_dlist[rep],size);
-    	data_dlist[rep] = NULL;
+    data_dlist[rep] = NULL;
 	}
 	// stop timer
 	QueryPerformanceCounter(&time_end);
 	printf("\n***  DList Insert First ***\n");
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Insert First", "DList");
+  SaveResult(frequency, time_start, time_end,"Insert First", "DList");
 	///////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////
@@ -480,11 +480,11 @@ void calculateTimeForFunctionDList() {
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
 		data_dlist[rep] = dlist->ops_->extractFirst(dlist);
-  	}
+  }
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** DList Extract First ***\n");
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Extract First", NULL);
+  SaveResult(frequency, time_start, time_end,"Extract First", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -492,12 +492,12 @@ void calculateTimeForFunctionDList() {
 	QueryPerformanceCounter(&time_start);
 	for (u32 rep = 0; rep < repetitions; ++rep) {
 		dlist->ops_->insertLast(dlist,data_dlist[rep],size);
-    	data_dlist[rep] = NULL;
+    data_dlist[rep] = NULL;
 	}
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** DList Insert Last ***\n");
 	PrintTime(frequency,time_start,time_end);
-    SaveResult(frequency, time_start, time_end,"Insert Last", NULL);
+  SaveResult(frequency, time_start, time_end,"Insert Last", NULL);
 	/////////////////////////////////////////////////////////////////////
 	
 	/////////////////////////////////////////////////////////////////////
@@ -509,7 +509,7 @@ void calculateTimeForFunctionDList() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** DList Extract Last ***\n");
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Extract Last", NULL);
+  SaveResult(frequency, time_start, time_end,"Extract Last", NULL);
 	/////////////////////////////////////////////////////////////////////
 	// *** Insert At *** //
 	u16 middle = dlist->capacity_/2;
@@ -521,7 +521,7 @@ void calculateTimeForFunctionDList() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** DList Insert At position %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Insert At", NULL);
+  SaveResult(frequency, time_start, time_end,"Insert At", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
@@ -533,56 +533,63 @@ void calculateTimeForFunctionDList() {
 	QueryPerformanceCounter(&time_end);
 	printf("\n*** DList Extract At position %d ***\n",middle);
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Extract At", NULL);
+  SaveResult(frequency, time_start, time_end,"Extract At", NULL);
 	///////////////////////////////////////////////////////////////////////
 
+
+	dlist2 = NULL;
+  dlist2 = DLLIST_create(capacity);
+	//FillDList(dlist2,data_dlist_2);
+
+  for (u32 rep = 0; rep < repetitions; ++rep) {
+		dlist2->ops_->insertFirst(dlist2,data_dlist_2[rep],size);
+    //data_dlist_2[rep] = NULL;
+		dlist->ops_->insertFirst(dlist,data_dlist[rep],size);
+    //data_dlist[rep] = NULL;
+	}
+  	
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 1 *** //
-	dlist2 = NULL;
-  	dlist2 = DLLIST_create(capacity);
-	
-	FillDList(dlist2,data_dlist_2);
-  	
-  
-  	QueryPerformanceCounter(&time_start);
+  QueryPerformanceCounter(&time_start);
 	printf("\n*** DList Concat with %d and %d size ***\n",dlist->capacity_,dlist2->capacity_);
-  	dlist->ops_->concat(dlist,dlist2);
+  dlist->ops_->concat(dlist,dlist2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
+  SaveResult(frequency, time_start, time_end,"Concat 1", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 2 *** //
-  	QueryPerformanceCounter(&time_start);
+  QueryPerformanceCounter(&time_start);
 	printf("\n*** DList Concat with %d and %d size ***\n",dlist->capacity_,dlist2->capacity_);
-  	dlist->ops_->concat(dlist,dlist2);
+  dlist->ops_->concat(dlist,dlist2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
+  SaveResult(frequency, time_start, time_end,"Concat 2", NULL);
 	///////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////
 	// *** Concat 3 *** //
-  	QueryPerformanceCounter(&time_start);
+  QueryPerformanceCounter(&time_start);
 	printf("\n*** DList Concat with %d and %d size ***\n",dlist->capacity_,dlist2->capacity_);
-  	dlist->ops_->concat(dlist,dlist2);
+  dlist->ops_->concat(dlist,dlist2);
 	QueryPerformanceCounter(&time_end);
 	PrintTime(frequency,time_start,time_end);
-  	SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
+  SaveResult(frequency, time_start, time_end,"Concat 3", NULL);
 	///////////////////////////////////////////////////////////////////////
-
-
-for (u32 i = 0; i < capacity*2; i++) {
-		MM->free(data_dlist[i]);
-		MM->free(data_dlist_2[i]);
-	}
 
 	//dlist->ops_->softReset(dlist);
 	dlist->ops_->destroy(dlist);
 
-  	dlist2->ops_->softReset(dlist2);
+  dlist2->ops_->softReset(dlist2);
 	dlist2->ops_->destroy(dlist2);
+  
+  for (u32 i = 0; i < capacity; i++) {
+		//MM->free(data_dlist[i]);
+		MM->free(data_dlist_2[i]);
+    data_dlist[i] = NULL;
+    data_dlist_2[i] = NULL;
+	}
 }
 
 int main(int argc, char** argv) {

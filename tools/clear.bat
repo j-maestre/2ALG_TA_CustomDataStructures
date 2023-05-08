@@ -13,7 +13,8 @@ IF EXIST ..\build\PR08_Stack rmdir /s /q ..\build\PR08_Stack
 IF EXIST ..\build\PR09_Queue rmdir /s /q ..\build\PR09_Queue
 IF EXIST ..\build\PR10_Logger rmdir /s /q ..\build\PR10_Logger
 IF EXIST ..\build\PR11_Comparative rmdir /s /q ..\build\PR11_Comparative
-IF EXIST ..\build\PR12_SortingAlgorithms rmdir /s /q ..\build\PR12_SortingAlgorithms
+IF EXIST ..\build\PR12_Comparative_STD rmdir /s /q ..\build\PR12_Comparative_STD
+IF EXIST ..\build\PR13_SortingAlgorithms rmdir /s /q ..\build\PR13_SortingAlgorithms
 IF EXIST ..\bin\debug rmdir /s /q ..\bin\debug
 IF EXIST ..\bin\release rmdir /s /q ..\bin\release
 IF EXIST ..\build rmdir /s /q ..\build

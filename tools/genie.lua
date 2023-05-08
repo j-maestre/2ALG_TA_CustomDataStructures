@@ -53,7 +53,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR04_List",
     "PR05_DLList",
     "PR06_CircularList",
-    --"PR07_CircularDLList",
+    "PR07_CircularDLList",
     "PR08_Stack",
     "PR09_Queue",
     --"PR10_Logger",
@@ -185,6 +185,14 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/adt_clist.h"),
       path.join(PROJ_DIR, "./src/adt_clist.c"),
       path.join(PROJ_DIR, "./tests/test_clist.c"),
+    }
+  project "PR07_CircularDLList"
+    files {
+      path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+      path.join(PROJ_DIR, "./src/adt_memory_node.c"),
+      path.join(PROJ_DIR, "./include/adt_cdllist.h"),
+      path.join(PROJ_DIR, "./src/adt_cdllist.c"),
+      path.join(PROJ_DIR, "./tests/test_cdllist.c"),
     }
 
   project "PR08_Stack"

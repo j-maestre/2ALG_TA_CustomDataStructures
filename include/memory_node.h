@@ -17,7 +17,7 @@ public:
   MemoryNode& operator=(MemoryNode&& other);
 
   static MemoryNode* Create();
-  static s16 CreateFromRef(MemoryNode **other);
+  static s16 CreateFromRef(MemoryNode **node);
   
   void* data();
   s16 setData(void *src, u16 bytes);
@@ -34,14 +34,16 @@ public:
   s16 memMask(u8 mask);
   void print();
 
-protected:
-
   void* operator new(size_t count);
   void operator delete(void *ptr);
 
   void* operator new[](size_t count);
   void operator delete[](void *ptr, size_t count);
   
+  friend class Vector;
+  friend class CircularVector;
+  
+protected:
   void *data_;
   u16 size_;
   MemoryNode *next_;

@@ -26,6 +26,7 @@ MemoryNode::MemoryNode(MemoryNode&& other)
   this->size_ = other.size_;
   this->next_ = other.next_;
   this->previous_ = other.previous_;
+  other.data_ = nullptr;
 }
 
 MemoryNode::~MemoryNode() {}
@@ -56,6 +57,7 @@ MemoryNode& MemoryNode::operator=(MemoryNode&& other)
     this->size_ = other.size_;
     this->next_ = other.next_;
     this->previous_ = other.previous_;
+    other.data_ = nullptr;
   }
   
   return *this;

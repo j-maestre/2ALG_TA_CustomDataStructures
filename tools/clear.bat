@@ -16,6 +16,7 @@ IF EXIST ..\build\PR11_Comparative rmdir /s /q ..\build\PR11_Comparative
 IF EXIST ..\build\PR12_Comparative_STD rmdir /s /q ..\build\PR12_Comparative_STD
 IF EXIST ..\build\PR13_SortingAlgorithms rmdir /s /q ..\build\PR13_SortingAlgorithms
 IF EXIST ..\build\PR14_CPP_MemoryNode rmdir /s /q ..\build\PR14_CPP_MemoryNode
+IF EXIST ..\build\PR15_CPP_Vector rmdir /s /q ..\build\PR15_CPP_Vector
 IF EXIST ..\bin\debug rmdir /s /q ..\bin\debug
 IF EXIST ..\bin\release rmdir /s /q ..\bin\release
 IF EXIST ..\build rmdir /s /q ..\build

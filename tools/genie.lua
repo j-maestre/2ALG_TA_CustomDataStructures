@@ -61,8 +61,8 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR12_Comparative_STD",
     "PR13_SortingAlgorithms",
     "PR14_CPP_MemoryNode",
-    --"PR15_CPP_Vector",
-    --"PR16_CPP_CircularVector",
+    "PR15_CPP_Vector",
+    "PR16_CPP_CircularVector",
     --"PR17_CPP_MovableVector",
     --"PR18_CPP_List",
     --"PR19_CPP_DLList",
@@ -260,4 +260,20 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./include/memory_node.h"),
         path.join(PROJ_DIR, "./src/memory_node.cc"),
         path.join(PROJ_DIR, "./tests/test_memory_node.cc"),
+      }
+
+    project "PR15_CPP_Vector"
+      language "C++"
+      files {
+        path.join(PROJ_DIR, "./include/vector.h"),
+        path.join(PROJ_DIR, "./src/vector.cc"),
+        path.join(PROJ_DIR, "./tests/test_vector.cc"),
+      }
+
+    project "PR16_CPP_CircularVector"
+      language "C++"
+      files {
+        path.join(PROJ_DIR, "./include/circular_vector.h"),
+        path.join(PROJ_DIR, "./src/circular_vector.cc"),
+        path.join(PROJ_DIR, "./tests/test_circular_vector.cc"),
       }

@@ -81,14 +81,15 @@ int main()
 {   
     srand(time(NULL));
     InitDataForTest();
- 
+    
+    printf("\n*** QuickSort Algorithm *** \n");
     printf("*** Un-ordered ***\n");
     for (u16 i = 0; i < capacity; i++) {
         u16 *num = (u16*) v->ops_->at(v,i);
         printf("%d - ",*num);
 
     }
-    printf("\nSorting...\n");
+    printf("\n\n_____ Sorting... _____\n\n");
     quickSort(v, 0, capacity - 1);
  
     printf("*** Ordered ***\n");

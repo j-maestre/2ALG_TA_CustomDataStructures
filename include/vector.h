@@ -6,7 +6,7 @@
 class Vector
 {
 private:
-  Vector();
+  Vector(u16 size);
   Vector(const Vector& other);
   Vector(Vector&& other);
 
@@ -16,8 +16,7 @@ public:
   Vector& operator =(const Vector& other);
   Vector& operator =(Vector&& other);
 
-  static Vector* Create();
-  static s16 CreateFromRef(Vector **vector);
+  static Vector* Create(u16 size);
 
 	s16 destroy();
   s16 softReset();
@@ -38,6 +37,7 @@ public:
 	void* extractAt(u16 position);
 	s16 concat(Vector *vector_src);
 	s16 traverse(void (*callback)(MemoryNode *));
+	MemoryNode* data();
 	void print();
 
 	void* operator new(size_t count);

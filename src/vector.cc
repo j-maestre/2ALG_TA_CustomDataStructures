@@ -5,12 +5,12 @@
 #include "common_def.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 
-Vector::Vector() : head_(0), tail_(0), capacity_(0), storage_(nullptr)
+Vector::Vector(u16 size) : head_(0), tail_(0), capacity_(size)
 {
-  
+  storage_ = new MemoryNode[capacity_];
 }
 
-Vector::Vector(const Vector& other) : Vector()
+Vector::Vector(const Vector& other) : Vector(other.capacity_)
 {
   this->head_ = other.head_;
   this->tail_ = other.tail_;
@@ -75,24 +75,9 @@ Vector& Vector::operator=(Vector&& other)
   return *this;
 }
 
-Vector* Vector::Create()
+Vector* Vector::Create(u16 size)
 {
-  return new Vector();
-}
-
-s16 Vector::CreateFromRef(Vector** vector)
-{
-  if (nullptr == vector) {
-    return kErrorCode_VectorNULL;
-  }
-  
-  *vector = Vector::Create();
-  if (*vector == nullptr)
-  {
-    return kErrorCode_NoMemory;
-  }
-
-  return kErrorCode_Ok;
+  return new Vector(size);
 }
 
 s16 Vector::destroy()
@@ -289,7 +274,7 @@ s16 Vector::insertLast(void* data, u16 bytes)
     return kErrorCode_ZeroBytes;
   }
 
-  if(this->isFull()){
+  if(!this->isFull()){
     this->storage_[this->tail_].setData(data, bytes);
     this->tail_++;
     return kErrorCode_Ok;
@@ -393,7 +378,7 @@ void* Vector::extractLast()
   }
 
   void *data_tmp = ((this->storage_)+(this->tail_ - 1))->data_;
-  this->storage_[this->tail_-1],softReset();
+  this->storage_[this->tail_-1].softReset();
   this->tail_--;
 
   return data_tmp;
@@ -446,8 +431,14 @@ s16 Vector::traverse(void (* callback)(MemoryNode*))
   return kErrorCode_Ok;
 }
 
+MemoryNode* Vector::data()
+{
+  return this->storage_;
+}
+
 void Vector::print()
 {
+  if (this == NULL) return;
   if( nullptr == this->storage_){
     return;
   }
@@ -466,7 +457,7 @@ void Vector::print()
 
 void* Vector::operator new(size_t count)
 {
-  return MM->malloc(sizeof(Vector));
+  return MM->malloc(count);
 }
 
 void Vector::operator delete(void* ptr)
@@ -476,7 +467,7 @@ void Vector::operator delete(void* ptr)
 
 void* Vector::operator new [](size_t count)
 {
-  return MM->malloc(sizeof(Vector) * count);
+  return MM->malloc(count);
 }
 
 void Vector::operator delete [](void* ptr, size_t count)

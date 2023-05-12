@@ -11,6 +11,8 @@
 
 Vector *v = NULL;
 Vector *v2 = NULL;
+Vector *v3 = NULL;
+Vector *v4 = NULL;
 u16 capacity;
 u16 data[5000];
 u16 max_range;
@@ -99,24 +101,116 @@ void heapify(Vector *vec, u16 n, u16 i) {
  
 //******* End HeapSort ***********
 
+//******* Bubble Sort ************
+void bubbleSort(Vector *v, u16 size) {
+
+  // loop to access each array element
+  for (u16 step = 0; step < size - 1; ++step) {
+      
+    // loop to compare array elements
+    for (u16 i = 0; i < size - step - 1; ++i) {
+      
+      // compare two adjacent elements
+      // change > to < to sort in descending order
+      //if (array[i] > array[i + 1]) {
+      if (*((u16*) v->ops_->at(v,i)) > *((u16*) v->ops_->at(v,i+1))) {
+        
+        // swapping occurs if elements
+        // are not in the intended order
+        swap(v,i,i+1);
+        //int temp = array[i];
+        //array[i] = array[i + 1];
+        //array[i + 1] = temp;
+      }
+    }
+  }
+}
+//******* End Bubble Sort ************
+
+
+//******* Cocktail sort ************
+void CocktailSort(Vector *v, u16 n){
+    u8 swapped = 1;
+    int start = 0;
+    int end = n - 1;
+ 
+    while (swapped == 1) {
+        // reset the swapped flag on entering
+        // the loop, because it might be true from
+        // a previous iteration.
+        swapped = 0;
+ 
+        // loop from left to right same as
+        // the bubble sort
+        for (u16 i = start; i < end; ++i) {
+            //if (a[i] > a[i + 1]) {
+            if (*((u16*) v->ops_->at(v,i)) > *((u16*) v->ops_->at(v,i+1))) {
+                //swap(a[i], a[i + 1]);
+                swap(v,i,i+1);
+                swapped = 1;
+            }
+        }
+ 
+        // if nothing moved, then array is sorted.
+        if (swapped == 0)
+            break;
+ 
+        // otherwise, reset the swapped flag so that it
+        // can be used in the next stage
+        swapped = 0;
+ 
+        // move the end point back by one, because
+        // item at the end is in its rightful spot
+        --end;
+ 
+        // from right to left, doing the
+        // same comparison as in the previous stage
+        for (u16 i = end - 1; i >= start; --i) {
+            //if (a[i] > a[i + 1]) {
+            if (*((u16*) v->ops_->at(v,i)) > *((u16*) v->ops_->at(v,i+1))) {
+                //swap(a[i], a[i + 1]);
+                swap(v, i, i+1);
+                swapped = 1;
+            }
+        }
+ 
+        // increase the starting point, because
+        // the last stage would have moved the next
+        // smallest number to its rightful spot.
+        ++start;
+    }
+}
+
+
+//******* End Cocktail sort ************
+
+
 void InitDataForTest(){
   
-    capacity = 1000;
-    max_range = 150;
+    capacity = 10000;
+    max_range = 15000;
     v = NULL;
     v = VECTOR_create(capacity);
 
     v2 = NULL;
     v2 = VECTOR_create(capacity);
+    v3 = VECTOR_create(capacity);
+    v4 = VECTOR_create(capacity);
 
     for(u16 i = 0; i < capacity; i++){
         u16 *number = MM->malloc(sizeof(u16));
         u16 *number2 = MM->malloc(sizeof(u16));
+        u16 *number3 = MM->malloc(sizeof(u16));
+        u16 *number4 = MM->malloc(sizeof(u16));
         int r = rand()%max_range;
         *number = r;
         *number2 = r;
+        *number3 = r;
+        *number4 = r;
         v->ops_->insertFirst(v,number,sizeof(u16));
         v2->ops_->insertFirst(v2,number2,sizeof(u16));
+        v3->ops_->insertFirst(v3,number3,sizeof(u16));
+        v4->ops_->insertFirst(v4,number4,sizeof(u16));
     }
 }
 
@@ -152,40 +246,59 @@ int main()
     InitDataForTest();
     QueryPerformanceFrequency(&frequency);
     
+    printf("Init sorting test with %d capacity and 0 - %d range\n\n",capacity,max_range);
 
     printf("\n*** QuickSort Algorithm *** \n");
-    printf("*** Un-ordered ***\n");
-    printVector(v);
-
-    printf("\n\n_____ Sorting... _____\n\n");
+    //printf("*** Un-ordered ***\n");
+    //printVector(v);
+    //printf("\n\n_____ Sorting... _____\n\n");
 
     QueryPerformanceCounter(&time_start);
     quickSort(v, 0, capacity - 1);
     QueryPerformanceCounter(&time_end);
 
-    printf("*** Ordered ***\n");
-    printVector(v);
+    //printf("*** Ordered ***\n");
+    //printVector(v);
    
     PrintTime(frequency,time_start,time_end);
 
 
-
-
-    printf("\n\n\n*** HeapSort Algorithm *** \n");
-    printf("*** Un-ordered ***\n");
-    printVector(v2);
-
-    printf("\n\n_____ Sorting... _____\n\n");
+    printf("\n*** HeapSort Algorithm *** \n");
+    //printf("*** Un-ordered ***\n");
+    //printVector(v2);
+    //printf("\n\n_____ Sorting... _____\n\n");
 
     QueryPerformanceCounter(&time_start);
     heapSort(v2, capacity);
     QueryPerformanceCounter(&time_end);
 
-    printf("*** Ordered ***\n");
-    printVector(v2);
-
+    //printf("*** Ordered ***\n");
+    //printVector(v2);
     PrintTime(frequency,time_start,time_end);
  
+    printf("\n*** Bubble Sort Algorithm *** \n");
+    //printf("*** Un-ordered ***\n");
+    //printVector(v3);
+    //printf("\n\n_____ Sorting... _____\n\n");
+
+    QueryPerformanceCounter(&time_start);
+    bubbleSort(v3, capacity);
+    QueryPerformanceCounter(&time_end);
+    //printf("*** Ordered ***\n");
+    //printVector(v3);
+    PrintTime(frequency,time_start,time_end);
+
+
+    printf("\n*** Cocktail sort Algorithm *** \n");
+    QueryPerformanceCounter(&time_start);
+    CocktailSort(v4,capacity);
+    QueryPerformanceCounter(&time_end);
+    PrintTime(frequency,time_start,time_end);
+
+
     v->ops_->destroy(v);
+    //v2->ops_->destroy(v2);
+    //v3->ops_->destroy(v3);
+    //v4->ops_->destroy(v4);
     return 0;
 }

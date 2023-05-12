@@ -20,7 +20,7 @@
 
 #include "edk_platform_types.h"
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif //_cplusplus
 
@@ -39,7 +39,7 @@ extern "C" {
   EDK_MemoryManager* EDK_MemMngrInstance();
 #define MM (EDK_MemMngrInstance()->ops_)
 
-#ifdef _cplusplus
+#ifdef __cplusplus
 }
 #endif //_cplusplus
 

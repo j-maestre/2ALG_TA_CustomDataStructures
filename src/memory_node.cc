@@ -65,7 +65,7 @@ MemoryNode& MemoryNode::operator=(MemoryNode&& other)
 
 void* MemoryNode::operator new(size_t count)
 {
-  MemoryNode *aux = (MemoryNode*)MM->malloc(sizeof(MemoryNode));
+  MemoryNode *aux = (MemoryNode*)MM->malloc(count);
   return aux;
 }
 
@@ -77,7 +77,7 @@ void MemoryNode::operator delete(void* ptr)
 
 void* MemoryNode::operator new [](size_t count)
 {
-  MemoryNode *aux = (MemoryNode*)MM->malloc(sizeof(MemoryNode) * count);
+  MemoryNode *aux = (MemoryNode*)MM->malloc(count);
   return aux;
 }
 

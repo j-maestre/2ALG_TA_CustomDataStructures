@@ -20,19 +20,27 @@
 
 #include "edk_platform_types.h"
 
-typedef struct edk_memory_manager_s {
-  struct memory_manager_ops_s *ops_;
-} EDK_MemoryManager;
+#ifdef _cplusplus
+extern "C" {
+#endif //_cplusplus
 
-struct memory_manager_ops_s {
-  void* (*malloc)(int size);
-  void* (*calloc)(int size);
-  void (*free)(void *ptr);
-  void (*status)();
-  void (*destroy)();
-};
+  typedef struct edk_memory_manager_s {
+    struct memory_manager_ops_s* ops_;
+  } EDK_MemoryManager;
 
-EDK_MemoryManager* EDK_MemMngrInstance();
+  struct memory_manager_ops_s {
+    void* (*malloc)(int size);
+    void* (*calloc)(int size);
+    void (*free)(void* ptr);
+    void (*status)();
+    void (*destroy)();
+  };
+
+  EDK_MemoryManager* EDK_MemMngrInstance();
 #define MM (EDK_MemMngrInstance()->ops_)
+
+#ifdef _cplusplus
+}
+#endif //_cplusplus
 
 #endif //__EDK_MEMORY_MANAGER_H__

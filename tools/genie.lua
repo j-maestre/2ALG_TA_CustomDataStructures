@@ -60,10 +60,17 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR11_Comparative",
     "PR12_Comparative_STD",
     "PR13_SortingAlgorithms",
+<<<<<<< HEAD
     "PR14_CPP_MemoryNode",
     "PR15_CPP_Vector",
     "PR16_CPP_CircularVector",
     --"PR17_CPP_MovableVector",
+=======
+    --"PR14_CPP_MemoryNode",
+    --"PR15_CPP_Vector",
+    --"PR16_CPP_CircularVector",
+    "PR17_CPP_MovableVector",
+>>>>>>> 9863f04 (extern C in memory manager)
     --"PR18_CPP_List",
     --"PR19_CPP_DLList",
     --"PR20_CPP_CircularList",
@@ -254,6 +261,7 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./tests/sorting.c")
     }
 
+<<<<<<< HEAD
     project "PR14_CPP_MemoryNode"
       language "C++"
       files {
@@ -277,3 +285,12 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./src/circular_vector.cc"),
         path.join(PROJ_DIR, "./tests/test_circular_vector.cc"),
       }
+=======
+    project "PR17_CPP_MovableVector"
+    language "C++"
+    files {
+      path.join(PROJ_DIR, "./include/movable_vector.h"),
+      path.join(PROJ_DIR, "./src/movable_vector.cc"),
+      path.join(PROJ_DIR, "./tests/test_movable_vector.cc"),
+    }
+>>>>>>> 9863f04 (extern C in memory manager)

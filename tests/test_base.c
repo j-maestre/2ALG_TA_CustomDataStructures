@@ -69,11 +69,11 @@ void* TESTBASE_generateDataAscii(u8 char_from, u16 size, boolean end_of_string) 
 }
 
 void* TESTBASE_generateDataString(u8 *string) {
-	u16 size = strlen(string) + 1;
+	u16 size = strlen((const char*)string) + 1;
 	void *data = TESTBASE_allocateData(size);
 	if (NULL == data)
 		return NULL;
-	strcpy(data, string);
+	strcpy((char*)data, (const char*)string);
 	return data;
 }
 
@@ -81,7 +81,7 @@ void* TESTBASE_generateDataIntegerAsString(u16 value) {
 	void *data = TESTBASE_allocateData(kMaxIntegerChars);
 	if (NULL == data)
 		return NULL;
-	itoa(value, data, 10);
+	itoa(value, (char*)data, 10);
 	return data;
 }
 
@@ -131,8 +131,8 @@ void TESTBASE_generateDataForTest() {
 	for (u8 i = 0; i < kSingleSizeData3; ++i) {
 		*(data++) = '0' + i;
 	}
-	strcpy(TestData.single_ptr_data_4, abgs_msg);
-	strcpy(TestData.single_ptr_big_data, "");
+	strcpy((char*)TestData.single_ptr_data_4, (const char*)abgs_msg);
+	strcpy((char*)TestData.single_ptr_big_data, "");
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Allocate and memory pointers of TEST A
 	printf("  + Generating Integers as String\n");
@@ -153,13 +153,13 @@ void TESTBASE_generateDataForTest() {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Allocate and memory pointers of TEST C
 	printf("  + Generating Strings\n");
-	TestData.storage_ptr_test_C[0] = TESTBASE_generateDataString("\n   ABGS - ");
-	TestData.storage_ptr_test_C[1] = TESTBASE_generateDataString("Artificial Bytes Game Studio\n");
-	TestData.storage_ptr_test_C[2] = TESTBASE_generateDataString("  **  Tap Pop Balloon - ");
-	TestData.storage_ptr_test_C[3] = TESTBASE_generateDataString("Combo Party  **\n");
-	TestData.storage_ptr_test_C[4] = TESTBASE_generateDataString("      Available for Android");
-	TestData.storage_ptr_test_C[5] = TESTBASE_generateDataString(" and iOS\n");
-	TestData.storage_ptr_test_C[6] = TESTBASE_generateDataString("\n");
+	TestData.storage_ptr_test_C[0] = TESTBASE_generateDataString((u8*)"\n   ABGS - ");
+	TestData.storage_ptr_test_C[1] = TESTBASE_generateDataString((u8*)"Artificial Bytes Game Studio\n");
+	TestData.storage_ptr_test_C[2] = TESTBASE_generateDataString((u8*)"  **  Tap Pop Balloon - ");
+	TestData.storage_ptr_test_C[3] = TESTBASE_generateDataString((u8*)"Combo Party  **\n");
+	TestData.storage_ptr_test_C[4] = TESTBASE_generateDataString((u8*)"      Available for Android");
+	TestData.storage_ptr_test_C[5] = TESTBASE_generateDataString((u8*)" and iOS\n");
+	TestData.storage_ptr_test_C[6] = TESTBASE_generateDataString((u8*)"\n");
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Print data
 #ifdef _TEST_PRINT_DATA
@@ -192,15 +192,15 @@ void TESTBASE_generateDataForTest() {
 	printf("TestData.single_ptr_big_data (allocated %d bytes) = \"%s\"\n", kSingleSizeBigData, (u8 *)TestData.single_ptr_big_data);
 	printf("\n");
 	for (u8 n = 0; n < kNumberOfStoragePtrTest_A; ++n) {
-		printf("TestData.storage_ptr_test_A[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen(TestData.storage_ptr_test_A[n]) + 1), TestData.storage_ptr_test_A[n]);
+		printf("TestData.storage_ptr_test_A[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen((const char*)TestData.storage_ptr_test_A[n]) + 1), TestData.storage_ptr_test_A[n]);
 	}
 	printf("\n");
 	for (u8 n = 0; n < kNumberOfStoragePtrTest_B; ++n) {
-		printf("TestData.storage_ptr_test_B[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen(TestData.storage_ptr_test_B[n]) + 1), TestData.storage_ptr_test_B[n]);
+		printf("TestData.storage_ptr_test_B[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen((const char*)TestData.storage_ptr_test_B[n]) + 1), TestData.storage_ptr_test_B[n]);
 	}
 	printf("\n");
 	for (u8 n = 0; n < kNumberOfStoragePtrTest_C; ++n) {
-		printf("TestData.storage_ptr_test_C[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen(TestData.storage_ptr_test_C[n]) + 1), TestData.storage_ptr_test_C[n]);
+		printf("TestData.storage_ptr_test_C[%d] (allocated %d bytes) = \"%s\"\n", n, (strlen((const char*)TestData.storage_ptr_test_C[n]) + 1), TestData.storage_ptr_test_C[n]);
 	}
 #endif
 	printf("  ===========================================\n");

@@ -34,6 +34,8 @@ typedef enum {
   kErrorCode_CallBackNULL = -14,
   kErrorCode_ListFull = -15,
   kErrorCode_ListNULL = -16,
+  kErrorCode_LoggerNULL = -17,
+  kErrorCode_FileNULL = -18,
 } ErrorCode;
 
 #endif // __COMMON_DEF_H__

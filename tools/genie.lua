@@ -74,7 +74,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     --"PR21_CPP_CircularDLList",
     --"PR22_CPP_Stack",
     --"PR23_CPP_Queue",
-    --"PR24_CPP_Logger",
+    "PR24_CPP_Logger",
     --"PR25_CPP_Comparative",
   }
 
@@ -288,4 +288,16 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/movable_vector.h"),
       path.join(PROJ_DIR, "./src/movable_vector.cc"),
       path.join(PROJ_DIR, "./tests/test_movable_vector.cc"),
+    }
+    project "PR24_CPP_Logger"
+    files {
+      path.join(PROJ_DIR, "./include/logger.h"),
+      path.join(PROJ_DIR, "./src/logger.c"),
+      path.join(PROJ_DIR, "./tests/test_logger.c"),
+      path.join(PROJ_DIR, "./include/adt_memory_node.h"),
+      path.join(PROJ_DIR, "./src/adt_memory_node.c"),
+      path.join(PROJ_DIR, "./include/adt_queue.h"),
+      path.join(PROJ_DIR, "./src/adt_queue.c"),
+      path.join(PROJ_DIR, "./include/adt_list.h"),
+      path.join(PROJ_DIR, "./src/adt_list.c"),
     }

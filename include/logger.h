@@ -8,11 +8,12 @@
 
 typedef struct Logger{
     struct adt_queue_s* queue;
-    struct Callbacks* call;
+    struct Callbacks* ops_;
 } Logger;
 
 struct Callbacks{
     void (*print)(Logger *logger, const char *msg);
+    void (*printSucces)(Logger *logger, const char *msg);
     void (*printWarning)(Logger *logger, const char *msg);
     void (*printError)(Logger *logger, const char *msg);
     s8 (*flush)(Logger *logger, FILE *f);

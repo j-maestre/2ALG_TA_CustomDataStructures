@@ -142,7 +142,8 @@ void CocktailSort(Vector *v, u16 n){
  
         // loop from left to right same as
         // the bubble sort
-        for (u16 i = start; i < end; ++i) {
+        //for (u16 i = start; i < end; ++i) {
+        for (s16 i = 0; i < end; ++i) {
             //if (a[i] > a[i + 1]) {
             if (*((u16*) v->ops_->at(v,i)) > *((u16*) v->ops_->at(v,i+1))) {
                 //swap(a[i], a[i + 1]);
@@ -165,9 +166,9 @@ void CocktailSort(Vector *v, u16 n){
  
         // from right to left, doing the
         // same comparison as in the previous stage
-        for (u16 i = end - 1; i >= start; --i) {
+        for (s16 i = end - 1; i >= start; --i) {
             //if (a[i] > a[i + 1]) {
-            if (*((u16*) v->ops_->at(v,i)) > *((u16*) v->ops_->at(v,i+1))) {
+            if (*((u16*) v->ops_->at(v,i)) >= *((u16*) v->ops_->at(v,i+1))) {
                 //swap(a[i], a[i + 1]);
                 swap(v, i, i+1);
                 swapped = 1;
@@ -187,8 +188,8 @@ void CocktailSort(Vector *v, u16 n){
 
 void InitDataForTest(){
   
-    capacity = 10000;
-    max_range = 15000;
+    capacity = 10;
+    max_range = 1500;
     v = NULL;
     v = VECTOR_create(capacity);
 
@@ -240,7 +241,7 @@ void PrintTime(LARGE_INTEGER frequency, LARGE_INTEGER time_start, LARGE_INTEGER 
 int main()
 {   
     LARGE_INTEGER frequency;				// ticks per second
-	LARGE_INTEGER  time_start, time_end;    // ticks in interval, 
+	  LARGE_INTEGER  time_start, time_end;    // ticks in interval, 
     
     srand(time(NULL));
     InitDataForTest();
@@ -295,10 +296,10 @@ int main()
     QueryPerformanceCounter(&time_end);
     PrintTime(frequency,time_start,time_end);
 
-
     v->ops_->destroy(v);
-    //v2->ops_->destroy(v2);
-    //v3->ops_->destroy(v3);
-    //v4->ops_->destroy(v4);
+    v2->ops_->destroy(v2);
+    v3->ops_->destroy(v3);
+    v4->ops_->destroy(v4);
+    MM->status();
     return 0;
 }

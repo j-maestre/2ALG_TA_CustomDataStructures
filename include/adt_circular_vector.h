@@ -6,7 +6,7 @@
 
 /**
  * @file adt_vector.h
- * @author Hector Ochando <ochandoca@esat-alumni.com>
+ * @author Jose Maria Maestre <maestrequi@esat-alumni.com>
  */
 
 #ifndef __ADT_CIRCULAR_VECTOR_H__

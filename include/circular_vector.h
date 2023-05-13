@@ -1,3 +1,8 @@
+/**
+ * @file adt_vector.h
+ * @author Jose Maria Maestre <maestrequi@esat-alumni.com>
+ */
+
 #ifndef __CIRCULAR_VECTOR_H__
 #define __CIRCULAR_VECTOR_H__ 1
 

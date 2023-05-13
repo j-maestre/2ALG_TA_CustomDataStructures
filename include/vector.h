@@ -1,6 +1,11 @@
 #ifndef __VECTOR_H__
 #define __VECTOR_H__ 1
 
+/**
+ * @file adt_memory_node.h
+ * @author Hector Ochando <ochandoca@esat-alumni.com>
+ */
+
 #include "memory_node.h"
 
 class Vector

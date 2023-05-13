@@ -1,3 +1,8 @@
+/**
+ * @file adt_memory_node.h
+ * @author Hector Ochando <ochandoca@esat-alumni.com>
+ */
+
 #ifndef __ADT_QUEUE_H__
 #define __ADT_QUEUE_H__ 1
 

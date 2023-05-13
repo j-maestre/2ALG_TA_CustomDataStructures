@@ -1,3 +1,9 @@
+/**
+ * @file adt_memory_node.h
+ * @author Hector Ochando <ochandoca@esat-alumni.com>
+ */
+
+
 #ifndef __MEMORY_NODE_H__
 #define __MEMORY_NODE_H__ 1
 

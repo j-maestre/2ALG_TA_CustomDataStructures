@@ -1,4 +1,7 @@
-
+/**
+ * @file adt_memory_node.h
+ * @author Hector Ochando <ochandoca@esat-alumni.com>
+ */
 
 #ifndef __ADT_STACK_H__
 #define __ADT_STACK_H__ 1

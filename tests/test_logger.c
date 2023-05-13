@@ -16,9 +16,14 @@ void main(){
     }
 
     log->ops_->print(log,"Print normal data");
+    log->ops_->print(log,"Print normal data con numero: %d", 90);
     log->ops_->printSucces(log,"Print Succes data");
+    log->ops_->printSucces(log,"Print Succes data con numero %d",91);
     log->ops_->printWarning(log,"Print Warning data");
+    log->ops_->printWarning(log,"Print Warning data con numero %d", 92);
     log->ops_->printError(log,"Print Error data");
+    log->ops_->printError(log,"Print Error data con numero %d", 93);
+    
 
     FILE *f;
 

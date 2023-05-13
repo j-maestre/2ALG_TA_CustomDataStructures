@@ -4,13 +4,14 @@
 #include "common_def.h"
 #include "string.h"
 
-static void LOGGER_Print(Logger *log, const char *msg);
-static void LOGGER_PrintSucces(Logger *log, const char *msg);
-static void LOGGER_PrintWarning(Logger *log, const char *msg);
-static void LOGGER_PrintError(Logger *log, const char *msg);
+static void LOGGER_Print(Logger *log, const char *msg, ...);
+static void LOGGER_PrintSucces(Logger *log, const char *msg, ...);
+static void LOGGER_PrintWarning(Logger *log, const char *msg, ...);
+static void LOGGER_PrintError(Logger *log, const char *msg, ...);
 static s8 LOGGER_Flush(Logger *log, FILE *f);
 static s8 LOGGER_Destroy(Logger *log);
 static s8 LOGGER_Reset(Logger *log);
+static char arguments[1024];
 
 struct Callbacks callbacks = {
     .print = LOGGER_Print,
@@ -45,7 +46,7 @@ Logger* LOGGER_Create(){
 } 
 
 
-void LOGGER_Print(Logger *log, const char *msg){
+void LOGGER_Print(Logger *log, const char *msg, ...){
     if( NULL == log ){
         return NULL;
     }
@@ -53,34 +54,54 @@ void LOGGER_Print(Logger *log, const char *msg){
         return NULL;
     }
 
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(arguments,sizeof(arguments),msg,args);
+    va_end(args);
+
     printf("\n------------------------\n");
     printf("\n [LOGGER] TEXT: \n");
-    printf(" %s \n",msg);
+    printf(" %s \n",arguments);
     printf("\n------------------------\n");
 
-    char *msg_copy = (char*) MM->malloc(strlen(msg)+1);
-    strcpy(msg_copy,msg);
+    char *msg_copy = (char*) MM->malloc(strlen(arguments)+1);
+    strcpy(msg_copy,arguments);
 
     log->queue->ops_->enqueue(log->queue, msg_copy, strlen(msg_copy)+1);
     log->queue->ops_->resize(log->queue, log->queue->ops_->length(log->queue)+1);
 
 }
 
-void LOGGER_PrintSucces(Logger *log, const char *msg){
+void LOGGER_PrintSucces(Logger *log, const char *msg, ...){
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(arguments,sizeof(arguments),msg,args);
+    va_end(args);
+
     printf("\033[1;32m");
-    LOGGER_Print(log, msg);
+    LOGGER_Print(log, arguments);
     printf("\033[0m");
 }
 
-void LOGGER_PrintWarning(Logger *log, const char *msg){
+void LOGGER_PrintWarning(Logger *log, const char *msg, ...){
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(arguments,sizeof(arguments),msg,args);
+    va_end(args);
+
     printf("\033[1;33m");
-    LOGGER_Print(log, msg);
+    LOGGER_Print(log, arguments);
     printf("\033[0m");
 }
 
-void LOGGER_PrintError(Logger *log, const char *msg){
+void LOGGER_PrintError(Logger *log, const char *msg, ...){
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(arguments,sizeof(arguments),msg,args);
+    va_end(args);
+
     printf("\033[1;31m");
-    LOGGER_Print(log, msg);
+    LOGGER_Print(log, arguments);
     printf("\033[0m");
 }
 

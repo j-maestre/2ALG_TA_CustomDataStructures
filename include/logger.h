@@ -9,6 +9,7 @@
 #include "EDK_MemoryManager/edk_platform_types.h"
 #include "adt_queue.h"
 #include <stdio.h>
+#include <stdarg.h>
 
 typedef struct Logger{
     struct adt_queue_s* queue;
@@ -21,11 +22,12 @@ struct Callbacks{
      * 
      * \param logger Logger to enqueue the message
      * \param msg Message to be printed and enqueued
+     * \param ... Arguments to be printed
      * 
      * \return NULL when the logger is NULL
      * \return NULL when the message is NULL
     */
-    void (*print)(Logger *logger, const char *msg);
+    void (*print)(Logger *logger, const char *msg, ...);
 
 
 
@@ -34,11 +36,12 @@ struct Callbacks{
      * 
      * \param logger Logger to enqueue the message
      * \param msg Message to be printed and enqueued
+     * \param ... Arguments to be printed
      * 
      * \return NULL when the logger is NULL
      * \return NULL when the message is NULL
     */
-    void (*printSucces)(Logger *logger, const char *msg);
+    void (*printSucces)(Logger *logger, const char *msg, ...);
 
 
 
@@ -47,24 +50,24 @@ struct Callbacks{
      * 
      * \param logger Logger to enqueue the message
      * \param msg Message to be printed and enqueued
+     * \param ... Arguments to be printed
      * 
      * \return NULL when the logger is NULL
      * \return NULL when the message is NULL
     */
-    void (*printWarning)(Logger *logger, const char *msg);
+    void (*printWarning)(Logger *logger, const char *msg, ...);
 
     /**
      * \brief Print the message recived in Red format and enqueue the message
      * 
      * \param logger Logger to enqueue the message
      * \param msg Message to be printed and enqueued
+     * \param ... Arguments to be printed
      * 
      * \return NULL when the logger is NULL
      * \return NULL when the message is NULL
     */
-    void (*printError)(Logger *logger, const char *msg);
-
-
+    void (*printError)(Logger *logger, const char *msg, ...);
 
     /**
      * \brief Write all the messages enqueued previously on a txt file

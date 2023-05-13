@@ -9,8 +9,8 @@ static void LOGGER_PrintSucces(Logger *log, const char *msg);
 static void LOGGER_PrintWarning(Logger *log, const char *msg);
 static void LOGGER_PrintError(Logger *log, const char *msg);
 static s8 LOGGER_Flush(Logger *log, FILE *f);
-static void LOGGER_Destroy(Logger *log);
-static void LOGGER_Reset(Logger *log);
+static s8 LOGGER_Destroy(Logger *log);
+static s8 LOGGER_Reset(Logger *log);
 
 struct Callbacks callbacks = {
     .print = LOGGER_Print,
@@ -109,22 +109,27 @@ s8 LOGGER_Flush(Logger *log, FILE *f){
     return kErrorCode_Ok;
 }
 
-void LOGGER_Destroy(Logger *l){
+s8 LOGGER_Destroy(Logger *l){
     if(NULL != l){
         if(l->queue != NULL){
             l->queue->ops_->reset(l->queue);
             l->queue->ops_->destroy(l->queue);
         }
         MM->free(l);
+        return kErrorCode_Ok;
     }
+    return kErrorCode_LoggerNULL;
 }
 
 
-void LOGGER_Reset(Logger *l){
+s8 LOGGER_Reset(Logger *l){
     if(NULL != l){
         l->queue->ops_->reset(l->queue);
         l->queue->ops_->resize(l->queue,1);
+        return kErrorCode_Ok;
     }
+
+    return kErrorCode_LoggerNULL;
 }
 
 

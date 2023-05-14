@@ -102,8 +102,7 @@ int main() {
 
 	printf("\t insertAt vector_1\n");
 	u16 position = (kNumberOfStoragePtrTest_A / 2);
-	for (u16 i = 0; i < kNumberOfStoragePtrTest_B; ++i)
-	{
+	for (u16 i = 0; i < kNumberOfStoragePtrTest_B; ++i){
 		error_type = vector_1->insertAt(TestData.storage_ptr_test_B[i], (strlen((const char*)TestData.storage_ptr_test_B[i]) + 1), position);
 		TestData.storage_ptr_test_B[i] = NULL;
 		TESTBASE_printFunctionResult(vector_1, (u8*)"insertAt vector_1", error_type);
@@ -429,7 +428,6 @@ int main() {
 	TESTBASE_printFunctionResult(vector_2, (u8*)"destroy vector_2 (NOT VALID)", error_type);
 	error_type = vector_3->destroy();
 	TESTBASE_printFunctionResult(vector_3, (u8*)"destroy vector_3 (NOT VALID)", error_type);
-
 
 	// Work is done, clean the system
 	error_type = vector_1->destroy();

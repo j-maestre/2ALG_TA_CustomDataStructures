@@ -81,8 +81,10 @@ Vector* Vector::Create(u16 size)
   return new Vector(size);
 }
 
-s16 Vector::destroy()
-{
+s16 Vector::destroy(){
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if(nullptr != this->storage_)
   {
     for (u16 i = 0; i < this->capacity_; i++)
@@ -98,6 +100,10 @@ s16 Vector::destroy()
 
 s16 Vector::softReset()
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if (this->storage_ == nullptr)
   {
     return kErrorCode_StorageNULL;
@@ -114,6 +120,11 @@ s16 Vector::softReset()
 
 s16 Vector::reset()
 {
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if (this->storage_ == nullptr)
   {
     return kErrorCode_StorageNULL;
@@ -130,6 +141,10 @@ s16 Vector::reset()
 
 s16 Vector::resize(u16 new_size)
 {
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if(new_size == 0){
     return kErrorCode_SizeZERO;
   }
@@ -177,11 +192,16 @@ s16 Vector::resize(u16 new_size)
 
 u16 Vector::capacity() const
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   return this->capacity_;
 }
 
-u16 Vector::length() const
-{
+u16 Vector::length() const{
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if(this->tail_ > this->capacity_){
     return 0;
   }
@@ -198,13 +218,16 @@ boolean Vector::isEmpty() const
   return False;
 }
 
-boolean Vector::isFull() const
-{
+boolean Vector::isFull() const{
   return (this->tail_ == this->capacity_);
 }
 
-void* Vector::first()
-{
+void* Vector::first(){
+
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -213,6 +236,11 @@ void* Vector::first()
 
 void* Vector::last()
 {
+
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -228,6 +256,9 @@ void* Vector::last()
 
 void* Vector::at(u16 position)
 {
+  if (nullptr == this) {
+    return nullptr;
+  }
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -237,8 +268,11 @@ void* Vector::at(u16 position)
   return (this->storage_ + position)->data_;
 }
 
-s16 Vector::insertFirst(void* data, u16 bytes)
-{
+s16 Vector::insertFirst(void* data, u16 bytes){
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if( nullptr == data){
     return kErrorCode_DataNULL;
   }
@@ -268,6 +302,11 @@ s16 Vector::insertFirst(void* data, u16 bytes)
 
 s16 Vector::insertLast(void* data, u16 bytes)
 {
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if (nullptr == this->storage_) {
     return kErrorCode_StorageNULL;
   }
@@ -289,6 +328,11 @@ s16 Vector::insertLast(void* data, u16 bytes)
 
 s16 Vector::insertAt(void* data, u16 bytes, u16 position)
 {
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if (nullptr == this->storage_) {
     return kErrorCode_StorageNULL;
   }
@@ -299,15 +343,16 @@ s16 Vector::insertAt(void* data, u16 bytes, u16 position)
     return kErrorCode_ZeroBytes;
   }
 
-  if( position > this->tail_){
-    position = this->tail_;
-  }
-
   if(this->isFull()){
     return kErrorCode_VectorFull;
   }
 
-  if(this->isEmpty()){
+  if( position > this->tail_){
+    position = this->tail_;
+  }
+
+
+  if(!this->isEmpty()){
     // El vector tiene cosas, hay que moverlas
     for (u32 i = this->tail_; i > position ; i--){
       this->storage_[i].setData(this->storage_[i-1].data_, this->storage_[i-1].size_);
@@ -321,8 +366,12 @@ s16 Vector::insertAt(void* data, u16 bytes, u16 position)
   return kErrorCode_Ok;
 }
 
-void* Vector::extractFirst()
-{
+void* Vector::extractFirst(){
+
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -346,8 +395,11 @@ void* Vector::extractFirst()
   return data_tmp;
 }
 
-void* Vector::extractAt(u16 position)
-{
+void* Vector::extractAt(u16 position){
+
+  if(nullptr == this){
+    return nullptr;
+  }
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -371,8 +423,11 @@ void* Vector::extractAt(u16 position)
   return data_tmp;
 }
 
-void* Vector::extractLast()
-{
+void* Vector::extractLast(){
+
+  if(nullptr == this){
+    return nullptr;
+  }
   if( nullptr == (this->storage_)+(this->tail_)){
     return nullptr;
   }
@@ -388,8 +443,12 @@ void* Vector::extractLast()
   return data_tmp;
 }
 
-s16 Vector::concat(Vector* vector_src)
-{
+s16 Vector::concat(Vector* vector_src){
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if( nullptr == vector_src){
     return kErrorCode_VectorNULL;
   }
@@ -421,6 +480,11 @@ s16 Vector::concat(Vector* vector_src)
 
 s16 Vector::traverse(void (* callback)(MemoryNode*))
 {
+
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if( nullptr == callback){
     kErrorCode_CallBackNULL;
   }
@@ -437,12 +501,16 @@ s16 Vector::traverse(void (* callback)(MemoryNode*))
 
 MemoryNode* Vector::data()
 {
+  if(nullptr == this){
+    return nullptr;
+  }
+
   return this->storage_;
 }
 
 void Vector::print()
 {
-  if (this == NULL) return;
+  if (this == nullptr) return;
   if( nullptr == this->storage_){
     return;
   }

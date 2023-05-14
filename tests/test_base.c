@@ -38,8 +38,29 @@ struct test_data_s {
 	void *storage_ptr_test_C[kNumberOfStoragePtrTest_C];
 } TestData;
 
+// TODO Update Error Codes
 u8 *abgs_msg = (u8 *)"\n   ABGS - Artificial Bytes Game Studio\n  **  Tap Pop Balloon - Combo Party  **\n      Available for Android and iOS\n\n";
-char *error_codes[] = {{"OK"},{"NULL"},{"Memory error"},{"node is NULL"},{"node->data_ is NULL"},{"bytes is ZERO"},{"No memory when malloc"},{"Vector is NULL"},{"Storage NULL"},{"Size is ZERO"},{"Vector tail exceeds capacity"},{"Vecot position exceeds capacity"},{"Vector position exceeds tail"},{"Vector is FULL"},{"Callback is NULL"}};
+char *error_codes[] = {{"OK"},
+					  {"NULL"},
+					  {"Memory error"},
+					  {"node is NULL"},
+					  {"node->data_ is NULL"},
+					  {"bytes is ZERO"},
+					  {"No memory when malloc"},
+					  {"Vector is NULL"},
+					  {"Storage NULL"},
+					  {"Size is ZERO"},
+					  {"Vector tail exceeds capacity"},
+					  {"Vecot position exceeds capacity"},
+					  {"Vector position exceeds tail"},
+					  {"Vector is FULL"},
+					  {"Callback is NULL"},
+					  {"List is FULL"},
+					  {"List is NULL"},
+					  {"Logger is NULL"},
+					  {"File is NULL"},
+					  };
+
 
 
 void* TESTBASE_allocateData(u16 size) {

@@ -63,12 +63,8 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR14_CPP_MemoryNode",
     "PR15_CPP_Vector",
     "PR16_CPP_CircularVector",
-    --"PR17_CPP_MovableVector",
-    --"PR14_CPP_MemoryNode",
-    --"PR15_CPP_Vector",
-    --"PR16_CPP_CircularVector",
     "PR17_CPP_MovableVector",
-    --"PR18_CPP_List",
+    "PR18_CPP_List",
     --"PR19_CPP_DLList",
     --"PR20_CPP_CircularList",
     --"PR21_CPP_CircularDLList",
@@ -281,6 +277,7 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./include/circular_vector.h"),
         path.join(PROJ_DIR, "./src/circular_vector.cc"),
         path.join(PROJ_DIR, "./tests/test_circular_vector.cc"),
+        path.join(PROJ_DIR, "./src/memory_node.cc"),
       }
     project "PR17_CPP_MovableVector"
     language "C++"
@@ -288,6 +285,16 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/movable_vector.h"),
       path.join(PROJ_DIR, "./src/movable_vector.cc"),
       path.join(PROJ_DIR, "./tests/test_movable_vector.cc"),
+      path.join(PROJ_DIR, "./src/memory_node.cc"),
+    }
+
+    project "PR18_CPP_List"
+    language "C++"
+    files {
+      path.join(PROJ_DIR, "./include/list.h"),
+      path.join(PROJ_DIR, "./src/list.cc"),
+      path.join(PROJ_DIR, "./tests/test_list.cc"),
+      path.join(PROJ_DIR, "./src/memory_node.cc"),
     }
     project "PR24_CPP_Logger"
     files {

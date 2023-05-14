@@ -78,12 +78,16 @@ CircularVector& CircularVector::operator=(CircularVector&& other)
 
 CircularVector* CircularVector::Create(u16 size)
 {
+  
   if (size <= 0) return nullptr;
   return new CircularVector(size);
 }
 
 s16 CircularVector::destroy()
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   for (u16 i = 0; i < this->capacity_; i++)
   {
     this->storage_[i].reset();
@@ -96,6 +100,9 @@ s16 CircularVector::destroy()
 
 s16 CircularVector::softReset()
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if (this->storage_ == nullptr)
   {
     return kErrorCode_StorageNULL;
@@ -112,6 +119,10 @@ s16 CircularVector::softReset()
 
 s16 CircularVector::reset()
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if (this->storage_ == nullptr)
   {
     return kErrorCode_StorageNULL;
@@ -128,6 +139,10 @@ s16 CircularVector::reset()
 
 s16 CircularVector::resize(u16 new_size)
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if(new_size == 0){
     return kErrorCode_SizeZERO;
   }
@@ -158,7 +173,9 @@ s16 CircularVector::resize(u16 new_size)
     }
     else
     {
-      this->storage_[(this->head_ + index_aux)%this->capacity_].reset();
+      if(this->storage_[(this->head_ + index_aux)%this->capacity_].data_ != nullptr){
+        this->storage_[(this->head_ + index_aux)%this->capacity_].reset();
+      }
       index_aux++;
     }
   }
@@ -183,6 +200,7 @@ u16 CircularVector::capacity() const
 
 u16 CircularVector::length() const
 {
+  
   if(this->tail_ > this->head_){
     return this->tail_ - this->head_;
 
@@ -212,6 +230,9 @@ boolean CircularVector::isFull() const
 
 void* CircularVector::first()
 {
+  if(nullptr == this){
+    return nullptr;
+  }
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -220,6 +241,11 @@ void* CircularVector::first()
 
 void* CircularVector::last()
 {
+
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -233,6 +259,10 @@ void* CircularVector::last()
 
 void* CircularVector::at(u16 position)
 {
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -240,8 +270,11 @@ void* CircularVector::at(u16 position)
   return this->storage_[(this->head_ + position)%this->capacity_].data_;
 }
 
-s16 CircularVector::insertFirst(void* data, u16 bytes)
-{
+s16 CircularVector::insertFirst(void* data, u16 bytes){
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if( nullptr == this->storage_){
     return kErrorCode_StorageNULL;
   }
@@ -255,13 +288,13 @@ s16 CircularVector::insertFirst(void* data, u16 bytes)
     return kErrorCode_VectorFull;
   }
 
-  //if(!CVECTOR_isEmpty(vector)){
+  //if(!this->isEmpty()){
 
-  if(this->head_ == 0){
-    this->head_ = this->capacity_;
-  }
-    
-  this->head_--;
+    if(this->head_ == 0){
+      this->head_ = this->capacity_;
+    }
+      
+    this->head_--;
   //}
 
   this->storage_[this->head_].setData(data, bytes);
@@ -271,6 +304,9 @@ s16 CircularVector::insertFirst(void* data, u16 bytes)
 
 s16 CircularVector::insertLast(void* data, u16 bytes)
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if( nullptr == this->storage_){
     return kErrorCode_StorageNULL;
   }
@@ -292,6 +328,10 @@ s16 CircularVector::insertLast(void* data, u16 bytes)
 
 s16 CircularVector::insertAt(void* data, u16 bytes, u16 position)
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if( nullptr == this->storage_){
     return kErrorCode_StorageNULL;
   }
@@ -373,24 +413,35 @@ s16 CircularVector::insertAt(void* data, u16 bytes, u16 position)
 
 void* CircularVector::extractFirst(u16 *size)
 {
+
+  if(nullptr == this){
+    return nullptr;
+  }
   if( nullptr == this->storage_){
     return nullptr;
   }
 
-  if(this->isFull()){
+  if(this->isEmpty()){
     return nullptr;
   }
 
   void *data_tmp = (this->storage_ + this->head_)->data_;
 
+  if(size != nullptr){
+    *size = (this->storage_ + this->head_)->size_;
+  }
+
   this->storage_[this->head_].softReset();
   this->head_ = (this->head_+1) % (this->capacity_);
-
   return data_tmp;
 }
 
 void* CircularVector::extractAt(u16 position)
 {
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == this->storage_){
     return nullptr;
   }
@@ -436,6 +487,10 @@ void* CircularVector::extractAt(u16 position)
 
 void* CircularVector::extractLast()
 {
+  if(nullptr == this){
+    return nullptr;
+  }
+
   if( nullptr == (this->storage_)+ (this->tail_ - 1)){
     return nullptr;
   }
@@ -444,8 +499,6 @@ void* CircularVector::extractLast()
     return nullptr;
   }
 
-
-  
   if(this->tail_ == 0){
     this->tail_ = this->capacity_;
   }
@@ -461,6 +514,10 @@ void* CircularVector::extractLast()
 
 s16 CircularVector::concat(CircularVector* vector_src)
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
+
   if( nullptr == vector_src){
     return kErrorCode_VectorNULL;
   }
@@ -531,6 +588,9 @@ s16 CircularVector::concat(CircularVector* vector_src)
 
 s16 CircularVector::traverse(void (* callback)(MemoryNode*))
 {
+  if(nullptr == this){
+    return kErrorCode_VectorNULL;
+  }
   if( NULL == callback){
     return kErrorCode_CallBackNULL;
   }
@@ -547,12 +607,17 @@ s16 CircularVector::traverse(void (* callback)(MemoryNode*))
 
 MemoryNode* CircularVector::data()
 {
+  if(nullptr == this){
+    return nullptr;
+  }
   return storage_;
 }
 
-
 void CircularVector::print()
 {
+  if(nullptr == this){
+    return;
+  }
   if( nullptr == (this->storage_ + this->head_)){
     return;
   }

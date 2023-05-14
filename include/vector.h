@@ -24,8 +24,8 @@ public:
   static Vector* Create(u16 size);
 
 	s16 destroy();
-  s16 softReset();
-  s16 reset();
+	s16 softReset();
+	s16 reset();
 	s16 resize(u16 new_size);
 	u16 capacity() const;
 	u16 length() const;

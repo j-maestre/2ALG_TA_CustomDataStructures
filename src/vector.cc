@@ -82,11 +82,14 @@ Vector* Vector::Create(u16 size)
 
 s16 Vector::destroy()
 {
-  for (u16 i = 0; i < this->capacity_; i++)
+  if(nullptr != this->storage_)
   {
-    this->storage_[i].reset();
+    for (u16 i = 0; i < this->capacity_; i++)
+    {
+      this->storage_[i].reset();
+    }
+    delete[] this->storage_;
   }
-  delete[] this->storage_;
   delete this;
   
   return kErrorCode_Ok;
@@ -115,7 +118,7 @@ s16 Vector::reset()
     return kErrorCode_StorageNULL;
   }
 
-  for (u16 i = 0; i < this->capacity_; i++)
+  for (u16 i = 0; i < this->tail_; i++)
   {
     this->storage_[i].reset();
   }
@@ -142,9 +145,9 @@ s16 Vector::resize(u16 new_size)
 
   if(new_size > this->capacity_){
     // Al alza
-    for (u32 i = 0; i < this->tail_; i++){
-      node_tmp[i] = std::move(this->storage_[i]);
-    }
+  for (u32 i = 0; i < this->tail_; i++){
+    node_tmp[i] = std::move(this->storage_[i]);
+  }
 
   }else
   {

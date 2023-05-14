@@ -48,6 +48,8 @@ public:
   
   friend class Vector;
   friend class CircularVector;
+  friend class MVector;
+  friend class List;
   
 protected:
   void *data_;

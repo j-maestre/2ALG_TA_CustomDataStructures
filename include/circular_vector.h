@@ -11,7 +11,7 @@
 class CircularVector
 {
 private:
-  CircularVector();
+  CircularVector(u16 size);
   CircularVector(const CircularVector& other);
   CircularVector(CircularVector&& other);
 
@@ -21,8 +21,7 @@ public:
   CircularVector& operator =(const CircularVector& other);
   CircularVector& operator =(CircularVector&& other);
 
-  static CircularVector* Create();
-  static s16 CreateFromRef(CircularVector **vector);
+  static CircularVector* Create(u16 size);
 
   s16 destroy();
   s16 softReset();
@@ -43,6 +42,7 @@ public:
   void* extractAt(u16 position);
   s16 concat(CircularVector *vector_src);
   s16 traverse(void (*callback)(MemoryNode *));
+  MemoryNode* data();
   void print();
 
   void* operator new(size_t count);

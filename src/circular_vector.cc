@@ -6,12 +6,12 @@
 #include "vector.h"
 #include "EDK_MemoryManager/edk_memory_manager.h"
 
-CircularVector::CircularVector() : head_(0), tail_(0), capacity_(0), storage_(nullptr)
+CircularVector::CircularVector(u16 size) : head_(0), tail_(0), capacity_(size), storage_(nullptr)
 {
-  
+  storage_ = new MemoryNode[size];
 }
 
-CircularVector::CircularVector(const CircularVector& other) : CircularVector()
+CircularVector::CircularVector(const CircularVector& other) : CircularVector(other.capacity_)
 {
   this->head_ = other.head_;
   this->tail_ = other.tail_;
@@ -76,24 +76,10 @@ CircularVector& CircularVector::operator=(CircularVector&& other)
   return *this;
 }
 
-CircularVector* CircularVector::Create()
+CircularVector* CircularVector::Create(u16 size)
 {
-  return new CircularVector();
-}
-
-s16 CircularVector::CreateFromRef(CircularVector** vector)
-{
-  if (nullptr == vector) {
-    return kErrorCode_VectorNULL;
-  }
-  
-  *vector = CircularVector::Create();
-  if (*vector == nullptr)
-  {
-    return kErrorCode_NoMemory;
-  }
-
-  return kErrorCode_Ok;
+  if (size <= 0) return nullptr;
+  return new CircularVector(size);
 }
 
 s16 CircularVector::destroy()
@@ -559,6 +545,12 @@ s16 CircularVector::traverse(void (* callback)(MemoryNode*))
   return kErrorCode_Ok;
 }
 
+MemoryNode* CircularVector::data()
+{
+  return storage_;
+}
+
+
 void CircularVector::print()
 {
   if( nullptr == (this->storage_ + this->head_)){
@@ -580,7 +572,7 @@ void CircularVector::print()
 
 void* CircularVector::operator new(size_t count)
 {
-  return MM->malloc(sizeof(CircularVector));
+  return MM->malloc(count);
 }
 
 void CircularVector::operator delete(void* ptr)
@@ -590,7 +582,7 @@ void CircularVector::operator delete(void* ptr)
 
 void* CircularVector::operator new [](size_t count)
 {
-  return MM->malloc(sizeof(CircularVector) * count);
+  return MM->malloc(count);
 }
 
 void CircularVector::operator delete [](void* ptr, size_t count)

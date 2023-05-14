@@ -65,7 +65,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR16_CPP_CircularVector",
     "PR17_CPP_MovableVector",
     "PR18_CPP_List",
-    --"PR19_CPP_DLList",
+    "PR19_CPP_DLList",
     --"PR20_CPP_CircularList",
     --"PR21_CPP_CircularDLList",
     --"PR22_CPP_Stack",
@@ -296,6 +296,16 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./tests/test_list.cc"),
       path.join(PROJ_DIR, "./src/memory_node.cc"),
     }
+    
+    project "PR19_CPP_DLList"
+    language "C++"
+    files {
+      path.join(PROJ_DIR, "./include/dllist.h"),
+      path.join(PROJ_DIR, "./src/dllist.cc"),
+      path.join(PROJ_DIR, "./tests/test_dllist.cc"),
+      path.join(PROJ_DIR, "./src/memory_node.cc"),
+    }
+    
     project "PR24_CPP_Logger"
     files {
       path.join(PROJ_DIR, "./include/logger.h"),

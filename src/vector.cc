@@ -77,6 +77,7 @@ Vector& Vector::operator=(Vector&& other)
 
 Vector* Vector::Create(u16 size)
 {
+  if (size <= 0) return nullptr;
   return new Vector(size);
 }
 

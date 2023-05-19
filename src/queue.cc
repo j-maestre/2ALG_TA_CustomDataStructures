@@ -205,4 +205,54 @@ void* Queue::back()
   return this->storage_->last();
 }
 
+s16 Queue::concat(Queue* queue_src)
+{
+  if (this == NULL || queue_src == NULL)
+  {
+    return kErrorCode_NULL;
+  }
 
+  if (this->storage_ == NULL)
+  {
+    return kErrorCode_NULL;
+  }
+
+  return this->storage_->concat(queue_src->storage_);
+}
+
+s16 Queue::destroy()
+{
+  if (this == NULL)
+  {
+    return kErrorCode_NULL;
+  }
+
+  if (this->storage_ == NULL)
+  {
+    return kErrorCode_NULL;
+  }
+
+  s16 result = this->storage_->destroy();
+
+  if (result == kErrorCode_Ok)
+  {
+    delete this;
+  }
+
+  return result;
+}
+
+void Queue::print()
+{
+  if (this == NULL)
+  {
+    return;
+  }
+
+  if (this->storage_ == NULL)
+  {
+    return;
+  }
+
+  this->storage_->print();
+}

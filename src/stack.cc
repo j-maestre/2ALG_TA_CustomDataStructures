@@ -32,7 +32,11 @@ Stack& Stack::operator=(Stack&& other)
 
 Stack* Stack::Create(u16 size)
 {
-	return new Stack(size);
+	if(size > 0){
+		return new Stack(size);
+	}
+
+	return nullptr;
 }
 
 void* Stack::operator new(size_t count)

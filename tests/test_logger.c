@@ -29,7 +29,7 @@ void main(){
 
     f = fopen("log.txt","w");
     if(f != NULL){
-        log->ops_->printWarning(log,"Flusing msgs...");
+        log->ops_->printWarning(log,"Flushing msgs...");
         s8 result = log->ops_->flush(log,f);
 
         if(result == 0){

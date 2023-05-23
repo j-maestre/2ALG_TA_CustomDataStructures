@@ -66,12 +66,9 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR17_CPP_MovableVector",
     "PR18_CPP_List",
     "PR19_CPP_DLList",
-    --"PR20_CPP_CircularList",
-    --"PR21_CPP_CircularDLList",
-    --"PR22_CPP_Stack",
-    --"PR23_CPP_Queue",
+    "PR22_CPP_Stack",
+    "PR23_CPP_Queue",
     "PR24_CPP_Logger",
-    --"PR25_CPP_Comparative",
   }
 
 --[[************************* PROJECT GENERATOR FUNCTION *************************]]--
@@ -318,3 +315,19 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./include/adt_list.h"),
       path.join(PROJ_DIR, "./src/adt_list.c"),
     }
+
+    project "PR23_CPP_Queue"
+    language "C++"
+    files {
+      path.join(PROJ_DIR, "./src/memory_node.cc"),
+      path.join(PROJ_DIR, "./src/list.cc"),
+      path.join(PROJ_DIR, "./src/queue.cc"),
+    }
+
+    project "PR22_CPP_Stack"
+      language "C++"
+      files {
+        path.join(PROJ_DIR, "./src/memory_node.cc"),
+        path.join(PROJ_DIR, "./src/vector.cc"),
+        path.join(PROJ_DIR, "./src/stack.cc"),
+      }

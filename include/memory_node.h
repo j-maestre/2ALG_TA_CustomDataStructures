@@ -50,6 +50,7 @@ public:
   friend class CircularVector;
   friend class MVector;
   friend class List;
+  friend class DLList;
   
 protected:
   void *data_;

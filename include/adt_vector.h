@@ -159,13 +159,13 @@ struct vector_ops_s {
 	s16 (*insertFirst)(Vector *vector, void *data, u16 bytes);
 
   /**
-   * \brief Inserts an element in the last position of the Vectorç
+   * \brief Inserts an element in the last position of the Vector
    * 
    * \param vector pointer
    * \param void* data to insert at last position
    * \param u16 bytes size of data to insert
    * 
-   * \return s16 kErrorCode_VectorNULL When vetor is NULL
+   * \return s16 kErrorCode_VectorNULL When vector is NULL
    * \return s16 kErrorCode_StorageNULL When storage is NULL
    * \return s16 kErrorCode_DataNULL When data is NULL
    * \return s16 kErrorCode_ZeroBytes When bytes is 0
@@ -182,7 +182,7 @@ struct vector_ops_s {
    * \param u16 bytes size of data to insert
    * \param u16 position to insert the data
    * 
-   * \return s16 kErrorCode_VectorNULL When vetor is NULL
+   * \return s16 kErrorCode_VectorNULL When vector is NULL
    * \return s16 kErrorCode_StorageNULL When storage is NULL
    * \return s16 kErrorCode_DataNULL When data is NULL
    * \return s16 kErrorCode_ZeroBytes When bytes is 0
@@ -202,19 +202,8 @@ struct vector_ops_s {
    *               When the function has done his job
    */
 	void* (*extractFirst)(Vector *vector);
-  /*
-	// For debugging:
-#if DEBUG
-	void* (*extractFirst)(Vector *vector, u16 *size);
-#endif // DEBUG
-	void* (*extractFirst)(Vector *vector
-#if DEBUG
-	, u16 *size
-#endif // DEBUG
-		);
-  */
 
- /**
+  /**
   * \brief Extracts the last element of the vector
   * 
   * \param vector pointer
@@ -243,7 +232,7 @@ struct vector_ops_s {
 	 * \brief Concatenates two vectors
    * 
 	 * \param vector pointer base
-	 * \param vector pointer to concatenate
+	 * \param vector_src pointer to concatenate
    * 
    * \return s16 kErrorCode_VectorNULL When one of the Vector is NULL
    * \return s16 kErrorCode_StorageNULL When storage is NULL

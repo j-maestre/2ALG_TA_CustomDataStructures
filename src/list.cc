@@ -56,7 +56,7 @@ s16 List::destroy()
 
   MemoryNode *current = this->head_;
   MemoryNode *next = current->next_;
-  for (int i = 0; i < this->lenght_-1 && current != nullptr; i++){
+  for (int i = 0; i < this->lenght_ && next != nullptr; i++){
     current->free();
     current = next;
     next = next->next_; 
@@ -115,18 +115,19 @@ s16 List::reset()
   return kErrorCode_Ok;
 }
 
-s16 List::resize(u16 new_size)
-{
+s16 List::resize(u16 new_size){
   if (this == nullptr)
     return kErrorCode_NULL;
 
-  MemoryNode *current = nullptr;
+  MemoryNode *current = new MemoryNode;
   while (this->lenght_ > new_size)
   {
-    current->data_ = this->extractLast(&current->size_);
-    current->free();
+    current->data_ = this->extractLast(nullptr);
+    current->reset();
+
   }
 
+  current->free();
   this->capacity_ = new_size;
   
   return kErrorCode_Ok;
@@ -369,7 +370,9 @@ void* List::extractLast(u16* size)
   }
   this->lenght_--;
   if (size != nullptr) *size = current->size_;
-  return current->data_;
+  void *data_tmp = current->data_;
+  current->softFree();
+  return data_tmp;
 }
 
 void* List::extractAt(u16 position)
@@ -417,7 +420,7 @@ s16 List::concat(List* list_src)
   this->resize(new_capacity);
 
   MemoryNode *copy_node = new MemoryNode();
-  MemoryNode *current;
+  MemoryNode *current = new MemoryNode();
   for (u32 i = 0; i < list_src->lenght_; i++)
   {
     current->data_ = list_src->at(i, &current->size_);
@@ -427,6 +430,7 @@ s16 List::concat(List* list_src)
   }
   
   copy_node->softFree();
+  current->softFree();
   
   return kErrorCode_Ok;
 }

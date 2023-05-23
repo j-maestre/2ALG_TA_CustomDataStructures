@@ -322,6 +322,7 @@ solution("DS_ALG_AI1" .. _ACTION)
       path.join(PROJ_DIR, "./src/memory_node.cc"),
       path.join(PROJ_DIR, "./src/list.cc"),
       path.join(PROJ_DIR, "./src/queue.cc"),
+      path.join(PROJ_DIR, "./tests/test_queue.cc"),
     }
 
     project "PR22_CPP_Stack"

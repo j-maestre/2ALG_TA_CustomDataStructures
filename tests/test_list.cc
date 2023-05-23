@@ -56,7 +56,6 @@ int main() {
 	printf("  + list_2: %zu\n", sizeof(*list_2));
 	printf("  + list_3: %zu\n", sizeof(*list_3));
 
-
 	//FIRST BATTERY
 	printf("---------------- FIRST BATTERY ----------------\n\n");
 	// reset
@@ -382,7 +381,6 @@ int main() {
 	if (NULL != data)
 		printf("ERROR: LAST in list_2 is not NULL\n");
 
-
 	printf("\n\n# Test Extract\n");
 	data = list_2->extractFirst();
 	if (NULL != data)
@@ -399,6 +397,7 @@ int main() {
 	{
 		printf("ERROR: trying to extractAt from an empty list\n");
 	}
+	
 
 	printf("\n\n# Test Concat\n");
 	printf("\t concat list_1 + list_2\n");
@@ -408,6 +407,7 @@ int main() {
 	printf("\n\n# Test Resize\n");
 	error_type = list_2->resize(5);
 	TESTBASE_printFunctionResult(list_2, (u8 *)"resize list_2 (NOT VALID)", error_type);
+
 
 	printf("\n\n# Test Reset\n");
 	error_type = list_2->reset();

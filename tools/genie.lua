@@ -69,6 +69,7 @@ solution("DS_ALG_AI1" .. _ACTION)
     "PR22_CPP_Stack",
     "PR23_CPP_Queue",
     "PR24_CPP_Logger",
+    "PR25_CustomMemoryManager",
   }
 
 --[[************************* PROJECT GENERATOR FUNCTION *************************]]--
@@ -332,4 +333,16 @@ solution("DS_ALG_AI1" .. _ACTION)
         path.join(PROJ_DIR, "./src/vector.cc"),
         path.join(PROJ_DIR, "./src/stack.cc"),
         path.join(PROJ_DIR, "./tests/test_stack.cc"),
+    }
+
+    project "PR25_CustomMemoryManager"
+    includedirs {
+      path.join(PROJ_DIR, "./include/memory_manager/"),
+      path.join(PROJ_DIR, "./include/memory_manager/data_structures"),
+    }
+    files {
+      path.join(PROJ_DIR, "./src/memory_manager/memory_manager.c"),
+      path.join(PROJ_DIR, "./src/memory_manager/data_structures/*.c"),
+      path.join(PROJ_DIR, "./src/cmm_memory_node.c"),
+      path.join(PROJ_DIR, "./tests/test_memory_manager.c"),
     }

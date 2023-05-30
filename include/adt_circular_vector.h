@@ -5,7 +5,7 @@
 //
 
 /**
- * @file adt_vector.h
+ * @file adt_circular_vector.h
  * @author Jose Maria Maestre <maestrequi@esat-alumni.com>
  */
 
@@ -16,6 +16,15 @@
 
 typedef Vector CVector;
 
+ /**
+ * \brief Creates a new Circular Vector
+ * 
+ * \param u16 capacity of the CVector 
+ * 
+ * \return CVector* NULL When capacit equal or less than 0
+ * \return CVector* NULL When there isn't memory
+ * \return pointer to the created CVector when the function has done his job
+ */
 CVector* CVECTOR_create(u16 capacity);
 
 #endif //__ADT_MOVABLE_VECTOR_H__

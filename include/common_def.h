@@ -5,7 +5,7 @@
 //
 
 /**
- * @file adt_vector.h
+ * @file common_def.h
  * @author Xema Maestre <maestrequi@esat-alumni.com>
  */
 

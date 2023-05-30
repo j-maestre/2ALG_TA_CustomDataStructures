@@ -5,7 +5,7 @@
 //
 
 /**
- * @file adt_vector.h
+ * @file adt_list.h
  * @author Hector Ochando <ochandoca@esat-alumni.com>
  */
 
@@ -32,7 +32,6 @@ struct list_ops_s {
    * 
    * \return s16 kErrorCode_Ok When the function has done his job
    */
-
 	s16 (*destroy)(List *list);
 
   /**
@@ -89,7 +88,7 @@ struct list_ops_s {
 	u16 (*length)(List *list);
 
   /**
-   * \brief return if the list is empty
+   * \brief return true if the list is empty
    * 
    * \param list pointer
    * 
@@ -176,7 +175,7 @@ struct list_ops_s {
 	s16 (*insertLast)(List *list, void *data, u16 bytes);
 
   /**
-   * \brief Inserts an element at the given position of the Vector
+   * \brief Inserts an element at the given position of the List
    * 
    * \param list pointer
    * \param void* data to insert at gived position

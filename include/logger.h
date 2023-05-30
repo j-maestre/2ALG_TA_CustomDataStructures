@@ -1,5 +1,5 @@
 /**
- * @file adt_vector.h
+ * @file logger.h
  * @author Jose Maria Maestre <maestrequi@esat-alumni.com>
  */
 

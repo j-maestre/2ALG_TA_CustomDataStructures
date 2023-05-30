@@ -5,7 +5,7 @@
 //
 
 /**
- * @file adt_vector.h
+ * @file adt_movable_vector.h
  * @author Jose Maria Maestre <maestrequi@esat-alumni.com>
  */
 
@@ -16,6 +16,15 @@
 
 typedef Vector MVector;
 
+ /**
+ * \brief Creates a new Movable Vector
+ * 
+ * \param u16 capacity of the Movable Vector 
+ * 
+ * \return MVector* NULL When capacit equal or less than 0
+ * \return MVector* NULL When there isn't memory
+ * \return pointer to the created MVector when the function has done his job
+ */
 MVector* MVECTOR_create(u16 capacity);
 
 #endif //__ADT_MOVABLE_VECTOR_H__

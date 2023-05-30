@@ -63,7 +63,6 @@ struct memory_node_ops_s {
    */
   u16(*size) (MemoryNode *node);
 
-
   /**
    * \brief Reset the content of the MemoryNode
    *         Freeing only the data
@@ -152,7 +151,7 @@ struct memory_node_ops_s {
   
 
   /**
-   * \brief Do a mast in each byte of the data of the MemoryNode
+   * \brief Do a mask in each byte of the data of the MemoryNode
    * 
    * \param node pointer to teh MemoryNode
    * \param make masg is gonna be aplyed
